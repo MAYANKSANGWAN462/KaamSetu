@@ -6,6 +6,8 @@ const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const http = require('http');
+import cors from "cors";
+app.use(cors());
 
 dotenv.config();
 
@@ -110,4 +112,15 @@ process.on('SIGINT', async () => {
     console.log('✅ Server closed');
     process.exit(0);
   });
+});
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+
+app.get("/", (req, res) => {
+  res.send("Backend working");
 });
