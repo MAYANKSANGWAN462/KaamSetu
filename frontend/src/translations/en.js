@@ -1,0 +1,76 @@
+// frontend/src/translations/en.js
+// English translations
+
+export default {
+  // Auth
+  'auth.login': 'Login',
+  'auth.register': 'Register',
+  'auth.email': 'Email Address',
+  'auth.password': 'Password',
+  'auth.confirmPassword': 'Confirm Password',
+  'auth.name': 'Full Name',
+  'auth.phone': 'Phone Number',
+  'auth.selectRole': 'I want to',
+  'auth.hireWorker': 'Hire a Worker',
+  'auth.becomeWorker': 'Become a Worker',
+  'auth.forgotPassword': 'Forgot Password?',
+  'auth.noAccount': "Don't have an account?",
+  'auth.haveAccount': 'Already have an account?',
+  'auth.loginSuccess': 'Login successful!',
+  'auth.registerSuccess': 'Registration successful!',
+  'auth.logout': 'Logout',
+  
+  // Common
+  'common.loading': 'Loading...',
+  'common.error': 'Error',
+  'common.success': 'Success',
+  'common.save': 'Save',
+  'common.cancel': 'Cancel',
+  'common.delete': 'Delete',
+  'common.edit': 'Edit',
+  'common.view': 'View',
+  'common.apply': 'Apply',
+  'common.post': 'Post',
+  'common.search': 'Search',
+  'common.filter': 'Filter',
+  'common.clear': 'Clear',
+  'common.back': 'Back',
+  'common.next': 'Next',
+  'common.previous': 'Previous',
+  'common.submit': 'Submit',
+  'common.update': 'Update',
+  'common.close': 'Close',
+  'common.confirm': 'Confirm',
+  'common.all': 'All',
+  
+  // Navigation
+  'nav.home': 'Home',
+  'nav.search': 'Find Workers',
+  'nav.findJobs': 'Find Jobs',
+  'nav.myJobs': 'My Jobs',
+  'nav.dashboard': 'Dashboard',
+  'nav.profile': 'Profile',
+  'nav.messages': 'Messages',
+  
+  // Home Page
+  'home.hero.title': 'Find Trusted Local Workers',
+  'home.hero.subtitle': 'Connect with skilled professionals in your area',
+  'home.hero.search': 'Search for workers or jobs...',
+  'home.categories.title': 'Popular Categories',
+  'home.cta.title': 'Ready to Get Started?',
+  'home.cta.subtitle': 'Join thousands of satisfied customers',
+  'home.cta.hire': 'Hire a Worker',
+  'home.cta.work': 'Start Working',
+  'home.stats.workers': 'Active Workers',
+  'home.stats.jobs': 'Jobs Completed',
+  'home.stats.users': 'Happy Users',
+  'home.stats.cities': 'Cities Served',
+  
+  // Categories
+  'category.plumbing': 'Plumbing',
+  'category.electrician': 'Electrician',
+  'category.carpentry': 'Carpentry',
+  'category.painting': 'Painting',
+  'category.cleaning': 'Cleaning',
+  'category.construction': 'Construction',
+};
