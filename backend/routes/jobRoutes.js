@@ -1,38 +1,39 @@
-// Purpose: Defines job API endpoints and applies authentication/authorization middleware.
 const express = require('express');
 const router = express.Router();
-const { 
+const {
   createJob,
   getJobs,
-  getJobById,
   getMyJobs,
+  getJobById,
   updateJob,
-  deleteJob,
-  applyForJob,
-  getJobApplications,
-  updateApplicationStatus,
-  getMyApplications,
-  completeJob
+  deleteJob
 } = require('../controllers/jobController');
-const { protect } = require('../middleware/authMiddleware');
+const { protect, requireMode } = require('../middleware/authMiddleware');
 
-// Public routes
+// ── Public routes ──────────────────────────────
 router.get('/', getJobs);
 
-// Hirer routes
-router.post('/', protect, createJob);
-router.get('/my-jobs', protect, getMyJobs);
-router.put('/:id', protect, updateJob);
-router.delete('/:id', protect, deleteJob);
-router.put('/:id/complete', protect, completeJob);
-router.get('/:id/applications', protect, getJobApplications);
-router.put('/:jobId/applications/:appId', protect, updateApplicationStatus);
+// ── Static routes MUST come before /:id ────────
+router.get('/mine',            protect, requireMode('hirer'), getMyJobs);
+router.get('/my-jobs',         protect, requireMode('hirer'), getMyJobs); // alias
+router.get('/applications/my', protect, requireMode('worker'), async (req, res) => {
+  // Forward to application controller if exists, else return empty
+  try {
+    const Application = require('../models/Application');
+    const apps = await Application.find({ workerId: req.user._id })
+      .populate('jobId')
+      .sort({ createdAt: -1 });
+    res.json({ success: true, data: apps });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
 
-// Worker routes
-router.post('/:id/apply', protect, applyForJob);
-router.get('/applications/my', protect, getMyApplications);
+router.post('/', protect, requireMode('hirer'), createJob);
 
-// Public dynamic route declared last to avoid shadowing static paths
-router.get('/:id', getJobById);
+// ── Dynamic routes LAST ────────────────────────
+router.get('/:id',    getJobById);
+router.put('/:id',    protect, requireMode('hirer'), updateJob);
+router.delete('/:id', protect, requireMode('hirer'), deleteJob);
 
 module.exports = router;

@@ -1,71 +1,57 @@
 const mongoose = require('mongoose');
 
-const messageSchema = new mongoose.Schema({
-  senderId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+const messageSchema = new mongoose.Schema(
+  {
+    conversationId: {
+      type: String,
+      required: [true, 'conversationId is required'],
+      trim: true,
+      index: true
+    },
+    senderId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+    receiverId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+    content: {
+      type: String,
+      required: [true, 'Message content is required'],
+      trim: true,
+      maxlength: [5000, 'Message cannot exceed 5000 characters']
+    },
+    isRead: {
+      type: Boolean,
+      default: false
+    }
   },
-  receiverId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  message: {
-    type: String,
-    required: true,
-    maxlength: 2000
-  },
-  read: {
-    type: Boolean,
-    default: false
-  },
-  readAt: Date,
-  deletedBy: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }]
-}, {
-  timestamps: true
-});
-
-// Index for faster queries
-messageSchema.index({ senderId: 1, receiverId: 1, createdAt: -1 });
-messageSchema.index({ receiverId: 1, read: 1 });
-
-// Method to mark as read
-messageSchema.methods.markAsRead = async function() {
-  if (!this.read) {
-    this.read = true;
-    this.readAt = Date.now();
-    await this.save();
+  {
+    timestamps: true
   }
-  return this;
-};
+);
 
-// Method to delete for user
-messageSchema.methods.deleteForUser = async function(userId) {
-  if (!this.deletedBy.includes(userId)) {
-    this.deletedBy.push(userId);
-    await this.save();
-  }
-  return this;
-};
+messageSchema.index({ conversationId: 1, createdAt: -1 });
+messageSchema.index({ receiverId: 1, isRead: 1 });
+messageSchema.index({ senderId: 1, receiverId: 1 });
 
-// Static method to get conversation
-messageSchema.statics.getConversation = async function(user1Id, user2Id, limit = 50, skip = 0) {
-  return this.find({
-    $or: [
-      { senderId: user1Id, receiverId: user2Id },
-      { senderId: user2Id, receiverId: user1Id }
-    ],
-    deletedBy: { $nin: [user1Id] }
-  })
-  .sort({ createdAt: -1 })
-  .skip(skip)
-  .limit(limit)
-  .populate('senderId', 'name profileImage')
-  .populate('receiverId', 'name profileImage');
+messageSchema.statics.getConversation = function getConversation(
+  _userId,
+  _peerId,
+  conversationId,
+  limit,
+  skip
+) {
+  return this.find({ conversationId })
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .populate('senderId', 'name profilePhoto')
+    .populate('receiverId', 'name profilePhoto')
+    .lean();
 };
 
 module.exports = mongoose.model('Message', messageSchema);

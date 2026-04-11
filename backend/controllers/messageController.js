@@ -1,139 +1,170 @@
-// Purpose: Handles messaging flows restricted to accepted worker-hirer relationships.
 const Message = require('../models/Message');
 const User = require('../models/User');
 const Application = require('../models/Application');
-const Job = require('../models/Job');
+const { makeConversationId } = require('../utils/conversationId');
 
-const canUsersMessage = async (userAId, userBId) => {
-  const userA = userAId.toString();
-  const userB = userBId.toString();
+/* ─── Guard: any Application record = interaction exists ─── */
 
-  const acceptedApplications = await Application.find({
-    status: 'accepted',
-    $or: [{ workerId: userA }, { workerId: userB }]
+const hasInteraction = async (userAId, userBId) => {
+  const a = userAId.toString();
+  const b = userBId.toString();
+  const record = await Application.findOne({
+    $or: [
+      { workerId: a, hirerId: b },
+      { workerId: b, hirerId: a }
+    ]
   })
-    .select('jobId workerId')
+    .select('_id')
     .lean();
-
-  if (!acceptedApplications.length) return false;
-
-  const jobIds = acceptedApplications.map((application) => application.jobId);
-  const jobs = await Job.find({ _id: { $in: jobIds } }).select('_id createdBy').lean();
-  const hirerByJobId = new Map(jobs.map((job) => [job._id.toString(), job.createdBy.toString()]));
-
-  return acceptedApplications.some((application) => {
-    const workerId = application.workerId.toString();
-    const hirerId = hirerByJobId.get(application.jobId.toString());
-    if (!hirerId) return false;
-    return (workerId === userA && hirerId === userB) || (workerId === userB && hirerId === userA);
-  });
+  return Boolean(record);
 };
 
-// @desc    Send a message
-// @route   POST /api/messages
-// @access  Private
+/* ─── POST /api/messages ─────────────────────────────────── */
+
 const sendMessage = async (req, res) => {
   try {
-    const { receiverId, message } = req.body;
-    
-    if (!receiverId || !message) {
-      return res.status(400).json({ message: 'Receiver ID and message are required' });
-    }
-    
-    if (message.length > 2000) {
-      return res.status(400).json({ message: 'Message cannot exceed 2000 characters' });
-    }
-    
-    // Check if receiver exists
-    const receiver = await User.findById(receiverId);
-    if (!receiver) {
-      return res.status(404).json({ message: 'Receiver not found' });
+    const { receiverId, content } = req.body;
+    const text = String(content || '').trim();
+
+    if (!receiverId || !text) {
+      return res.status(400).json({
+        success: false,
+        message: 'receiverId and content are required'
+      });
     }
 
-    const allowed = await canUsersMessage(req.user._id, receiverId);
-    if (!allowed) {
-      return res.status(403).json({ message: 'Messaging is enabled only after hiring acceptance' });
+    if (text.length > 5000) {
+      return res.status(400).json({
+        success: false,
+        message: 'Message cannot exceed 5000 characters'
+      });
     }
-    
-    // Create message
-    const newMessage = await Message.create({
+
+    const receiver = await User.findById(receiverId).lean();
+    if (!receiver) {
+      return res.status(404).json({ success: false, message: 'Receiver not found' });
+    }
+
+    // Core guard — any Application record required
+    const allowed = await hasInteraction(req.user._id, receiverId);
+    if (!allowed) {
+      return res.status(403).json({
+        success: false,
+        message: 'You can only message users you have a job interaction with'
+      });
+    }
+
+    const conversationId = makeConversationId(req.user._id, receiverId);
+
+    const msg = await Message.create({
+      conversationId,
       senderId: req.user._id,
       receiverId,
-      message
+      content: text,
+      isRead: false
     });
-    
-    // Populate sender info
-    const populatedMessage = await Message.findById(newMessage._id)
-      .populate('senderId', 'name profileImage')
-      .populate('receiverId', 'name profileImage');
-    
-    res.status(201).json(populatedMessage);
+
+    const populated = await Message.findById(msg._id)
+      .populate('senderId', 'name profilePhoto')
+      .populate('receiverId', 'name profilePhoto')
+      .lean();
+
+    // Emit via socket
+    try {
+      const { getIo } = require('../config/socket');
+      const io = getIo();
+      io.to(conversationId).emit('receiveMessage', {
+        conversationId,
+        messageId: populated._id,
+        senderId: req.user._id.toString(),
+        receiverId: receiverId.toString(),
+        content: populated.content,
+        createdAt: populated.createdAt,
+        isRead: false
+      });
+    } catch (socketErr) {
+      console.warn('[sendMessage] Socket emit skipped:', socketErr.message);
+    }
+
+    return res.status(201).json({ success: true, data: populated });
   } catch (error) {
-    console.error('Send message error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('[sendMessage]', error.message);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
-// @desc    Get conversation between two users
-// @route   GET /api/messages/:userId
-// @access  Private
+/* ─── GET /api/messages/:conversationId ──────────────────── */
+
 const getConversation = async (req, res) => {
   try {
+    const { conversationId } = req.params;
     const { page = 1, limit = 50 } = req.query;
-    const skip = (parseInt(page) - 1) * parseInt(limit);
 
-    const allowed = await canUsersMessage(req.user._id, req.params.userId);
-    if (!allowed) {
-      return res.status(403).json({ message: 'Conversation is available only for accepted worker-hirer matches' });
+    // Derive the other userId from conversationId
+    const parts = conversationId.split('_');
+    if (parts.length !== 2) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid conversationId format'
+      });
     }
-    
+
+    const myId = req.user._id.toString();
+    const otherId = parts[0] === myId ? parts[1] : parts[0];
+
+    const allowed = await hasInteraction(req.user._id, otherId);
+    if (!allowed) {
+      return res.status(403).json({
+        success: false,
+        message: 'You do not have access to this conversation'
+      });
+    }
+
+    const skip = (parseInt(page, 10) - 1) * parseInt(limit, 10);
     const messages = await Message.getConversation(
       req.user._id,
-      req.params.userId,
-      parseInt(limit),
+      otherId,
+      conversationId,
+      parseInt(limit, 10),
       skip
     );
-    
-    // Mark unread messages as read
+
+    // Mark received messages as read
     await Message.updateMany(
       {
-        senderId: req.params.userId,
+        conversationId,
+        senderId: otherId,
         receiverId: req.user._id,
-        read: false
+        isRead: false
       },
-      { read: true, readAt: Date.now() }
+      { $set: { isRead: true } }
     );
-    
-    res.json({
-      messages: messages.reverse(),
-      page: parseInt(page),
-      hasMore: messages.length === parseInt(limit)
+
+    return res.json({
+      success: true,
+      data: {
+        messages: messages.reverse(),
+        page: parseInt(page, 10),
+        hasMore: messages.length === parseInt(limit, 10)
+      }
     });
   } catch (error) {
-    console.error('Get conversation error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('[getConversation]', error.message);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
-// @desc    Get all conversations for current user
-// @route   GET /api/messages/conversations
-// @access  Private
+/* ─── GET /api/messages/conversations ────────────────────── */
+
 const getConversations = async (req, res) => {
   try {
-    // Get all unique users that current user has chatted with
     const conversations = await Message.aggregate([
       {
         $match: {
-          $or: [
-            { senderId: req.user._id },
-            { receiverId: req.user._id }
-          ],
-          deletedBy: { $nin: [req.user._id] }
+          $or: [{ senderId: req.user._id }, { receiverId: req.user._id }]
         }
       },
-      {
-        $sort: { createdAt: -1 }
-      },
+      { $sort: { createdAt: -1 } },
       {
         $group: {
           _id: {
@@ -143,15 +174,18 @@ const getConversations = async (req, res) => {
               '$senderId'
             ]
           },
-          lastMessage: { $first: '$message' },
+          lastMessage: { $first: '$content' },
           lastMessageTime: { $first: '$createdAt' },
+          conversationId: { $first: '$conversationId' },
           unreadCount: {
             $sum: {
               $cond: [
-                { $and: [
-                  { $eq: ['$receiverId', req.user._id] },
-                  { $eq: ['$read', false] }
-                ] },
+                {
+                  $and: [
+                    { $eq: ['$receiverId', req.user._id] },
+                    { $eq: ['$isRead', false] }
+                  ]
+                },
                 1,
                 0
               ]
@@ -161,95 +195,75 @@ const getConversations = async (req, res) => {
       },
       { $sort: { lastMessageTime: -1 } }
     ]);
-    
-    // Populate user details for each conversation
-    const populatedConversations = await Promise.all(
+
+    const populated = await Promise.all(
       conversations.map(async (conv) => {
-        const user = await User.findById(conv._id).select('name email profileImage');
-        const allowed = await canUsersMessage(req.user._id, conv._id);
+        const [otherUser, allowed] = await Promise.all([
+          User.findById(conv._id).select('name profilePhoto').lean(),
+          hasInteraction(req.user._id, conv._id)
+        ]);
+
+        if (!allowed) return null;
+
         return {
-          userId: conv._id,
-          name: user?.name || 'Unknown User',
-          profileImage: user?.profileImage || '',
+          conversationId: makeConversationId(req.user._id, conv._id),
+          otherUserId: conv._id,
+          name: otherUser?.name || 'Unknown',
+          profilePhoto: otherUser?.profilePhoto || '',
           lastMessage: conv.lastMessage,
           lastMessageTime: conv.lastMessageTime,
-          unreadCount: conv.unreadCount,
-          allowed
+          unreadCount: conv.unreadCount
         };
       })
     );
 
-    res.json(populatedConversations.filter((conversation) => conversation.allowed));
+    return res.json({
+      success: true,
+      data: populated.filter(Boolean)
+    });
   } catch (error) {
-    console.error('Get conversations error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('[getConversations]', error.message);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
-// @desc    Mark message as read
-// @route   PUT /api/messages/:messageId/read
-// @access  Private
-const markAsRead = async (req, res) => {
-  try {
-    const message = await Message.findById(req.params.messageId);
-    
-    if (!message) {
-      return res.status(404).json({ message: 'Message not found' });
-    }
-    
-    if (message.receiverId.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: 'Not authorized' });
-    }
-    
-    await message.markAsRead();
-    
-    res.json({ message: 'Message marked as read' });
-  } catch (error) {
-    console.error('Mark as read error:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-};
+/* ─── GET /api/messages/unread/count ─────────────────────── */
 
-// @desc    Delete message (soft delete)
-// @route   DELETE /api/messages/:messageId
-// @access  Private
-const deleteMessage = async (req, res) => {
-  try {
-    const message = await Message.findById(req.params.messageId);
-    
-    if (!message) {
-      return res.status(404).json({ message: 'Message not found' });
-    }
-    
-    if (message.senderId.toString() !== req.user._id.toString() && 
-        message.receiverId.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: 'Not authorized' });
-    }
-    
-    await message.deleteForUser(req.user._id);
-    
-    res.json({ message: 'Message deleted' });
-  } catch (error) {
-    console.error('Delete message error:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-};
-
-// @desc    Get unread message count
-// @route   GET /api/messages/unread/count
-// @access  Private
 const getUnreadCount = async (req, res) => {
   try {
     const count = await Message.countDocuments({
       receiverId: req.user._id,
-      read: false,
-      deletedBy: { $nin: [req.user._id] }
+      isRead: false
     });
-    
-    res.json({ unreadCount: count });
+    return res.json({ success: true, data: { unreadCount: count } });
   } catch (error) {
-    console.error('Get unread count error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('[getUnreadCount]', error.message);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+/* ─── DELETE /api/messages/:messageId ────────────────────── */
+
+const deleteMessage = async (req, res) => {
+  try {
+    const message = await Message.findById(req.params.messageId);
+    if (!message) {
+      return res.status(404).json({ success: false, message: 'Message not found' });
+    }
+
+    const myId = req.user._id.toString();
+    if (
+      message.senderId.toString() !== myId &&
+      message.receiverId.toString() !== myId
+    ) {
+      return res.status(403).json({ success: false, message: 'Not authorized' });
+    }
+
+    await message.deleteOne();
+    return res.json({ success: true, message: 'Message deleted' });
+  } catch (error) {
+    console.error('[deleteMessage]', error.message);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -257,7 +271,6 @@ module.exports = {
   sendMessage,
   getConversation,
   getConversations,
-  markAsRead,
-  deleteMessage,
-  getUnreadCount
+  getUnreadCount,
+  deleteMessage
 };

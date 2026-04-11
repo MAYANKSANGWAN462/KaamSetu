@@ -1,7 +1,7 @@
 {
-  "name": "sambandh-frontend",
+  "name": "kaamsetu-frontend",
   "version": "1.0.0",
-  "description": "Sambandh - Connecting local skilled workers with opportunities",
+  "description": "KaamSetu - Connecting local skilled workers with opportunities",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,6 +12,7 @@
     "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^3.10.0",
+    "@react-oauth/google": "^0.13.4",
     "axios": "^1.13.6",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.38.0",

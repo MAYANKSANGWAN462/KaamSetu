@@ -1,198 +1,248 @@
+const mongoose = require('mongoose');
 const Review = require('../models/Review');
 const Job = require('../models/Job');
-const User = require('../models/User');
+const Application = require('../models/Application');
+const WorkerProfile = require('../models/WorkerProfile');
 
-// @desc    Create a review for a worker
-// @route   POST /api/reviews
-// @access  Private/Hirer
+async function refreshWorkerRating(workerUserId) {
+  const oid =
+    typeof workerUserId === 'string'
+      ? new mongoose.Types.ObjectId(workerUserId)
+      : workerUserId;
+
+  const agg = await Review.aggregate([
+    { $match: { revieweeId: oid } },
+    { $group: { _id: null, avg: { $avg: '$rating' }, count: { $sum: 1 } } }
+  ]);
+
+  const row = agg[0];
+  await WorkerProfile.updateOne(
+    { userId: workerUserId },
+    {
+      $set: {
+        'rating.avg': row ? Math.round(row.avg * 10) / 10 : 0,
+        'rating.count': row ? row.count : 0
+      }
+    }
+  );
+}
+
+/* ─── POST /api/reviews ───────────────────────────────────── */
+
 const createReview = async (req, res) => {
   try {
-    const { jobId, workerId, rating, comment } = req.body;
-    
-    if (!jobId || !workerId || !rating || !comment) {
-      return res.status(400).json({ message: 'All fields are required' });
+    const { workerId, jobId, rating, comment } = req.body;
+
+    if (!workerId || rating == null) {
+      return res.status(400).json({
+        success: false,
+        message: 'workerId and rating are required'
+      });
     }
-    
-    // Check if job exists and is completed
-    const job = await Job.findById(jobId);
-    if (!job) {
-      return res.status(404).json({ message: 'Job not found' });
+
+    const ratingNum = Number(rating);
+    if (!Number.isInteger(ratingNum) || ratingNum < 1 || ratingNum > 5) {
+      return res.status(400).json({
+        success: false,
+        message: 'Rating must be an integer between 1 and 5'
+      });
     }
-    
-    if (job.status !== 'completed') {
-      return res.status(400).json({ message: 'Can only review completed jobs' });
+
+    // If jobId provided, validate job ownership and completion
+    if (jobId) {
+      const job = await Job.findById(jobId).lean();
+      if (!job) {
+        return res.status(404).json({ success: false, message: 'Job not found' });
+      }
+      if (job.hirerId.toString() !== req.user._id.toString()) {
+        return res.status(403).json({
+          success: false,
+          message: 'Not authorized to review this job'
+        });
+      }
+      if (job.status !== 'filled') {
+        return res.status(400).json({
+          success: false,
+          message: 'Reviews are only allowed after the job is filled'
+        });
+      }
+
+      const accepted = await Application.findOne({
+        jobId,
+        workerId,
+        status: 'accepted'
+      }).lean();
+      if (!accepted) {
+        return res.status(400).json({
+          success: false,
+          message: 'This worker was not accepted for the specified job'
+        });
+      }
+
+      const existing = await Review.findOne({
+        jobId,
+        reviewerId: req.user._id
+      }).lean();
+      if (existing) {
+        return res.status(409).json({
+          success: false,
+          message: 'You have already reviewed this job'
+        });
+      }
+    } else {
+      // Direct review without job — check interaction exists
+      const interaction = await Application.findOne({
+        workerId,
+        hirerId: req.user._id
+      }).lean();
+      if (!interaction) {
+        return res.status(403).json({
+          success: false,
+          message: 'You can only review workers you have interacted with'
+        });
+      }
     }
-    
-    // Check if user is the hirer of this job
-    if (job.hirerId.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: 'Not authorized to review this job' });
-    }
-    
-    // Check if review already exists
-    const existingReview = await Review.findOne({ jobId, workerId });
-    if (existingReview) {
-      return res.status(400).json({ message: 'Review already exists for this job' });
-    }
-    
-    // Create review
+
     const review = await Review.create({
-      jobId,
-      workerId,
-      hirerId: req.user._id,
-      rating,
-      comment
+      jobId: jobId || null,
+      reviewerId: req.user._id,
+      revieweeId: workerId,
+      rating: ratingNum,
+      comment: comment ? String(comment).trim().slice(0, 2000) : ''
     });
-    
-    res.status(201).json(review);
+
+    await refreshWorkerRating(workerId);
+
+    return res.status(201).json({ success: true, data: review });
   } catch (error) {
-    console.error('Create review error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('[createReview]', error.message);
+    if (error.code === 11000) {
+      return res.status(409).json({
+        success: false,
+        message: 'You have already reviewed this job'
+      });
+    }
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
-// @desc    Get reviews for a worker
-// @route   GET /api/reviews/worker/:workerId
-// @access  Public
+/* ─── GET /api/reviews/worker/:workerId ──────────────────── */
+
 const getWorkerReviews = async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
-    const skip = (parseInt(page) - 1) * parseInt(limit);
-    
-    const reviews = await Review.find({ workerId: req.params.workerId })
-      .populate('hirerId', 'name profileImage')
-      .populate('jobId', 'title')
-      .skip(skip)
-      .limit(parseInt(limit))
-      .sort({ createdAt: -1 });
-    
-    const total = await Review.countDocuments({ workerId: req.params.workerId });
-    
-    // Get rating breakdown
-    const ratingBreakdown = await Review.aggregate([
-      { $match: { workerId: new mongoose.Types.ObjectId(req.params.workerId) } },
-      { $group: { _id: '$rating', count: { $sum: 1 } } },
-      { $sort: { _id: 1 } }
+    const pageNum = Math.max(1, parseInt(page, 10));
+    const limitNum = Math.max(1, parseInt(limit, 10));
+    const skip = (pageNum - 1) * limitNum;
+    const workerOid = new mongoose.Types.ObjectId(req.params.workerId);
+
+    const [reviews, total, stats] = await Promise.all([
+      Review.find({ revieweeId: req.params.workerId })
+        .populate('reviewerId', 'name profilePhoto')
+        .populate('jobId', 'title')
+        .skip(skip)
+        .limit(limitNum)
+        .sort({ createdAt: -1 })
+        .lean(),
+      Review.countDocuments({ revieweeId: req.params.workerId }),
+      Review.aggregate([
+        { $match: { revieweeId: workerOid } },
+        {
+          $group: {
+            _id: '$rating',
+            count: { $sum: 1 },
+            avg: { $avg: '$rating' }
+          }
+        },
+        { $sort: { _id: 1 } }
+      ])
     ]);
-    
-    const averageRating = await Review.aggregate([
-      { $match: { workerId: new mongoose.Types.ObjectId(req.params.workerId) } },
-      { $group: { _id: null, avg: { $avg: '$rating' } } }
-    ]);
-    
-    res.json({
-      reviews,
-      ratingBreakdown,
-      averageRating: averageRating[0]?.avg || 0,
-      page: parseInt(page),
-      totalPages: Math.ceil(total / parseInt(limit)),
-      total
+
+    const avgRating =
+      stats.length > 0
+        ? stats.reduce((sum, s) => sum + s.avg * s.count, 0) /
+          stats.reduce((sum, s) => sum + s.count, 0)
+        : 0;
+
+    return res.json({
+      success: true,
+      data: {
+        reviews,
+        averageRating: Math.round(avgRating * 10) / 10,
+        ratingBreakdown: stats.map((s) => ({ rating: s._id, count: s.count })),
+        page: pageNum,
+        totalPages: Math.ceil(total / limitNum),
+        total
+      }
     });
   } catch (error) {
-    console.error('Get worker reviews error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('[getWorkerReviews]', error.message);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
-// @desc    Get review by ID
-// @route   GET /api/reviews/:id
-// @access  Public
-const getReviewById = async (req, res) => {
-  try {
-    const review = await Review.findById(req.params.id)
-      .populate('hirerId', 'name profileImage')
-      .populate('workerId', 'name profileImage')
-      .populate('jobId', 'title');
-    
-    if (!review) {
-      return res.status(404).json({ message: 'Review not found' });
-    }
-    
-    res.json(review);
-  } catch (error) {
-    console.error('Get review by ID error:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-};
+/* ─── PUT /api/reviews/:id ───────────────────────────────── */
 
-// @desc    Update review
-// @route   PUT /api/reviews/:id
-// @access  Private/Hirer
 const updateReview = async (req, res) => {
   try {
-    const { rating, comment } = req.body;
-    
     const review = await Review.findById(req.params.id);
     if (!review) {
-      return res.status(404).json({ message: 'Review not found' });
+      return res.status(404).json({ success: false, message: 'Review not found' });
     }
-    
-    if (review.hirerId.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: 'Not authorized to update this review' });
+    if (review.reviewerId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'Not authorized to update this review'
+      });
     }
-    
-    if (rating) review.rating = rating;
-    if (comment) review.comment = comment;
-    
+
+    if (req.body.rating != null) review.rating = Number(req.body.rating);
+    if (req.body.comment !== undefined) {
+      review.comment = String(req.body.comment).trim().slice(0, 2000);
+    }
+
     await review.save();
-    
-    res.json(review);
+    await refreshWorkerRating(review.revieweeId);
+
+    return res.json({ success: true, data: review });
   } catch (error) {
-    console.error('Update review error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('[updateReview]', error.message);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
-// @desc    Delete review
-// @route   DELETE /api/reviews/:id
-// @access  Private/Hirer or Admin
+/* ─── DELETE /api/reviews/:id ────────────────────────────── */
+
 const deleteReview = async (req, res) => {
   try {
     const review = await Review.findById(req.params.id);
     if (!review) {
-      return res.status(404).json({ message: 'Review not found' });
+      return res.status(404).json({ success: false, message: 'Review not found' });
     }
-    
-    if (review.hirerId.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Not authorized to delete this review' });
+    if (
+      review.reviewerId.toString() !== req.user._id.toString() &&
+      req.user.role !== 'admin'
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: 'Not authorized to delete this review'
+      });
     }
-    
-    await review.deleteOne();
-    
-    res.json({ message: 'Review deleted successfully' });
-  } catch (error) {
-    console.error('Delete review error:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-};
 
-// @desc    Report review (flag for admin)
-// @route   POST /api/reviews/:id/report
-// @access  Private
-const reportReview = async (req, res) => {
-  try {
-    const { reason } = req.body;
-    
-    const review = await Review.findById(req.params.id);
-    if (!review) {
-      return res.status(404).json({ message: 'Review not found' });
-    }
-    
-    review.isFlagged = true;
-    review.flagReason = reason || 'No reason provided';
-    await review.save();
-    
-    res.json({ message: 'Review reported successfully' });
+    const revieweeId = review.revieweeId;
+    await review.deleteOne();
+    await refreshWorkerRating(revieweeId);
+
+    return res.json({ success: true, message: 'Review deleted successfully' });
   } catch (error) {
-    console.error('Report review error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('[deleteReview]', error.message);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
 module.exports = {
   createReview,
   getWorkerReviews,
-  getReviewById,
   updateReview,
-  deleteReview,
-  reportReview
+  deleteReview
 };

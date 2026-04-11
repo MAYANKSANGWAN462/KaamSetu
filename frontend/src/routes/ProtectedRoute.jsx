@@ -2,9 +2,9 @@
 // frontend/src/routes/ProtectedRoute.jsx
 // Route guard that checks authentication and user roles
 
-import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import React from "react";
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, isAuthenticated, loading } = useAuth();
@@ -12,7 +12,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500"></div>
       </div>
     );
   }
@@ -23,8 +23,8 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
   if (allowedRoles?.length) {
     const canAccess = allowedRoles.some((role) => {
-      if (role === 'worker') return Boolean(user?.actsAsWorker);
-      if (role === 'hirer') return Boolean(user?.actsAsHirer);
+      if (role === "worker") return user?.activeMode === "worker";
+      if (role === "hirer") return user?.activeMode === "hirer";
       return user?.role === role;
     });
 
@@ -34,7 +34,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   }
 
   // If children is a function, call it with user data
-  if (typeof children === 'function') {
+  if (typeof children === "function") {
     return children({ user });
   }
 

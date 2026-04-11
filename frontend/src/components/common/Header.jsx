@@ -4,6 +4,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { config } from '../../config';
 import ThemeToggle from './ThemeToggle';
+import HeaderModeToggle from './HeaderModeToggle';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Header = () => {
@@ -42,8 +43,8 @@ const Header = () => {
     setIsMenuOpen(false);
   }, [location.pathname]);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate('/');
     setIsMenuOpen(false);
     setIsMobileOpen(false);
@@ -51,9 +52,7 @@ const Header = () => {
 
   const navLinks = [
     { path: '/', label: 'Home', icon: '⌂' },
-    { path: '/search', label: 'Find Work', icon: '⊙' },
-    { path: '/post-job', label: 'Hire Workers', requiresAuth: true, icon: '✦' },
-    { path: '/messages', label: 'Messages', requiresAuth: true, icon: '✉' },
+    { path: '/search', label: 'Search', icon: '⊙' },
   ];
 
   const shouldShowLink = (link) => !link.requiresAuth || isAuthenticated;
@@ -75,8 +74,8 @@ const Header = () => {
         />
 
         <nav className="max-w-screen-xl mx-auto px-4 sm:px-6">
-          {/* Single row — logo | desktop-nav | right-actions */}
-          <div className="flex items-center h-16 gap-2 sm:gap-4">
+          {/* Single row — logo | desktop-nav | (center: mode) | right-actions */}
+          <div className="relative flex items-center h-16 gap-2 sm:gap-4">
 
             {/* ── Logo ──────────────────────────────────────────── */}
             <Link to="/" className="flex items-center gap-2 sm:gap-2.5 shrink-0 group">
@@ -127,6 +126,13 @@ const Header = () => {
               )}
             </div>
 
+            {/* ── Center: mode toggle (logged in only) ───────────── */}
+            <div className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:block">
+              <div className="pointer-events-auto">
+                {isAuthenticated ? <HeaderModeToggle /> : null}
+              </div>
+            </div>
+
             {/* ── Right side actions ─────────────────────────────── */}
             <div className="flex items-center gap-1.5 sm:gap-2 ml-auto">
 
@@ -149,8 +155,8 @@ const Header = () => {
                       {user?.name?.charAt(0)?.toUpperCase() || 'U'}
                       <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-400 border-2 border-white dark:border-[#0d0d14]" />
                     </div>
-                    <span className="hidden lg:inline text-sm font-medium text-gray-700 dark:text-gray-300 max-w-[90px] truncate">
-                      {user?.name?.split(' ')[0] || 'User'}
+                    <span className="hidden xl:inline text-sm text-gray-500 dark:text-gray-400">
+                      Hi, {user?.name?.split(' ')[0] || 'User'}
                     </span>
                     <svg
                       className={`w-3.5 h-3.5 text-gray-400 transition-transform duration-200 shrink-0 ${isMenuOpen ? 'rotate-180' : ''}`}
@@ -180,6 +186,9 @@ const Header = () => {
                             )},
                             { to: '/dashboard', label: 'Dashboard', icon: (
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                            )},
+                            { to: '/messages', label: 'Messages', icon: (
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                             )},
                           ].map((item) => (
                             <Link
@@ -309,9 +318,13 @@ const Header = () => {
                         </div>
                       </div>
 
+                      <div className="px-4 py-2 flex justify-center md:hidden">
+                        <HeaderModeToggle />
+                      </div>
                       {[
                         { to: '/profile', label: 'My Profile', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg> },
                         { to: '/dashboard', label: 'Dashboard', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg> },
+                        { to: '/messages', label: 'Messages', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg> },
                       ].map((item) => (
                         <Link
                           key={item.to}

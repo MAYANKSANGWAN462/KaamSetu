@@ -54,7 +54,30 @@ export const AVAILABILITY_STATUS = [
 
 export const JOB_STATUS = {
   OPEN: 'open',
+  FILLED: 'filled',
   IN_PROGRESS: 'in-progress',
   COMPLETED: 'completed',
   CANCELLED: 'cancelled'
 }
+
+export const SKILL_LIST = [
+  'Masonry', 'Plastering', 'Tiling', 'Welding', 'Carpentry', 'Plumbing',
+  'Electrical Wiring', 'Painting', 'Roofing', 'Scaffolding',
+  'Driving', 'Delivery', 'Loading', 'Forklift Operation',
+  'Cooking', 'Cleaning', 'Housekeeping', 'Childcare', 'Elderly Care',
+  'Farming', 'Harvesting', 'Irrigation', 'Pesticide Application',
+  'Mechanic', 'AC Repair', 'Mobile Repair', 'IT Support',
+  'Security', 'Tailoring', 'Embroidery', 'Screen Printing',
+  'Event Setup', 'Photography Assistant', 'Packaging', 'Data Entry'
+]
+
+export const WAGE_UNITS = ['hourly', 'daily', 'per job']
+
+export const SORT_OPTIONS = [
+  { value: 'distance', label: 'Nearest' },
+  { value: 'wage', label: 'Highest Pay' },
+  { value: 'rating', label: 'Best Rated' },
+  { value: 'recent', label: 'Most Recent' },
+]
+
+export const DISTANCE_OPTIONS = [5, 10, 25, 50, 100]

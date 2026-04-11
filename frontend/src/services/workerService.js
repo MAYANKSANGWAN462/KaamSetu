@@ -16,7 +16,7 @@ class WorkerService {
       });
 
       const queryString = params.toString();
-      const endpoint = `/worker${queryString ? `?${queryString}` : ""}`;
+      const endpoint = `/workers${queryString ? `?${queryString}` : ""}`;
       const response = await api.get(endpoint);
 
       // Return the full response structure
@@ -34,7 +34,7 @@ class WorkerService {
   // Get worker by ID
   async getWorkerById(id) {
     try {
-      const response = await api.get(`/worker/${id}`);
+      const response = await api.get(`/workers/${id}`);
       return response.data;
     } catch (error) {
       throw this.handleError(error);

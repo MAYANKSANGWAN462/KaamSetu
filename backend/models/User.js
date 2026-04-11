@@ -1,117 +1,135 @@
-// Purpose: Defines user schema and authentication-related model methods.
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'Name is required'],
-    trim: true,
-    minlength: [2, 'Name must be at least 2 characters'],
-    maxlength: [50, 'Name cannot exceed 50 characters']
+const locationSchema = new mongoose.Schema(
+  {
+    lat: { type: Number },
+    lng: { type: Number },
+    city: { type: String, trim: true, default: "" },
+    area: { type: String, trim: true, default: "" },
   },
-  email: {
-    type: String,
-    required: [true, 'Email is required'],
-    unique: true,
-    lowercase: true,
-    trim: true,
-    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email']
+  { _id: false },
+);
+
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Name is required"],
+      trim: true,
+      minlength: [2, "Name must be at least 2 characters"],
+      maxlength: [80, "Name cannot exceed 80 characters"],
+    },
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      lowercase: true,
+      trim: true,
+      match: [
+        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+        "Please enter a valid email",
+      ],
+    },
+    phone: {
+      type: String,
+      trim: true,
+      default: "",
+      validate: {
+        validator(v) {
+          if (v == null || v === "") return true;
+          return /^[0-9]{10}$/.test(String(v).trim());
+        },
+        message: "Phone must be exactly 10 digits",
+      },
+    },
+    passwordHash: {
+      type: String,
+      select: false,
+      default: "",
+    },
+    googleId: {
+      type: String,
+      sparse: true,
+      trim: true,
+    },
+    profilePhoto: {
+      type: String,
+      default: "",
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+      select: false,
+      default: "",
+    },
+    verificationExpiry: {
+      type: Date,
+      select: false,
+      default: null,
+    },
+    activeMode: {
+      type: String,
+      enum: {
+        values: ["worker", "hirer", null],
+        message: 'activeMode must be "worker" or "hirer"',
+      },
+      default: null,
+      set: (v) => (v === "" || v === undefined ? null : v),
+    },
+    location: {
+      type: locationSchema,
+      default: () => ({}),
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    lastLogin: {
+      type: Date,
+      default: null,
+    },
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+      trim: true,
+      set: (v) => (!v || v === "worker" || v === "hirer" ? "user" : v),
+    },
   },
-  phone: {
-    type: String,
-    unique: true,
-    sparse: true,
-    match: [/^[0-9]{10}$/, 'Please enter a valid 10-digit phone number']
+  {
+    timestamps: true,
   },
-  password: {
-    type: String,
-    required: [true, 'Password is required'],
-    minlength: [6, 'Password must be at least 6 characters'],
-    select: false
-  },
-  role: {
-    type: String,
-    default: 'user'
-  },
-  preferredMode: {
-    type: String,
-    enum: ['worker', 'hirer']
-  },
-  language: {
-    type: String,
-    enum: ['en', 'hi', 'pa', 'ta', 'bn'],
-    default: 'en'
-  },
-  location: {
-    type: String,
-    trim: true
-  },
-  address: {
-    type: String,
-    trim: true,
-    default: ''
-  },
-  bio: {
-    type: String,
-    trim: true,
-    maxlength: [500, 'Bio cannot exceed 500 characters'],
-    default: ''
-  },
-  profileImage: {
-    type: String,
-    default: ''
-  },
-  rating: {
-    type: Number,
-    default: 0,
-    min: 0,
-    max: 5
-  },
-  totalReviews: {
-    type: Number,
-    default: 0
-  },
-  isVerified: {
-    type: Boolean,
-    default: false
-  },
-  isActive: {
-    type: Boolean,
-    default: true
-  },
-  lastLogin: {
-    type: Date,
-    default: Date.now
+);
+
+userSchema.index({ email: 1 });
+userSchema.index({ googleId: 1 }, { sparse: true });
+
+userSchema.pre("save", async function hashPasswordIfNeeded(next) {
+  if (!this.isModified("passwordHash") || !this.passwordHash) {
+    return next();
   }
-}, {
-  timestamps: true
-});
-
-// Hash password before saving
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  
+  const val = this.passwordHash;
+  if (typeof val === "string" && val.startsWith("$2")) {
+    return next();
+  }
   try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    const salt = await bcrypt.genSalt(12);
+    this.passwordHash = await bcrypt.hash(String(val), salt);
     next();
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 });
 
-// Compare password method
-userSchema.methods.comparePassword = async function(enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
+userSchema.methods.comparePassword = async function comparePassword(
+  plainPassword,
+) {
+  if (!this.passwordHash) return false;
+  return bcrypt.compare(String(plainPassword), this.passwordHash);
 };
 
-// Update rating method
-userSchema.methods.updateRating = function(newRating) {
-  const total = (this.rating * this.totalReviews) + newRating;
-  this.totalReviews += 1;
-  this.rating = total / this.totalReviews;
-  return this.save();
-};
-
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model("User", userSchema);

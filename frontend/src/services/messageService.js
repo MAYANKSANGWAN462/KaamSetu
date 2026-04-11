@@ -14,6 +14,15 @@ class MessageService {
     }
   }
 
+  async getMessagingEligibility(userId) {
+    try {
+      const response = await api.get(`/messages/eligibility/${userId}`);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
   // Get messages between users
   async getMessages(userId, page = 1, limit = 50) {
     try {

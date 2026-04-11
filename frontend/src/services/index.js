@@ -9,3 +9,4 @@ export { default as workerService } from './workerService';
 export { default as jobService } from './jobService';
 export { default as reviewService } from './reviewService';
 export { default as messageService } from './messageService';
+export { default as applicationService } from './applicationService';

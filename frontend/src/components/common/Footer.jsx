@@ -1,6 +1,6 @@
 // Purpose: Renders a rich, premium footer with branding, links, and contact information.
 import { Link } from 'react-router-dom'
-import { config } from '../../config'
+import { config } from '../../config';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
@@ -25,7 +25,7 @@ const Footer = () => {
     ],
   }
 
-  const languages = ['English', 'हिन्दी', 'ਪੰਜਾਬੀ', 'தமிழ்', 'বাংলা']
+  // const languages = ['English', 'हिन्दी', 'ਪੰਜਾਬੀ', 'தமிழ்', 'বাংলা']
 
   return (
     <footer className="relative bg-[#0d0d14] text-white overflow-hidden mt-auto">
@@ -73,7 +73,7 @@ const Footer = () => {
               Bridging the gap between skilled workers and opportunities across India. Find trusted work, hire reliable talent — all in your language, near you.
             </p>
 
-            {/* Language badges */}
+            {/* Language badges
             <div className="flex flex-wrap gap-1.5 mb-6">
               {languages.map((lang) => (
                 <span
@@ -83,7 +83,7 @@ const Footer = () => {
                   {lang}
                 </span>
               ))}
-            </div>
+            </div> */}
 
             {/* Contact */}
             <div className="space-y-2">

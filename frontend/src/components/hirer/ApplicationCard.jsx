@@ -3,15 +3,23 @@ import axios from 'axios'
 import toast from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const ApplicationCard = ({ application, onStatusChange }) => {
+  const navigate = useNavigate()
   const [isProcessing, setIsProcessing] = useState(null)
   const [showConfirm, setShowConfirm] = useState(null)
+  const workerUserId = application.workerId?._id || application.workerId
 
+  const jobId = application.jobId?._id || application.jobId
   const handleStatus = async (status) => {
     setIsProcessing(status)
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL}/applications/${application._id}`, { status })
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/jobs/${jobId}/applications/${application._id}`,
+        { status },
+        { withCredentials: true, headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+      )
       toast.success(
         <div className="flex items-center gap-2">
           <span>{status === 'accepted' ? '✅' : '❌'}</span>
@@ -210,6 +218,18 @@ const ApplicationCard = ({ application, onStatusChange }) => {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {application.status === 'accepted' && workerUserId && (
+          <div className="mt-4">
+            <button
+              type="button"
+              onClick={() => navigate(`/chat/${workerUserId}`)}
+              className="w-full rounded-xl border border-violet-400 px-4 py-2.5 text-sm font-semibold text-violet-700 dark:text-violet-200 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition-colors"
+            >
+              Message worker
+            </button>
+          </div>
+        )}
       </div>
     </motion.div>
   )

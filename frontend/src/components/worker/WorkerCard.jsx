@@ -3,13 +3,27 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { useLanguage } from '../../context/LanguageContext'
+
 import RatingStars from '../reviews/RatingStars'
 
 const WorkerCard = ({ worker, compact = false }) => {
-  const { t } = useLanguage()
+  
 
   if (!worker) return null
+
+  const normalizeLocation = (value) => {
+    if (!value) return ''
+    if (typeof value === 'string') return value
+    if (typeof value === 'object') {
+      return value.address || value.city || value.area || ''
+    }
+    return ''
+  }
+
+  const normalizeNumber = (value, fallback = 0) => {
+    const parsed = Number(value)
+    return Number.isFinite(parsed) ? parsed : fallback
+  }
 
   const {
     _id,
@@ -24,6 +38,20 @@ const WorkerCard = ({ worker, compact = false }) => {
     location,
     isAvailable = true,
   } = worker
+
+  const workerRating = normalizeNumber(
+    typeof rating === 'object' && rating !== null ? rating.avg : rating,
+    0
+  )
+  const workerTotalReviews = normalizeNumber(
+    typeof totalReviews === 'object' && totalReviews !== null ? totalReviews.count : totalReviews,
+    typeof rating === 'object' && rating !== null ? rating.count : 0
+  )
+  const workerLocation = normalizeLocation(location)
+  const workerHourlyRate = normalizeNumber(
+    hourlyRate ?? worker.wage?.amount,
+    0
+  )
 
   // ── Compact variant ───────────────────────────────────────────────
   if (compact) {
@@ -48,8 +76,8 @@ const WorkerCard = ({ worker, compact = false }) => {
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-sm text-gray-900 dark:text-white truncate">{name}</h3>
           <div className="flex items-center gap-1 mt-0.5">
-            <RatingStars rating={rating} size="small" />
-            <span className="text-xs text-gray-400 dark:text-gray-500">({totalReviews})</span>
+            <RatingStars rating={workerRating} size="small" />
+            <span className="text-xs text-gray-400 dark:text-gray-500">({workerTotalReviews})</span>
           </div>
         </div>
 
@@ -62,7 +90,7 @@ const WorkerCard = ({ worker, compact = false }) => {
             hover:bg-amber-100 dark:hover:bg-amber-500/20
             transition-colors duration-200"
         >
-          {t('worker.viewProfile') || 'View'}
+          View
         </Link>
       </motion.div>
     )
@@ -102,7 +130,7 @@ const WorkerCard = ({ worker, compact = false }) => {
               : 'bg-gray-900/30 border-gray-500/40 text-gray-300'
           }`}>
             <span className={`w-1.5 h-1.5 rounded-full ${isAvailable ? 'bg-emerald-400 animate-pulse' : 'bg-gray-400'}`} />
-            {isAvailable ? (t('worker.available') || 'Available') : (t('worker.busy') || 'Busy')}
+            {isAvailable ? 'Available' : 'Busy'}
           </span>
         </div>
 
@@ -132,7 +160,7 @@ const WorkerCard = ({ worker, compact = false }) => {
         {/* Hourly rate chip */}
         <div className="mb-1 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/25">
           <span className="text-xs text-amber-600 dark:text-amber-400 font-bold">
-            ₹{hourlyRate}<span className="font-normal text-amber-500/70">/hr</span>
+            ₹{workerHourlyRate}<span className="font-normal text-amber-500/70">/hr</span>
           </span>
         </div>
       </div>
@@ -143,9 +171,9 @@ const WorkerCard = ({ worker, compact = false }) => {
         <div>
           <h3 className="font-bold text-gray-900 dark:text-white text-base leading-tight">{name}</h3>
           <div className="flex items-center gap-2 mt-1">
-            <RatingStars rating={rating} />
+            <RatingStars rating={workerRating} />
             <span className="text-xs text-gray-400 dark:text-gray-500">
-              {rating > 0 ? rating.toFixed(1) : '—'} · {totalReviews} {t('worker.reviews', { count: totalReviews }) || 'reviews'}
+              {workerRating > 0 ? workerRating.toFixed(1) : '—'} · {workerTotalReviews} reviews
             </span>
           </div>
         </div>
@@ -160,13 +188,13 @@ const WorkerCard = ({ worker, compact = false }) => {
               {experience}y exp
             </span>
           )}
-          {location && (
+          {workerLocation && (
             <span className="flex items-center gap-1">
               <svg className="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              {location}
+              {workerLocation}
             </span>
           )}
         </div>
@@ -207,7 +235,7 @@ const WorkerCard = ({ worker, compact = false }) => {
               hover:bg-amber-50 dark:hover:bg-amber-500/5
               transition-all duration-200"
           >
-            {t('worker.viewProfile') || 'View Profile'}
+            View Profile
           </Link>
           <motion.button
             whileTap={{ scale: 0.96 }}
@@ -219,7 +247,7 @@ const WorkerCard = ({ worker, compact = false }) => {
               shadow-md shadow-amber-500/20 hover:shadow-amber-500/35
               transition-all duration-200"
           >
-            {t('worker.hireNow') || 'Hire Now'}
+            Hire Now
           </motion.button>
         </div>
       </div>

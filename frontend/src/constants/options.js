@@ -1,0 +1,1 @@
+export const WAGE_UNITS = ['hourly', 'daily', 'job']

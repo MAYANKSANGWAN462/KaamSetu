@@ -1,144 +1,141 @@
 const User = require('../models/User');
 const WorkerProfile = require('../models/WorkerProfile');
-const Job = require('../models/Job');
+const { sanitizeUserDoc } = require('../utils/sanitizeUser');
 
-// @desc    Get all users (admin only)
-// @route   GET /api/users
-// @access  Private/Admin
+// GET /api/users — admin only
 const getAllUsers = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 20;
     const skip = (page - 1) * limit;
-    
-    const users = await User.find({})
-      .select('-password')
-      .skip(skip)
-      .limit(limit)
-      .sort({ createdAt: -1 });
-    
-    const total = await User.countDocuments();
-    
-    res.json({
-      users,
+
+    const [users, total] = await Promise.all([
+      User.find({})
+        .select('-passwordHash')
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 })
+        .lean(),
+      User.countDocuments()
+    ]);
+
+    return res.json({
+      success: true,
+      data: users,
       page,
       totalPages: Math.ceil(total / limit),
       total
     });
   } catch (error) {
-    console.error('Get all users error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('[getAllUsers]', error.message);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
-// @desc    Get user by ID
-// @route   GET /api/users/:id
-// @access  Public
+// GET /api/users/:id — public
 const getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select('-password');
-    
+    const user = await User.findById(req.params.id)
+      .select('-passwordHash')
+      .lean();
+
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ success: false, message: 'User not found' });
     }
-    
-    // Get worker profile if user is worker
-    let workerProfile = null;
-    if (user.role === 'worker') {
-      workerProfile = await WorkerProfile.findOne({ userId: user._id });
-    }
-    
-    res.json({
-      ...user.toObject(),
-      workerProfile
+
+    const plain = sanitizeUserDoc(user);
+    const workerProfile = await WorkerProfile.findOne({ userId: user._id }).lean();
+
+    return res.json({
+      success: true,
+      data: {
+        ...plain,
+        workerProfile: workerProfile || null
+      }
     });
   } catch (error) {
-    console.error('Get user by ID error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('[getUserById]', error.message);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
-// @desc    Update user (admin only)
-// @route   PUT /api/users/:id
-// @access  Private/Admin
+// PUT /api/users/:id — admin only
 const updateUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
-    
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ success: false, message: 'User not found' });
     }
-    
-    user.name = req.body.name || user.name;
-    user.email = req.body.email || user.email;
-    user.phone = req.body.phone || user.phone;
-    user.role = req.body.role || user.role;
-    user.location = req.body.location || user.location;
-    user.isActive = req.body.isActive !== undefined ? req.body.isActive : user.isActive;
-    
-    const updatedUser = await user.save();
-    
-    res.json({
-      _id: updatedUser._id,
-      name: updatedUser.name,
-      email: updatedUser.email,
-      phone: updatedUser.phone,
-      role: updatedUser.role,
-      location: updatedUser.location,
-      isActive: updatedUser.isActive
-    });
+
+    if (req.body.name) user.name = req.body.name;
+    if (req.body.phone !== undefined) user.phone = req.body.phone || '';
+    if (req.body.location) user.location = req.body.location;
+    if (req.body.isActive !== undefined) user.isActive = req.body.isActive;
+
+    // Admin can change role but NOT activeMode via this route
+    if (req.body.role && ['user', 'admin'].includes(req.body.role)) {
+      user.role = req.body.role;
+    }
+
+    const updated = await user.save();
+    const plain = sanitizeUserDoc(updated);
+
+    return res.json({ success: true, data: plain });
   } catch (error) {
-    console.error('Update user error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('[updateUser]', error.message);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
-// @desc    Delete user (admin only)
-// @route   DELETE /api/users/:id
-// @access  Private/Admin
+// DELETE /api/users/:id — admin only
 const deleteUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
-    
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ success: false, message: 'User not found' });
     }
-    
-    // Delete associated data
-    if (user.role === 'worker') {
-      await WorkerProfile.findOneAndDelete({ userId: user._id });
-    }
-    
+
+    // Delete worker profile if exists
+    await WorkerProfile.findOneAndDelete({ userId: user._id });
     await user.deleteOne();
-    
-    res.json({ message: 'User deleted successfully' });
+
+    return res.json({ success: true, message: 'User deleted successfully' });
   } catch (error) {
-    console.error('Delete user error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('[deleteUser]', error.message);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
-// @desc    Get user stats (admin only)
-// @route   GET /api/users/stats
-// @access  Private/Admin
+// GET /api/users/stats — admin only
 const getUserStats = async (req, res) => {
   try {
-    const totalUsers = await User.countDocuments();
-    const totalWorkers = await User.countDocuments({ role: 'worker' });
-    const totalHirers = await User.countDocuments({ role: 'hirer' });
-    const activeUsers = await User.countDocuments({ isActive: true });
-    const verifiedWorkers = await WorkerProfile.countDocuments({ verificationStatus: 'verified' });
-    
-    res.json({
+    const [
       totalUsers,
-      totalWorkers,
-      totalHirers,
+      workersCount,
+      hirersCount,
       activeUsers,
-      verifiedWorkers
+      workerProfiles
+    ] = await Promise.all([
+      User.countDocuments(),
+      User.countDocuments({ activeMode: 'worker' }),
+      User.countDocuments({ activeMode: 'hirer' }),
+      User.countDocuments({ isActive: true }),
+      WorkerProfile.countDocuments()
+    ]);
+
+    return res.json({
+      success: true,
+      data: {
+        totalUsers,
+        workersCount,
+        hirersCount,
+        activeUsers,
+        workerProfilesCreated: workerProfiles
+      }
     });
   } catch (error) {
-    console.error('Get user stats error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('[getUserStats]', error.message);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 

@@ -2,19 +2,19 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-const LANGUAGES = [
-  { value: 'en', label: 'English', flag: '🇬🇧' },
-  { value: 'hi', label: 'हिन्दी', flag: '🇮🇳' },
-  { value: 'pa', label: 'ਪੰਜਾਬੀ', flag: '🇮🇳' },
-  { value: 'ta', label: 'தமிழ்', flag: '🇮🇳' },
-  { value: 'bn', label: 'বাংলা', flag: '🇮🇳' },
-]
+// const LANGUAGES = [
+//   { value: 'en', label: 'English', flag: '🇬🇧' },
+//   { value: 'hi', label: 'हिन्दी', flag: '🇮🇳' },
+//   { value: 'pa', label: 'ਪੰਜਾਬੀ', flag: '🇮🇳' },
+//   { value: 'ta', label: 'தமிழ்', flag: '🇮🇳' },
+//   { value: 'bn', label: 'বাংলা', flag: '🇮🇳' },
+// ]
 
 const PasswordStrength = ({ password }) => {
   const getStrength = () => {
     if (!password) return { score: 0, label: '', color: '' }
     let score = 0
-    if (password.length >= 6) score++
+    if (password.length >= 8) score++
     if (password.length >= 10) score++
     if (/[A-Z]/.test(password)) score++
     if (/[0-9]/.test(password)) score++
@@ -55,12 +55,11 @@ const PasswordStrength = ({ password }) => {
 
 const RegisterForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    language: localStorage.getItem('language') || 'en'
-  })
+  name: '',
+  email: '',
+  password: '',
+  confirmPassword: '',
+})
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [focusedField, setFocusedField] = useState(null)
@@ -82,8 +81,8 @@ const RegisterForm = ({ onSubmit }) => {
       setError('Please enter a valid email address')
       return false
     }
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters')
+    if (formData.password.length < 8) {
+      setError('Password must be at least 8 characters')
       return false
     }
     if (formData.password !== formData.confirmPassword) {
@@ -96,11 +95,22 @@ const RegisterForm = ({ onSubmit }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!validateForm()) return
+    setError('')
     setLoading(true)
     const { confirmPassword, ...submitData } = formData
-    localStorage.setItem('language', submitData.language || 'en')
-    await onSubmit(submitData)
-    setLoading(false)
+    // localStorage.setItem('language', submitData.language || 'en')
+    try {
+      const result = await onSubmit(submitData)
+      if (result && result.success === false) {
+        setError(result.message || 'Registration failed. Please try again.')
+      }
+    } catch (err) {
+      const msg =
+        err?.response?.data?.message || err?.message || 'Registration failed. Please try again.'
+      setError(msg)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const inputBase = (field) => `
@@ -207,7 +217,7 @@ const RegisterForm = ({ onSubmit }) => {
         </div>
       </motion.div>
 
-      {/* Language */}
+      {/* Language
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -240,7 +250,7 @@ const RegisterForm = ({ onSubmit }) => {
             </svg>
           </div>
         </div>
-      </motion.div>
+      </motion.div> */}
 
       {/* Password */}
       <motion.div
@@ -265,7 +275,7 @@ const RegisterForm = ({ onSubmit }) => {
             onFocus={() => setFocusedField('password')}
             onBlur={() => setFocusedField(null)}
             className={inputBase('password') + ' pl-10 pr-11'}
-            placeholder="Minimum 6 characters"
+            placeholder="Minimum 8 characters"
             required
           />
           <button

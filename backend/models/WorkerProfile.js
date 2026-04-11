@@ -1,103 +1,89 @@
-// Purpose: Stores worker profile capabilities used to infer worker role and matching.
 const mongoose = require('mongoose');
-const { SUBCATEGORY_VALUES } = require('../utils/categories');
 
-const workerProfileSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-    unique: true
+const locationSchema = new mongoose.Schema(
+  {
+    lat: { type: Number },
+    lng: { type: Number },
+    address: { type: String, trim: true, default: '' }
   },
-  skills: [{
-    type: String,
-    required: true,
-    trim: true
-  }],
-  category: {
-    type: String,
-    enum: SUBCATEGORY_VALUES,
-    required: true
-  },
-  customCategory: {
-    type: String,
-    trim: true,
-    default: ''
-  },
-  experience: {
-    type: Number,
-    required: true,
-    min: 0,
-    max: 50
-  },
-  hourlyRate: {
-    type: Number,
-    required: true,
-    min: 0
-  },
-  dailyRate: {
-    type: Number,
-    required: true,
-    min: 0
-  },
-  availability: {
-    type: String,
-    enum: ['available', 'busy', 'tomorrow'],
-    default: 'available'
-  },
-  description: {
-    type: String,
-    required: true,
-    maxlength: 1000
-  },
-  portfolioImages: [{
-    url: String,
-    publicId: String
-  }],
-  portfolioVideos: [{
-    url: String,
-    publicId: String
-  }],
-  serviceAreas: [{
-    type: String,
-    required: true
-  }],
-  coordinates: {
-    latitude: {
-      type: Number,
-      min: -90,
-      max: 90
-    },
-    longitude: {
-      type: Number,
-      min: -180,
-      max: 180
+  { _id: false }
+);
+
+const wageSchema = new mongoose.Schema(
+  {
+    amount: { type: Number, min: 0, default: 0 },
+    unit: {
+      type: String,
+      enum: ['hourly', 'daily', 'job'],
+      default: 'daily'
     }
   },
-  languages: [{
-    type: String,
-    enum: ['Hindi', 'English', 'Punjabi', 'Tamil', 'Bengali', 'Other']
-  }],
-  idVerified: {
-    type: Boolean,
-    default: false
-  },
-  completedJobs: {
-    type: Number,
-    default: 0
-  },
-  verificationStatus: {
-    type: String,
-    enum: ['pending', 'verified', 'rejected'],
-    default: 'pending'
-  }
-}, {
-  timestamps: true
-});
+  { _id: false }
+);
 
-// Index for search optimization
-workerProfileSchema.index({ category: 1, 'serviceAreas': 1 });
-workerProfileSchema.index({ skills: 1 });
-workerProfileSchema.index({ 'coordinates.latitude': 1, 'coordinates.longitude': 1 });
+const ratingSchema = new mongoose.Schema(
+  {
+    avg: { type: Number, default: 0, min: 0, max: 5 },
+    count: { type: Number, default: 0, min: 0 }
+  },
+  { _id: false }
+);
+
+const workerProfileSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      unique: true
+    },
+    category: {
+      type: String,
+      trim: true,
+      default: ''
+    },
+    subCategory: {
+      type: String,
+      trim: true,
+      default: ''
+    },
+    skills: {
+      type: [String],
+      default: []
+    },
+    bio: {
+      type: String,
+      maxlength: [300, 'Bio cannot exceed 300 characters'],
+      trim: true,
+      default: ''
+    },
+    wage: {
+      type: wageSchema,
+      default: () => ({ amount: 0, unit: 'daily' })
+    },
+    isAvailable: {
+      type: Boolean,
+      default: true
+    },
+    location: {
+      type: locationSchema,
+      default: () => ({})
+    },
+    portfolio: {
+      type: [String],
+      default: []
+    },
+    rating: {
+      type: ratingSchema,
+      default: () => ({ avg: 0, count: 0 })
+    }
+  },
+  {
+    timestamps: true
+  }
+);
+
+workerProfileSchema.index({ userId: 1 });
+workerProfileSchema.index({ category: 1, isAvailable: 1 });
 
 module.exports = mongoose.model('WorkerProfile', workerProfileSchema);

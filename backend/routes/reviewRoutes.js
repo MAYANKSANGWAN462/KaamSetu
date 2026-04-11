@@ -1,26 +1,19 @@
 const express = require('express');
 const router = express.Router();
-const { 
+const {
   createReview,
   getWorkerReviews,
-  getReviewById,
   updateReview,
-  deleteReview,
-  reportReview
+  deleteReview
 } = require('../controllers/reviewController');
-const { protect, authorize } = require('../middleware/authMiddleware');
+const { protect, requireMode } = require('../middleware/authMiddleware');
 
 // Public routes
 router.get('/worker/:workerId', getWorkerReviews);
-router.get('/:id', getReviewById);
 
 // Protected routes
-router.use(protect);
-
-// Hirer only routes
-router.post('/', authorize('hirer'), createReview);
-router.put('/:id', authorize('hirer'), updateReview);
-router.delete('/:id', deleteReview); // Hirer or admin
-router.post('/:id/report', reportReview);
+router.post('/',    protect, requireMode('hirer'), createReview);
+router.put('/:id',  protect, updateReview);
+router.delete('/:id', protect, deleteReview);
 
 module.exports = router;
