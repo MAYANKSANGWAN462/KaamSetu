@@ -128,6 +128,14 @@ const AnimatedRoutes = () => {
               }
             />
             <Route
+              path="/jobs/:id/edit"
+              element={
+                <ProtectedRoute>
+                  <PostJob />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/worker/setup"
               element={
                 <ProtectedRoute>

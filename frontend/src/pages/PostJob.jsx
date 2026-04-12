@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { jobService } from '../services'
@@ -13,16 +13,39 @@ const stagger = (i) => ({
 
 const PostJob = () => {
   const navigate = useNavigate()
+  const { id } = useParams()
+  const isEditing = Boolean(id)
   const [loading, setLoading] = useState(false)
+  const [initialData, setInitialData] = useState(null)
+  const [fetching, setFetching] = useState(isEditing)
+
+  useEffect(() => {
+    if (!isEditing) return
+    const fetchJob = async () => {
+      try {
+        const res = await jobService.getJobById(id)
+        setInitialData(res?.data || res)
+      } catch {
+        toast.error('Failed to load job')
+        navigate('/dashboard')
+      } finally { setFetching(false) }
+    }
+    fetchJob()
+  }, [id, isEditing, navigate])
 
   const handleSubmit = async (jobData) => {
     setLoading(true)
     try {
-      await jobService.createJob(jobData)
-      toast.success('Job posted successfully!')
+      if (isEditing) {
+        await jobService.updateJob(id, jobData)
+        toast.success('Job updated successfully!')
+      } else {
+        await jobService.createJob(jobData)
+        toast.success('Job posted successfully!')
+      }
       navigate('/dashboard')
     } catch (err) {
-      toast.error(err?.response?.data?.message || 'Failed to post job')
+      toast.error(err?.response?.data?.message || `Failed to ${isEditing ? 'update' : 'post'} job`)
     } finally { setLoading(false) }
   }
 
@@ -38,13 +61,25 @@ const PostJob = () => {
             Back
           </button>
           <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#c8933a] mb-1">Hirer Mode</p>
-          <h1 className="text-3xl font-black text-gray-900 dark:text-white">Post a New Job</h1>
-          <p className="text-sm text-[#9c8a78] mt-1">Fill in the details and workers near you will apply.</p>
+          <h1 className="text-3xl font-black text-gray-900 dark:text-white">
+            {isEditing ? 'Edit Job' : 'Post a New Job'}
+          </h1>
+          <p className="text-sm text-[#9c8a78] mt-1">
+            {isEditing ? 'Update your job details.' : 'Fill in the details and workers near you will apply.'}
+          </p>
         </motion.div>
 
         <motion.div {...stagger(1)}
           className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-7 shadow-sm">
-          <JobForm onSubmit={handleSubmit} loading={loading} />
+          {fetching ? (
+            <div className="space-y-4 animate-pulse">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="h-12 bg-[#e8dfd0] dark:bg-white/10 rounded-2xl" />
+              ))}
+            </div>
+          ) : (
+            <JobForm onSubmit={handleSubmit} loading={loading} initialData={initialData} />
+          )}
         </motion.div>
       </div>
     </div>

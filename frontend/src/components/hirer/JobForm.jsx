@@ -20,21 +20,21 @@ const InputWrapper = ({ label, hint, children, icon }) => (
 
 const baseInput = `w-full px-4 py-3 rounded-xl border border-[#e8dfd0] dark:border-white/10 bg-[#faf7f2] dark:bg-white/[0.06] text-gray-800 dark:text-gray-100 text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#c8933a]/30 focus:border-[#c8933a] transition-all duration-200`;
 
-const JobForm = ({ onSubmit, loading }) => {
+const JobForm = ({ onSubmit, loading, initialData }) => {
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    category: "",
-    locationCity: "",
-    latitude: "",
-    longitude: "",
-    salaryMode: "fixed",
-    salaryFixed: 600,
-    salaryMin: 400,
-    salaryMax: 1000,
-    workersRequired: 1,
-    duration: "",
-    requiredSkills: "",
+    title: initialData?.title || "",
+    description: initialData?.description || "",
+    category: initialData?.category || "",
+    locationCity: initialData?.location?.city || "",
+    latitude: initialData?.location?.latitude || "",
+    longitude: initialData?.location?.longitude || "",
+    salaryMode: initialData?.salary?.mode || "fixed",
+    salaryFixed: initialData?.salary?.fixed || initialData?.wage?.amount || 600,
+    salaryMin: initialData?.salary?.min || 400,
+    salaryMax: initialData?.salary?.max || 1000,
+    workersRequired: initialData?.workersRequired || 1,
+    duration: initialData?.duration || "",
+    requiredSkills: (initialData?.requiredSkills || []).join(", "),
   });
 
   const [activeSection, setActiveSection] = useState(null);
