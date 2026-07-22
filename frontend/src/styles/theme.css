@@ -1,13 +1,13 @@
 :root {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f3f4f6;
-  --text-primary: #111827;
-  --text-secondary: #6b7280;
+  --bg-primary: #faf7f2;
+  --bg-secondary: #f4efe6;
+  --text-primary: #1a140c;
+  --text-secondary: #9c8a78;
 }
 
 .dark {
-  --bg-primary: #111827;
-  --bg-secondary: #1f2937;
-  --text-primary: #f9fafb;
-  --text-secondary: #9ca3af;
+  --bg-primary: #0e0d0b;
+  --bg-secondary: #17140f;
+  --text-primary: #f5f0e8;
+  --text-secondary: #9c8a78;
 }

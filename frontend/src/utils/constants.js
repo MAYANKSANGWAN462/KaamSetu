@@ -73,6 +73,51 @@ export const SKILL_LIST = [
 
 export const WAGE_UNITS = ['hourly', 'daily', 'per job']
 
+// Common blue-collar work types offered as quick-pick suggestion chips.
+// Custom input is always allowed — 'Other' lets the user type their own.
+export const WORK_TYPES = [
+  'Construction Helper',
+  'Driver',
+  'Electrician',
+  'House Help',
+  'Cleaner',
+  'Agriculture Worker',
+  'Plumber',
+  'Painter',
+  'Mason',
+  'Cook',
+  'Security Guard',
+  'Carpenter',
+  'Welder',
+  'Mechanic',
+  'Other',
+]
+
+// Indian cities used for the location autocomplete suggestions.
+// Sorted alphabetically so "Char…" surfaces Chandigarh / Charkhi Dadri together.
+export const INDIAN_CITIES = [
+  'Agra', 'Ahmedabad', 'Ajmer', 'Aligarh', 'Allahabad', 'Amritsar', 'Aurangabad',
+  'Bangalore', 'Bareilly', 'Bhopal', 'Bhubaneswar', 'Bikaner',
+  'Chandigarh', 'Charkhi Dadri', 'Chennai', 'Coimbatore', 'Cuttack',
+  'Dehradun', 'Delhi', 'Dhanbad', 'Durgapur',
+  'Faridabad', 'Firozabad',
+  'Ghaziabad', 'Gurugram', 'Guwahati', 'Gwalior',
+  'Hisar', 'Howrah', 'Hubli', 'Hyderabad',
+  'Indore',
+  'Jabalpur', 'Jaipur', 'Jalandhar', 'Jammu', 'Jamshedpur', 'Jhansi', 'Jodhpur',
+  'Kanpur', 'Karnal', 'Kochi', 'Kolkata', 'Kota', 'Kurukshetra',
+  'Lucknow', 'Ludhiana',
+  'Madurai', 'Meerut', 'Mumbai', 'Mysore',
+  'Nagpur', 'Nashik', 'Noida',
+  'Panipat', 'Patiala', 'Patna', 'Pune',
+  'Raipur', 'Rajkot', 'Ranchi', 'Rohtak',
+  'Salem', 'Shimla', 'Siliguri', 'Solapur', 'Sonipat', 'Srinagar', 'Surat',
+  'Thane', 'Thiruvananthapuram', 'Tiruchirappalli',
+  'Udaipur', 'Ujjain',
+  'Vadodara', 'Varanasi', 'Vijayawada', 'Visakhapatnam',
+  'Warangal',
+]
+
 export const SORT_OPTIONS = [
   { value: 'distance', label: 'Nearest' },
   { value: 'wage', label: 'Highest Pay' },

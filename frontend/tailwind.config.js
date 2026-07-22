@@ -25,17 +25,18 @@ export default {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
       colors: {
+        // Brand amber — matches the documented KaamSetu palette (#c8933a family).
         primary: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
+          50: '#fdf8f0',
+          100: '#faf0dd',
+          200: '#f2ddb5',
+          300: '#e8c583',
+          400: '#dca856',
+          500: '#c8933a',
+          600: '#b86e2a',
+          700: '#985622',
+          800: '#7c4620',
+          900: '#663a1d',
         },
       },
       animation: {
