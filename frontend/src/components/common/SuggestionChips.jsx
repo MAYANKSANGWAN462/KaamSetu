@@ -5,6 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 const OTHER = 'Other'
 
+// Accepts options as plain strings or { value, label } objects.
+const normalize = (opt) =>
+  typeof opt === 'string' ? { value: opt, label: opt } : opt
+
 const SuggestionChips = ({
   options = [],
   value = '',
@@ -13,12 +17,15 @@ const SuggestionChips = ({
   customPlaceholder = 'Type your own…',
   name,
 }) => {
+  const items = options.map(normalize)
   // A value that isn't one of the preset options (and isn't empty) is a custom entry.
-  const isCustomValue = Boolean(value) && !options.includes(value)
+  const isCustomValue = Boolean(value) && !items.some((o) => o.value === value)
   const [showCustom, setShowCustom] = useState(isCustomValue)
 
   const selectChip = (option) => {
-    if (option === OTHER) {
+    // "Other" only opens a free-text field when custom input is permitted;
+    // otherwise it is treated as a normal selectable value.
+    if (option === OTHER && allowCustom) {
       setShowCustom(true)
       onChange('')
       return
@@ -30,25 +37,25 @@ const SuggestionChips = ({
   return (
     <div>
       <div className="flex flex-wrap gap-2" role="group" aria-label={name}>
-        {options.map((option) => {
-          const isOther = option === OTHER
+        {items.map(({ value: optValue, label }) => {
+          const isOther = optValue === OTHER && allowCustom
           const active = isOther
             ? showCustom || isCustomValue
-            : value === option
+            : value === optValue
           return (
             <motion.button
-              key={option}
+              key={optValue}
               type="button"
               whileTap={{ scale: 0.95 }}
               aria-pressed={active}
-              onClick={() => selectChip(option)}
+              onClick={() => selectChip(optValue)}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold border transition-all duration-200 ${
                 active
                   ? 'bg-gradient-to-br from-[#d4963e] to-[#b86e2a] border-transparent text-white shadow-sm'
                   : 'bg-[#faf7f2] dark:bg-white/[0.04] border-[#e8dfd0] dark:border-white/10 text-[#9c8a78] hover:border-[#c8933a]/50 hover:text-[#c8933a]'
               }`}
             >
-              {option}
+              {label}
             </motion.button>
           )
         })}

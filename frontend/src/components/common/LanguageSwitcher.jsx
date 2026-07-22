@@ -62,7 +62,7 @@ const LanguageSwitcher = () => {
                 setIsOpen(false);
               }}
               className={`w-full text-left px-4 py-2 flex items-center space-x-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                language === lang.code ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : ''
+                language === lang.code ? 'bg-amber-50 dark:bg-amber-500/10 text-[#c8933a]' : ''
               }`}
             >
               <span className="text-xl">{lang.flag}</span>

@@ -3,8 +3,10 @@
 
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { JOB_CATEGORY_GROUPS, PRICE_PRESETS } from "../../utils/constants";
+import { PRICE_PRESETS, WORK_TYPES } from "../../utils/constants";
 import CreatableSelect from "react-select/creatable";
+import SuggestionChips from "../common/SuggestionChips";
+import LocationAutocomplete from "../common/LocationAutocomplete";
 
 const InputWrapper = ({ label, hint, children, icon }) => (
   <div className="group">
@@ -155,25 +157,20 @@ const JobForm = ({ onSubmit, loading, initialData }) => {
           />
         </InputWrapper>
 
-        <InputWrapper label="Category" icon="🗂️">
-          <select
+        <InputWrapper
+          label="Work Type"
+          icon="🗂️"
+          hint="Tap the type of worker you need"
+        >
+          <SuggestionChips
             name="category"
+            options={WORK_TYPES}
             value={formData.category}
-            onChange={handleChange}
-            className={`${baseInput} cursor-pointer`}
-            required
-          >
-            <option value="">Select a category…</option>
-            {JOB_CATEGORY_GROUPS.map((group) => (
-              <optgroup key={group.group} label={group.group}>
-                {group.options.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </optgroup>
-            ))}
-          </select>
+            onChange={(val) =>
+              setFormData((prev) => ({ ...prev, category: val }))
+            }
+            allowCustom={false}
+          />
         </InputWrapper>
 
         <InputWrapper
@@ -194,7 +191,7 @@ const JobForm = ({ onSubmit, loading, initialData }) => {
       </div>
 
       {/* — Section 2: Pricing — */}
-      <div className="p-5 rounded-2xl bg-indigo-50/60 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-800/50">
+      <div className="p-5 rounded-2xl bg-amber-50/60 dark:bg-amber-500/[0.06] border border-amber-100 dark:border-amber-500/15">
         <p className="text-xs font-bold uppercase tracking-widest text-[#c8933a] mb-4">
           💰 Pricing
         </p>
@@ -264,7 +261,7 @@ const JobForm = ({ onSubmit, loading, initialData }) => {
                   name="salaryFixed"
                   value={formData.salaryFixed}
                   onChange={handleChange}
-                  className="w-full h-2 rounded-full accent-indigo-600 cursor-pointer"
+                  className="w-full h-2 rounded-full accent-[#c8933a] cursor-pointer"
                 />
                 <div className="flex justify-between text-xs text-gray-400 mt-1">
                   <span>₹200</span>
@@ -368,14 +365,14 @@ const JobForm = ({ onSubmit, loading, initialData }) => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="md:col-span-1">
             <InputWrapper label="City" icon="🏙️">
-              <input
-                type="text"
-                name="locationCity"
+              <LocationAutocomplete
                 value={formData.locationCity}
-                onChange={handleChange}
-                className={baseInput}
+                onChange={(val) =>
+                  setFormData((prev) => ({ ...prev, locationCity: val }))
+                }
                 placeholder="e.g. Patiala"
-                required
+                icon={false}
+                inputClassName={baseInput}
               />
             </InputWrapper>
           </div>

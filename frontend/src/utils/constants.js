@@ -4,40 +4,59 @@ export const USER_ROLES = {
   ADMIN: 'admin'
 }
 
+// NOTE: values must stay in sync with the backend category tree
+// (backend/constants/categories.js) — createJob/updateProfile reject any
+// category not in that list. Labels are display-only.
 export const JOB_CATEGORY_GROUPS = [
   {
     group: 'Construction',
     options: [
       { value: 'Mason', label: 'Mason' },
       { value: 'Helper', label: 'Helper' },
+      { value: 'Plumber', label: 'Plumber' },
       { value: 'Electrician', label: 'Electrician' },
+      { value: 'Painter', label: 'Painter' },
+      { value: 'Carpenter', label: 'Carpenter' },
+      { value: 'Welder', label: 'Welder' },
     ]
   },
   {
     group: 'Agriculture',
     options: [
       { value: 'Field Worker', label: 'Field Worker' },
-      { value: 'Harvester', label: 'Harvester' }
+      { value: 'Irrigation', label: 'Irrigation' },
+      { value: 'Harvester', label: 'Harvester' },
+      { value: 'Livestock Handler', label: 'Livestock Handler' },
+      { value: 'Pesticide Sprayer', label: 'Pesticide Sprayer' },
     ]
   },
   {
     group: 'Household',
     options: [
-      { value: 'Maid', label: 'Maid' },
-      { value: 'Cook', label: 'Cook' }
+      { value: 'Maid', label: 'House Help' },
+      { value: 'Cook', label: 'Cook' },
+      { value: 'Nanny', label: 'Nanny' },
+      { value: 'Driver', label: 'Driver' },
+      { value: 'Security Guard', label: 'Security Guard' },
+      { value: 'Gardener', label: 'Gardener' },
     ]
   },
   {
     group: 'Technical',
     options: [
       { value: 'Mechanic', label: 'Mechanic' },
-      { value: 'IT Support', label: 'IT Support' }
+      { value: 'AC Repair', label: 'AC Repair' },
+      { value: 'IT Support', label: 'IT Support' },
+      { value: 'Appliance Repair', label: 'Appliance Repair' },
+      { value: 'CCTV Installer', label: 'CCTV Installer' },
     ]
   },
   {
     group: 'Other',
     options: [
-      { value: 'Other', label: 'Other' }
+      { value: 'General Labour', label: 'General Labour' },
+      { value: 'Loader', label: 'Loader' },
+      { value: 'Other', label: 'Other' },
     ]
   }
 ]
@@ -74,23 +93,24 @@ export const SKILL_LIST = [
 export const WAGE_UNITS = ['hourly', 'daily', 'per job']
 
 // Common blue-collar work types offered as quick-pick suggestion chips.
-// Custom input is always allowed — 'Other' lets the user type their own.
+// `value` must be a backend-valid category (see JOB_CATEGORY_GROUPS); `label`
+// is the friendly text shown on the chip.
 export const WORK_TYPES = [
-  'Construction Helper',
-  'Driver',
-  'Electrician',
-  'House Help',
-  'Cleaner',
-  'Agriculture Worker',
-  'Plumber',
-  'Painter',
-  'Mason',
-  'Cook',
-  'Security Guard',
-  'Carpenter',
-  'Welder',
-  'Mechanic',
-  'Other',
+  { value: 'Helper', label: 'Construction Helper' },
+  { value: 'Driver', label: 'Driver' },
+  { value: 'Electrician', label: 'Electrician' },
+  { value: 'Maid', label: 'House Help' },
+  { value: 'Field Worker', label: 'Agriculture Worker' },
+  { value: 'Plumber', label: 'Plumber' },
+  { value: 'Painter', label: 'Painter' },
+  { value: 'Mason', label: 'Mason' },
+  { value: 'Cook', label: 'Cook' },
+  { value: 'Security Guard', label: 'Security Guard' },
+  { value: 'Carpenter', label: 'Carpenter' },
+  { value: 'Welder', label: 'Welder' },
+  { value: 'Mechanic', label: 'Mechanic' },
+  { value: 'Loader', label: 'Loader' },
+  { value: 'Other', label: 'Other' },
 ]
 
 // Indian cities used for the location autocomplete suggestions.

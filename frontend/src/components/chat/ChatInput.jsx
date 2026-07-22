@@ -25,7 +25,7 @@ const ChatInput = ({ onSend, sending }) => {
         <button
           type="submit"
           disabled={sending || !message.trim()}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg disabled:opacity-50"
+          className="bg-gradient-to-br from-[#d4963e] to-[#b86e2a] text-white px-4 py-2 rounded-lg disabled:opacity-50"
         >
           Send
         </button>

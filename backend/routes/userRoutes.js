@@ -32,14 +32,14 @@ const {
   deleteUser,
   getUserStats
 } = require('../controllers/userController');
-const { protect, authorize } = require('../middleware/authMiddleware');
+const { protect, authorize, optionalAuth } = require('../middleware/authMiddleware');
 
 // Static routes FIRST — before any /:id
 router.get('/',       protect, authorize('admin'), getAllUsers);
 router.get('/stats',  protect, authorize('admin'), getUserStats);
 
-// Dynamic route LAST
-router.get('/:id',    getUserById);
+// Dynamic route LAST — optionalAuth so contact info can be interaction-gated
+router.get('/:id',    optionalAuth, getUserById);
 router.put('/:id',    protect, authorize('admin'), updateUser);
 router.delete('/:id', protect, authorize('admin'), deleteUser);
 

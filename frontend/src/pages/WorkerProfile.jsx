@@ -1,9 +1,9 @@
 // WorkerProfile.jsx
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams, useLocation } from 'react-router-dom'
-import axios from 'axios'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../context/AuthContext'
+import api from '../services/api'
 
 const stagger = (i) => ({
   initial: { opacity: 0, y: 14 },
@@ -66,9 +66,9 @@ const WorkerProfile = () => {
   const fetchData = async () => {
     try {
       const [wRes, rRes] = await Promise.all([
-  axios.get(`${import.meta.env.VITE_API_URL}/api/workers/${id}`),
-  axios.get(`${import.meta.env.VITE_API_URL}/api/reviews/worker/${id}`)
-])
+        api.get(`/workers/${id}`),
+        api.get(`/reviews/worker/${id}`)
+      ])
       setWorker(wRes?.data?.data || wRes?.data || null)
       setReviews(rRes?.data?.data || rRes?.data || [])
     } catch (err) { console.error(err) } finally { setLoading(false) }
@@ -88,6 +88,8 @@ const WorkerProfile = () => {
   }
 
   const convId = user?._id && id ? [user._id, id].sort().join('_') : null
+  // Role rule: a user must never be able to contact/message their own profile.
+  const isOwn = worker?.isOwn || (user?._id && String(user._id) === String(id))
   const workerName = worker?.userId?.name || worker?.name || 'Worker'
   const workerInitial = workerName[0].toUpperCase()
   const photo = worker?.userId?.profilePhoto || worker?.profilePhoto
@@ -164,8 +166,8 @@ const WorkerProfile = () => {
             </div>
           </div>
 
-          {/* Action buttons — hirers only */}
-          {user?.activeMode === 'hirer' && (
+          {/* Action buttons — hirers only, never on your own profile */}
+          {user?.activeMode === 'hirer' && !isOwn && (
             <div className="flex flex-wrap gap-3 pt-5 mt-5 border-t border-[#e8dfd0] dark:border-white/8">
               {!hasInteraction ? (
                 <motion.button

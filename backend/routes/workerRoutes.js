@@ -9,11 +9,12 @@ const {
   deletePortfolioImage,
   updateAvailability
 } = require('../controllers/workerController');
-const { protect, requireMode } = require('../middleware/authMiddleware');
+const { protect, requireMode, optionalAuth } = require('../middleware/authMiddleware');
 const { uploadMultipleImages } = require('../middleware/uploadMiddleware');
 
-// Public routes — declared before dynamic /:id
-router.get('/', getWorkers);
+// Public routes — declared before dynamic /:id.
+// optionalAuth lets us hide the requester's own profile + gate contact info.
+router.get('/', optionalAuth, getWorkers);
 router.get('/profile/me', protect, getMyProfile);
 
 // Worker-mode-only routes
@@ -25,6 +26,6 @@ router.post('/portfolio',    protect, requireMode('worker'), uploadMultipleImage
 router.delete('/portfolio',  protect, requireMode('worker'), deletePortfolioImage);
 
 // Dynamic public route — must be last
-router.get('/:id', getWorkerById);
+router.get('/:id', optionalAuth, getWorkerById);
 
 module.exports = router;

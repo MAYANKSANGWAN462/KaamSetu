@@ -7,7 +7,10 @@ const {
   haversineDistance,
   smartScore,
   wageBoundsFromAmounts,
+  safeRegex,
 } = require("../utils/helpers");
+const { hasInteraction } = require("../utils/interaction");
+const { toPublicUser } = require("../utils/sanitizeUser");
 
 /* ─── Helpers ─────────────────────────────────────────────── */
 
@@ -82,15 +85,19 @@ const getWorkers = async (req, res) => {
     if (isAvailable === "true") query.isAvailable = true;
     if (isAvailable === "false") query.isAvailable = false;
 
-    // Skill filter via regex on skills array
+    // Role rule: never surface the requester's own worker profile in browse.
+    if (req.user) query.userId = { $ne: req.user._id };
+
+    // Skill filter via regex on skills array (escaped — see safeRegex)
     if (skill && String(skill).trim()) {
       query.skills = {
-        $elemMatch: { $regex: String(skill).trim(), $options: "i" },
+        $elemMatch: { $regex: safeRegex(String(skill)), $options: "i" },
       };
     }
 
+    // Public list — no PII in the populated user (email/phone withheld).
     const workers = await WorkerProfile.find(query)
-      .populate("userId", "name email phone location profilePhoto")
+      .populate("userId", "name location profilePhoto")
       .lean();
 
     // Resolve coordinates — support both lat/lng and latitude/longitude param names
@@ -216,6 +223,16 @@ const getWorkerById = async (req, res) => {
         .json({ success: false, message: "Worker not found" });
     }
 
+    // Interaction-gate the worker's contact info; flag own profile for the UI.
+    const requester = req.user || null;
+    const isOwn =
+      requester && requester._id.toString() === req.params.id.toString();
+    const includeContact =
+      isOwn ||
+      (requester && requester.role === "admin") ||
+      (requester ? await hasInteraction(requester._id, req.params.id) : false);
+    worker.userId = toPublicUser(worker.userId, { includeContact });
+
     const [reviews, ratingBreakdown] = await Promise.all([
       Review.find({ revieweeId: req.params.id })
         .populate("reviewerId", "name profilePhoto")
@@ -231,7 +248,7 @@ const getWorkerById = async (req, res) => {
 
     return res.json({
       success: true,
-      data: { ...worker, reviews, ratingBreakdown },
+      data: { ...worker, reviews, ratingBreakdown, isOwn: Boolean(isOwn) },
     });
   } catch (error) {
     console.error("[getWorkerById]", error.message);

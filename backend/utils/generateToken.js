@@ -42,7 +42,8 @@ const setTokenCookie = (res, userId) => {
   res.cookie(JWT_COOKIE_NAME, token, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? 'strict' : 'lax',
+    // 'none' required for cross-domain (Vercel frontend ↔ Render backend)
+    sameSite: isProduction ? 'none' : 'lax',
     path: '/',
     maxAge
   });
@@ -54,7 +55,7 @@ const clearTokenCookie = (res) => {
   res.cookie(JWT_COOKIE_NAME, '', {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? 'strict' : 'lax',
+    sameSite: isProduction ? 'none' : 'lax',
     path: '/',
     maxAge: 0
   });

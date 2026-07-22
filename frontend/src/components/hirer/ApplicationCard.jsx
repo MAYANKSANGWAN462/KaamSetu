@@ -1,25 +1,24 @@
 // frontend/src/components/hirer/ApplicationCard.jsx
-import axios from 'axios'
 import toast from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import api from '../../services/api'
+import { useAuth } from '../../context/AuthContext'
+import { makeConversationId } from '../../utils/conversationId'
 
 const ApplicationCard = ({ application, onStatusChange }) => {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [isProcessing, setIsProcessing] = useState(null)
   const [showConfirm, setShowConfirm] = useState(null)
   const workerUserId = application.workerId?._id || application.workerId
 
-  const jobId = application.jobId?._id || application.jobId
   const handleStatus = async (status) => {
     setIsProcessing(status)
     try {
-      await axios.put(
-        `${import.meta.env.VITE_API_URL}/jobs/${jobId}/applications/${application._id}`,
-        { status },
-        { withCredentials: true, headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
-      )
+      // Accept/reject — canonical route: PUT /api/applications/:id/status
+      await api.put(`/applications/${application._id}/status`, { status })
       toast.success(
         <div className="flex items-center gap-2">
           <span>{status === 'accepted' ? '✅' : '❌'}</span>
@@ -69,7 +68,7 @@ const ApplicationCard = ({ application, onStatusChange }) => {
 
   // gradient based on name for avatar
   const gradients = [
-    'from-violet-500 to-indigo-600',
+    'from-[#d4963e] to-[#b86e2a]',
     'from-orange-400 to-rose-500',
     'from-emerald-400 to-teal-600',
     'from-sky-400 to-blue-600',
@@ -119,7 +118,7 @@ const ApplicationCard = ({ application, onStatusChange }) => {
             {/* Bid */}
             <div className="flex items-center gap-1.5 mb-2">
               <span className="text-xs text-gray-400 dark:text-gray-500">Bid:</span>
-              <span className="text-base font-bold text-indigo-600 dark:text-indigo-400">
+              <span className="text-base font-bold text-[#c8933a]">
                 ₹{application.bidAmount?.toLocaleString('en-IN')}
               </span>
             </div>
@@ -223,8 +222,8 @@ const ApplicationCard = ({ application, onStatusChange }) => {
           <div className="mt-4">
             <button
               type="button"
-              onClick={() => navigate(`/chat/${workerUserId}`)}
-              className="w-full rounded-xl border border-violet-400 px-4 py-2.5 text-sm font-semibold text-violet-700 dark:text-violet-200 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition-colors"
+              onClick={() => navigate(`/messages/${makeConversationId(user?._id, workerUserId)}`)}
+              className="w-full rounded-xl border border-[#c8933a]/50 px-4 py-2.5 text-sm font-semibold text-[#c8933a] hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-colors"
             >
               Message worker
             </button>

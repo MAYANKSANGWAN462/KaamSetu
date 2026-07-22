@@ -873,7 +873,7 @@ import debounce from 'lodash/debounce'
 import toast from 'react-hot-toast'
 import { JOB_CATEGORIES, SKILL_LIST } from '../utils/constants'
 import useGeolocation from '../hooks/useGeolocation'
-import axios from 'axios'
+import api from '../services/api'
 
 const WAGE_MAX = 5000
 const RATING_OPTIONS = [1, 2, 3, 4, 5]
@@ -1024,7 +1024,7 @@ const Search = () => {
         if (f.skills?.length)    params.skill     = f.skills[0]   // backend supports single skill filter
         if (f.minRating > 0)     params.minRating = f.minRating
         if (f.availability === 'available') params.isAvailable = true
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/workers`, { params })
+        const res = await api.get('/workers', { params })
         const d = res.data
         data = d?.data?.workers || d?.workers || (Array.isArray(d) ? d : [])
       }

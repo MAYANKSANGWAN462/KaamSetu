@@ -196,7 +196,16 @@ const updateReview = async (req, res) => {
       });
     }
 
-    if (req.body.rating != null) review.rating = Number(req.body.rating);
+    if (req.body.rating != null) {
+      const rating = Number(req.body.rating);
+      if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+        return res.status(400).json({
+          success: false,
+          message: 'Rating must be an integer between 1 and 5'
+        });
+      }
+      review.rating = rating;
+    }
     if (req.body.comment !== undefined) {
       review.comment = String(req.body.comment).trim().slice(0, 2000);
     }

@@ -15,7 +15,7 @@ export const useTheme = () => {
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
-    const saved = localStorage.getItem('sambandh-theme');
+    const saved = localStorage.getItem('kaamsetu-theme');
     return saved || 'light';
   });
 
@@ -29,7 +29,7 @@ export const ThemeProvider = ({ children }) => {
     root.classList.add(theme);
     
     // Store in localStorage
-    localStorage.setItem('sambandh-theme', theme);
+    localStorage.setItem('kaamsetu-theme', theme);
     
     // Add transition class for smooth theme switching
     root.style.transition = 'background-color 0.3s ease, color 0.3s ease';

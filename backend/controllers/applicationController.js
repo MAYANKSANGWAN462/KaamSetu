@@ -67,6 +67,7 @@ const applyToJob = async (req, res) => {
         jobId: job._id.toString(),
         jobTitle: job.title,
         workerId: req.user._id.toString(),
+        workerName: req.user.name,
         applicationId: application._id.toString(),
         message: "A worker has applied for your job",
       });

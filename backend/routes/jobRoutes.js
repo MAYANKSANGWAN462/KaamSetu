@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const { createJob, getJobs, getMyJobs, getJobById, updateJob, deleteJob, updateJobStatus } = require('../controllers/jobController');
-const { protect, requireMode } = require('../middleware/authMiddleware');
+const { protect, requireMode, optionalAuth } = require('../middleware/authMiddleware');
 
 // ── Public routes ──────────────────────────────
-router.get('/', getJobs);
+// optionalAuth lets us hide the requester's own jobs + gate hirer contact info.
+router.get('/', optionalAuth, getJobs);
 
 // ── Static routes MUST come before /:id ────────
 router.get('/mine',            protect, requireMode('hirer'), getMyJobs);
@@ -27,7 +28,7 @@ router.post('/', protect, requireMode('hirer'), createJob);
 router.patch('/:id/status', protect, requireMode('hirer'), updateJobStatus);
 
 // ── Dynamic routes LAST ────────────────────────
-router.get('/:id',    getJobById);
+router.get('/:id',    optionalAuth, getJobById);
 router.put('/:id',    protect, requireMode('hirer'), updateJob);
 router.delete('/:id', protect, requireMode('hirer'), deleteJob);
 

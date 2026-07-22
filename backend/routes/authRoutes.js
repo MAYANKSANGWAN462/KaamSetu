@@ -14,6 +14,7 @@ const {
   verifyEmail
 } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
+const { validate } = require('../middleware/validate');
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -81,9 +82,9 @@ function googleBodyGuard(req, res, next) {
 }
 
 // Public routes
-router.post('/register', registerLimiter, registerValidation, registerUser);
-router.post('/login',    loginLimiter,    loginValidation,    loginUser);
-router.post('/google',   googleLimiter,   googleValidation,   googleBodyGuard, googleLogin);
+router.post('/register', registerLimiter, registerValidation, validate, registerUser);
+router.post('/login',    loginLimiter,    loginValidation,    validate, loginUser);
+router.post('/google',   googleLimiter,   googleValidation,   validate, googleBodyGuard, googleLogin);
 router.get('/verify-email', verifyEmail);
 router.post('/logout', logoutUser);
 

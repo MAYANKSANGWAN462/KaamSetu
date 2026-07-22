@@ -6,6 +6,7 @@ import { workerService } from "../services";
 import { useAuth } from "../context/AuthContext";
 import { JOB_CATEGORIES, SKILL_LIST, WAGE_UNITS } from "../utils/constants";
 import useGeolocation from "../hooks/useGeolocation";
+import LocationAutocomplete from "../components/common/LocationAutocomplete";
 
 const stagger = (i) => ({
   initial: { opacity: 0, y: 14 },
@@ -57,24 +58,9 @@ const WorkerSetup = () => {
     lng: null,
   });
 
-  // useEffect(() => {
-  //   if (skillInput.trim().length < 1) {
-  //     setSkillSuggestions([]);
-  //     return;
-  //   }
-  //   const q = skillInput.toLowerCase();
-  //   setSkillSuggestions(
-  //     (SKILL_LIST || [])
-  //       .filter((s) => s.toLowerCase().includes(q) && !form.skills.includes(s))
-  //       .slice(0, 6),
-  //   );
-  // }, [skillInput, form.skills]);
-
   const addSkill = (skill) => {
     if (!form.skills.includes(skill))
       setForm((p) => ({ ...p, skills: [...p.skills, skill] }));
-    setSkillInput("");
-    setSkillSuggestions([]);
   };
   const removeSkill = (skill) =>
     setForm((p) => ({ ...p, skills: p.skills.filter((s) => s !== skill) }));
@@ -378,14 +364,14 @@ const WorkerSetup = () => {
                 )}
               </div>
               <Label>Area / City</Label>
-              <input
-                type="text"
+              <LocationAutocomplete
                 value={form.locationAddress}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, locationAddress: e.target.value }))
+                onChange={(val) =>
+                  setForm((p) => ({ ...p, locationAddress: val }))
                 }
-                className={inputCls}
                 placeholder="e.g. Connaught Place, Delhi"
+                icon={false}
+                inputClassName={inputCls}
               />
             </SectionCard>
           </motion.div>

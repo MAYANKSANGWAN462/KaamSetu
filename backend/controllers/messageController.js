@@ -1,23 +1,7 @@
 const Message = require('../models/Message');
 const User = require('../models/User');
-const Application = require('../models/Application');
 const { makeConversationId } = require('../utils/conversationId');
-
-/* ─── Guard: any Application record = interaction exists ─── */
-
-const hasInteraction = async (userAId, userBId) => {
-  const a = userAId.toString();
-  const b = userBId.toString();
-  const record = await Application.findOne({
-    $or: [
-      { workerId: a, hirerId: b },
-      { workerId: b, hirerId: a }
-    ]
-  })
-    .select('_id')
-    .lean();
-  return Boolean(record);
-};
+const { hasInteraction } = require('../utils/interaction');
 
 /* ─── POST /api/messages ─────────────────────────────────── */
 
@@ -37,6 +21,14 @@ const sendMessage = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: 'Message cannot exceed 5000 characters'
+      });
+    }
+
+    // Role rule: a user can never message themselves.
+    if (receiverId.toString() === req.user._id.toString()) {
+      return res.status(400).json({
+        success: false,
+        message: 'You cannot message yourself'
       });
     }
 
@@ -81,6 +73,15 @@ const sendMessage = async (req, res) => {
         content: populated.content,
         createdAt: populated.createdAt,
         isRead: false
+      });
+      // Notify the receiver's personal room so the bell/unread badge updates
+      // even when they are not currently viewing this conversation.
+      io.to(receiverId.toString()).emit('newMessage', {
+        conversationId,
+        senderId: req.user._id.toString(),
+        senderName: req.user.name,
+        preview: populated.content.slice(0, 120),
+        createdAt: populated.createdAt
       });
     } catch (socketErr) {
       console.warn('[sendMessage] Socket emit skipped:', socketErr.message);

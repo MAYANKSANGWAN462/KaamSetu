@@ -143,6 +143,21 @@ const Header = () => {
               {/* Notification bell — authenticated only */}
               {isAuthenticated ? <NotificationBell /> : null}
 
+              {/* Post action button — authenticated, desktop only */}
+              {isAuthenticated && user?.activeMode && (
+                <motion.div whileTap={{ scale: 0.96 }} className="hidden md:block">
+                  <Link
+                    to={user.activeMode === 'hirer' ? '/hirer/post-job' : '/worker/post-gig'}
+                    className="flex items-center gap-1.5 px-3 lg:px-4 py-2 text-sm font-semibold text-white rounded-xl whitespace-nowrap bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 shadow-md shadow-amber-500/25 hover:shadow-amber-500/40 transition-all duration-200"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                    {user.activeMode === 'hirer' ? 'Post a Job' : 'Post a Gig'}
+                  </Link>
+                </motion.div>
+              )}
+
               {/* ── Authenticated state (desktop md+) ── */}
               {isAuthenticated ? (
                 <div className="relative hidden md:block" ref={menuRef}>
@@ -325,6 +340,22 @@ const Header = () => {
                       <div className="px-4 py-2 flex justify-center md:hidden">
                         <HeaderModeToggle />
                       </div>
+
+                      {/* Post action — mobile drawer */}
+                      {user?.activeMode && (
+                        <div className="px-4 pb-1">
+                          <Link
+                            to={user.activeMode === 'hirer' ? '/hirer/post-job' : '/worker/post-gig'}
+                            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 shadow-md shadow-amber-500/25 transition-all duration-200"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                            </svg>
+                            {user.activeMode === 'hirer' ? 'Post a Job' : 'Post a Gig'}
+                          </Link>
+                        </div>
+                      )}
+
                       {[
                         { to: '/profile', label: 'My Profile', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg> },
                         { to: '/dashboard', label: 'Dashboard', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg> },

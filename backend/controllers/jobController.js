@@ -5,8 +5,11 @@ const { isValidCategory, CATEGORY_SLUGS } = require('../constants/categories');
 const {
   haversineDistance,
   smartScore,
-  wageBoundsFromAmounts
+  wageBoundsFromAmounts,
+  safeRegex
 } = require('../utils/helpers');
+const { hasInteraction } = require('../utils/interaction');
+const { toPublicUser } = require('../utils/sanitizeUser');
 
 const toNum = (v, fallback = 0) => {
   const n = Number(v);
@@ -133,15 +136,18 @@ const getJobs = async (req, res) => {
     }
 
     if (q && String(q).trim()) {
-      const re = new RegExp(String(q).trim(), 'i');
+      const re = new RegExp(safeRegex(String(q)), 'i');
       query.$or = [{ title: re }, { description: re }];
     }
 
     // Default to open jobs only unless explicitly requested
     query.status = (status && status !== 'all') ? status : 'open';
 
+    // Role rule: never surface the requester's own jobs in browse.
+    if (req.user) query.hirerId = { $ne: req.user._id };
+
     const jobs = await Job.find(query)
-      .populate('hirerId', 'name email profilePhoto location')
+      .populate('hirerId', 'name profilePhoto location')
       .sort({ createdAt: -1 })
       .lean();
 
@@ -263,9 +269,22 @@ const getJobById = async (req, res) => {
     // Only return application count publicly — not the full applicant list
     const applicationCount = await Application.countDocuments({ jobId: job._id });
 
+    // Interaction-gate the hirer's contact info; flag ownership for the UI.
+    const requester = req.user || null;
+    const hirerId = job.hirerId?._id || job.hirerId;
+    const isOwn =
+      requester && hirerId && requester._id.toString() === hirerId.toString();
+    const includeContact =
+      isOwn ||
+      (requester && requester.role === 'admin') ||
+      (requester && hirerId ? await hasInteraction(requester._id, hirerId) : false);
+    if (job.hirerId && typeof job.hirerId === 'object') {
+      job.hirerId = toPublicUser(job.hirerId, { includeContact });
+    }
+
     return res.json({
       success: true,
-      data: { ...job, applicationCount }
+      data: { ...job, applicationCount, isOwn: Boolean(isOwn) }
     });
   } catch (error) {
     console.error('[getJobById]', error.message);
@@ -388,12 +407,18 @@ const deleteJob = async (req, res) => {
     job.status = 'cancelled';
     await job.save();
 
-    // Notify via socket
+    // Notify the hirer AND every worker with a pending application so their
+    // NotificationBell + MyApplications reflect the cancellation.
     try {
       const io = getIo();
-      io.to(job.hirerId.toString()).emit('jobCancelled', {
-        jobId: job._id.toString(),
-        title: job.title
+      const payload = { jobId: job._id.toString(), title: job.title };
+      io.to(job.hirerId.toString()).emit('jobCancelled', payload);
+
+      const pending = await Application.find({ jobId: job._id, status: 'pending' })
+        .select('workerId')
+        .lean();
+      pending.forEach((app) => {
+        if (app.workerId) io.to(app.workerId.toString()).emit('jobCancelled', payload);
       });
     } catch (socketErr) {
       console.warn('[deleteJob] Socket emit skipped:', socketErr.message);

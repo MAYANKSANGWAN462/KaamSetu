@@ -36,6 +36,11 @@ const reviewSchema = new mongoose.Schema(
 );
 
 reviewSchema.index({ revieweeId: 1, createdAt: -1 });
-reviewSchema.index({ jobId: 1, reviewerId: 1 }, { unique: true, sparse: true });
+// One review per (job, reviewer). Partial filter so direct reviews (jobId: null)
+// are NOT constrained — otherwise a reviewer could leave only one direct review ever.
+reviewSchema.index(
+  { jobId: 1, reviewerId: 1 },
+  { unique: true, partialFilterExpression: { jobId: { $type: 'objectId' } } }
+);
 
 module.exports = mongoose.model('Review', reviewSchema);

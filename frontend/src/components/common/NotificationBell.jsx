@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../../context/AuthContext'
-import io from 'socket.io-client'
+import { useSocket } from '../../context/SocketContext'
 import toast from 'react-hot-toast'
 
 const MAX_STORED = 30
@@ -43,12 +43,12 @@ const ICONS = {
 
 const NotificationBell = () => {
   const { user } = useAuth()
+  const socket = useSocket()
   const navigate  = useNavigate()
   const [open, setOpen]             = useState(false)
   const [notifs, setNotifs]         = useState([])
   const [unread, setUnread]         = useState(0)
   const dropdownRef = useRef(null)
-  const socketRef   = useRef(null)
 
   // Load persisted notifications on mount
   useEffect(() => {
@@ -58,13 +58,9 @@ const NotificationBell = () => {
     setUnread(stored.filter(n => !n.read).length)
   }, [user?._id])
 
-  // Socket — listen for real-time events
+  // Real-time events over the shared authenticated socket
   useEffect(() => {
-    if (!user?._id) return
-    const base = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/?api\/?$/i, '')
-    const socket = io(base, { transports: ['websocket', 'polling'] })
-    socketRef.current = socket
-    socket.emit('join', String(user._id))
+    if (!socket || !user?._id) return
 
     const addNotif = (notif) => {
       setNotifs(prev => {
@@ -76,7 +72,7 @@ const NotificationBell = () => {
     }
 
     // New application received (hirer)
-    socket.on('newApplication', (payload) => {
+    const onNewApplication = (payload) => {
       const notif = {
         id: `${Date.now()}`, type: 'newApplication', read: false,
         title: 'New Application',
@@ -87,24 +83,24 @@ const NotificationBell = () => {
       addNotif(notif)
       toast(notif.body, { icon: '📋', duration: 4000,
         style: { background: '#fffbf5', border: '1px solid #e8dfd0', color: '#333' } })
-    })
+    }
 
     // Hirer contacts worker
-    socket.on('hirerContact', (payload) => {
+    const onHirerContact = (payload) => {
       const notif = {
         id: `${Date.now()}`, type: 'hirerContact', read: false,
         title: 'Hirer wants to connect',
         body: payload.message || 'A hirer wants to connect with you',
-        link: null,
+        link: '/messages',
         createdAt: new Date().toISOString(),
       }
       addNotif(notif)
       toast(notif.body, { icon: '👋', duration: 4000,
         style: { background: '#fffbf5', border: '1px solid #e8dfd0', color: '#333' } })
-    })
+    }
 
     // Application status update (worker)
-    socket.on('applicationStatusUpdate', (payload) => {
+    const onStatusUpdate = (payload) => {
       const accepted = payload.status === 'accepted'
       const notif = {
         id: `${Date.now()}`,
@@ -124,24 +120,51 @@ const NotificationBell = () => {
           border: `1px solid ${accepted ? '#bbf7d0' : '#fecaca'}`,
           color: '#333' }
       })
-    })
+    }
 
     // Job cancelled (worker who applied)
-    socket.on('jobCancelled', (payload) => {
+    const onJobCancelled = (payload) => {
       const notif = {
         id: `${Date.now()}`, type: 'jobCancelled', read: false,
         title: 'Job Cancelled',
         body: `"${payload.title || 'A job'}" has been cancelled by the hirer.`,
-        link: null,
+        link: '/my-applications',
         createdAt: new Date().toISOString(),
       }
       addNotif(notif)
       toast(notif.body, { icon: '🚫', duration: 4000,
         style: { background: '#fef2f2', border: '1px solid #fecaca', color: '#333' } })
-    })
+    }
 
-    return () => { socket.disconnect(); socketRef.current = null }
-  }, [user?._id])
+    // New direct message (receiver not necessarily in the thread)
+    const onNewMessage = (payload) => {
+      const convId = payload.conversationId
+      const notif = {
+        id: `${Date.now()}`, type: 'newMessage', read: false,
+        title: payload.senderName || 'New message',
+        body: payload.preview || 'You have a new message',
+        link: convId ? `/messages/${convId}` : '/messages',
+        createdAt: payload.createdAt || new Date().toISOString(),
+      }
+      addNotif(notif)
+      toast(notif.body, { icon: '💬', duration: 4000,
+        style: { background: '#fffbf5', border: '1px solid #e8dfd0', color: '#333' } })
+    }
+
+    socket.on('newApplication', onNewApplication)
+    socket.on('hirerContact', onHirerContact)
+    socket.on('applicationStatusUpdate', onStatusUpdate)
+    socket.on('jobCancelled', onJobCancelled)
+    socket.on('newMessage', onNewMessage)
+
+    return () => {
+      socket.off('newApplication', onNewApplication)
+      socket.off('hirerContact', onHirerContact)
+      socket.off('applicationStatusUpdate', onStatusUpdate)
+      socket.off('jobCancelled', onJobCancelled)
+      socket.off('newMessage', onNewMessage)
+    }
+  }, [socket, user?._id])
 
   // Close on outside click
   useEffect(() => {

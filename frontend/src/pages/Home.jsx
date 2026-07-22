@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import axios from 'axios'
 import WorkerCard from '../components/worker/WorkerCard'
+import LocationAutocomplete from '../components/common/LocationAutocomplete'
 import { JOB_CATEGORIES } from '../utils/constants'
 import useGeolocation from '../hooks/useGeolocation'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -13,11 +14,17 @@ const stagger = (i, base = 0) => ({
   transition: { delay: base + i * 0.08, duration: 0.55, ease: [0.16, 1, 0.3, 1] }
 })
 
+// Keyed by category label (see JOB_CATEGORY_GROUPS). Falls back to 💼.
 const CATEGORY_ICONS = {
-  Construction: '🏗️', Plumbing: '🔧', Electrical: '⚡', Carpentry: '🪚',
-  Painting: '🖌️', Cleaning: '🧹', Driving: '🚗', Delivery: '📦',
-  Security: '🛡️', Cooking: '👨‍🍳', Farming: '🌾', 'Loading & Unloading': '📦',
-  Tailoring: '🧵', Other: '💼',
+  Mason: '🧱', Helper: '🦺', Plumber: '🔧', Electrician: '⚡',
+  Painter: '🖌️', Carpenter: '🪚', Welder: '🔥',
+  'Field Worker': '🌾', Irrigation: '💧', Harvester: '🌱',
+  'Livestock Handler': '🐄', 'Pesticide Sprayer': '🧴',
+  'House Help': '🧹', Cook: '👨‍🍳', Nanny: '🍼', Driver: '🚗',
+  'Security Guard': '🛡️', Gardener: '🌳',
+  Mechanic: '🔩', 'AC Repair': '❄️', 'IT Support': '💻',
+  'Appliance Repair': '🛠️', 'CCTV Installer': '📹',
+  'General Labour': '💪', Loader: '📦', Other: '💼',
 }
 
 const SkeletonCard = () => (
@@ -161,14 +168,12 @@ const Home = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                   </div>
-                  <input
-                    type="text"
+                  <LocationAutocomplete
                     value={searchInput.location}
-                    onChange={e => setSearchInput(p => ({ ...p, location: e.target.value }))}
-                    onFocus={() => setLocationFocused(true)}
-                    onBlur={() => setLocationFocused(false)}
+                    onChange={val => setSearchInput(p => ({ ...p, location: val }))}
                     placeholder="City or area…"
-                    className="w-full rounded-2xl bg-white/10 border border-white/10 pl-11 pr-4 py-4 text-sm font-medium text-white placeholder:text-[#6e5c48] outline-none focus:border-[#c8933a]/50 focus:bg-white/15 transition-all duration-300"
+                    icon={false}
+                    inputClassName="w-full rounded-2xl bg-white/10 border border-white/10 pl-11 pr-4 py-4 text-sm font-medium text-white placeholder:text-[#6e5c48] outline-none focus:border-[#c8933a]/50 focus:bg-white/15 transition-all duration-300"
                   />
                 </div>
 
@@ -388,8 +393,9 @@ const Home = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
-          {/* Connector line (desktop) */}
-          <div className="hidden md:block absolute top-12 left-[calc(16.67%+2rem)] right-[calc(16.67%+2rem)] h-px bg-gradient-to-r from-[#c8933a]/30 via-[#c8933a]/60 to-[#c8933a]/30" />
+          {/* Connector line (desktop) — sits behind the step icons (z-0) so it
+              reads as a link between them and never crosses the numbers or text. */}
+          <div className="hidden md:block absolute top-12 left-[calc(16.67%+2rem)] right-[calc(16.67%+2rem)] h-px bg-gradient-to-r from-[#c8933a]/30 via-[#c8933a]/60 to-[#c8933a]/30 z-0 pointer-events-none" />
 
           {[
             { n: '01', icon: '👤', title: 'Create Account', desc: 'Sign up once. Use one account to both find work and hire workers.' },
@@ -402,7 +408,7 @@ const Home = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="relative text-center group"
+              className="relative z-10 text-center group"
             >
               {/* Step indicator */}
               <div className="relative inline-flex">

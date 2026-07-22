@@ -109,6 +109,16 @@ function wageBoundsFromAmounts(amounts) {
   return min === max ? { min: Math.max(0, min - 1), max: max + 1 } : { min, max };
 }
 
+/**
+ * Escape a user-supplied string for safe use inside a RegExp and cap its length.
+ * Prevents regex injection / ReDoS on public search inputs.
+ */
+const safeRegex = (str, maxLen = 80) =>
+  String(str || '')
+    .trim()
+    .slice(0, maxLen)
+    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 const validateIndianPhone = (phone) => /^[6-9]\d{9}$/.test(String(phone || ''));
 
 const formatIndianCurrency = (amount) =>
@@ -157,6 +167,7 @@ module.exports = {
   smartScore,
   wageBoundsFromAmounts,
   clamp01,
+  safeRegex,
   validateIndianPhone,
   formatIndianCurrency,
   calculateAge,

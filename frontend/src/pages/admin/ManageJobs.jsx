@@ -1,50 +1,64 @@
-// ──────────────────────────────────────────────
-// ManageJobs.jsx
-// ──────────────────────────────────────────────
+// ManageJobs.jsx — admin view: list, filter, and moderate (reopen/cancel) job posts.
+import { useState, useEffect, useCallback } from 'react'
+import { Link } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
+import adminService from '../../services/adminService'
 
-const JOB_STATUSES = ['all', 'open', 'in-progress', 'completed', 'cancelled']
+const stagger = (i) => ({
+  initial: { opacity: 0, y: 14 },
+  animate: { opacity: 1, y: 0 },
+  transition: { delay: i * 0.07, duration: 0.45, ease: [0.16, 1, 0.3, 1] }
+})
 
-export const ManageJobs = () => {
+const JOB_STATUSES = ['all', 'open', 'filled', 'cancelled']
+
+const ManageJobs = () => {
   const [jobs, setJobs] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
-  const [deletingId, setDeletingId] = useState(null)
+  const [busyId, setBusyId] = useState(null)
   const [error, setError] = useState('')
 
-  const fetchJobs = async () => {
+  const fetchJobs = useCallback(async () => {
+    setLoading(true)
     try {
       setError('')
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/jobs`)
-      setJobs(Array.isArray(res.data) ? res.data : res.data?.data || [])
-    } catch { setError('Failed to load jobs.') }
-    finally { setLoading(false) }
-  }
+      const params = {}
+      if (filter !== 'all') params.status = filter
+      if (search.trim()) params.q = search.trim()
+      const res = await adminService.getJobs(params)
+      setJobs(res?.data || [])
+    } catch (err) {
+      setError(typeof err === 'string' ? err : 'Failed to load jobs.')
+    } finally {
+      setLoading(false)
+    }
+  }, [filter, search])
 
-  useEffect(() => { fetchJobs() }, [])
+  useEffect(() => {
+    const t = setTimeout(fetchJobs, 300)
+    return () => clearTimeout(t)
+  }, [fetchJobs])
 
-  const handleDelete = async (jobId) => {
-    if (!confirm('Delete this job post? This cannot be undone.')) return
-    setDeletingId(jobId)
+  const handleModerate = async (job, status) => {
+    if (status === 'cancelled' && !window.confirm('Cancel this job post?')) return
+    setBusyId(job._id)
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/admin/jobs/${jobId}`)
-      toast.success('Job deleted')
-      setJobs(prev => prev.filter(j => j._id !== jobId))
-    } catch { toast.error('Failed to delete job') }
-    finally { setDeletingId(null) }
+      await adminService.moderateJob(job._id, status)
+      toast.success(`Job ${status}`)
+      setJobs((prev) => prev.map((j) => (j._id === job._id ? { ...j, status } : j)))
+    } catch (err) {
+      toast.error(typeof err === 'string' ? err : 'Failed to moderate job')
+    } finally {
+      setBusyId(null)
+    }
   }
-
-  const filtered = jobs.filter(j => {
-    const matchStatus = filter === 'all' || j.status === filter
-    const matchSearch = !search || j.title?.toLowerCase().includes(search.toLowerCase())
-    return matchStatus && matchSearch
-  })
 
   const statusColor = (s) => ({
     open: 'bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400',
-    'in-progress': 'bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-400',
-    completed: 'bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-400',
+    filled: 'bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-400',
     cancelled: 'bg-red-100 dark:bg-red-500/15 text-red-700 dark:text-red-400',
   }[s] || 'bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400')
 
@@ -60,10 +74,8 @@ export const ManageJobs = () => {
           </Link>
           <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#c8933a] mb-1">Admin</p>
           <h1 className="text-3xl font-black text-gray-900 dark:text-white">Manage Jobs</h1>
-          <p className="text-sm text-[#9c8a78] mt-1">{jobs.length} total job posts on the platform.</p>
         </motion.div>
 
-        {/* Filters row */}
         <motion.div {...stagger(1)} className="flex flex-wrap gap-3 mb-5">
           <div className="relative flex-1 min-w-48">
             <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -71,12 +83,12 @@ export const ManageJobs = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
-            <input type="text" value={search} onChange={e => setSearch(e.target.value)}
+            <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
               placeholder="Search jobs…"
               className="w-full rounded-2xl bg-white dark:bg-white/[0.04] border border-[#e8dfd0] dark:border-white/10 pl-11 pr-4 py-3 text-sm text-gray-800 dark:text-gray-200 placeholder:text-[#b8a898] outline-none focus:border-[#c8933a]/60 transition-all duration-300" />
           </div>
           <div className="flex gap-1.5 flex-wrap">
-            {JOB_STATUSES.map(s => (
+            {JOB_STATUSES.map((s) => (
               <button key={s} onClick={() => setFilter(s)}
                 className={`px-3 py-2 rounded-xl text-xs font-bold capitalize transition-all duration-200 ${
                   filter === s
@@ -102,11 +114,10 @@ export const ManageJobs = () => {
               <div className="space-y-2">
                 <div className="h-5 w-1/2 bg-[#e8dfd0] dark:bg-white/10 rounded-lg" />
                 <div className="h-3 w-3/4 bg-[#e8dfd0] dark:bg-white/10 rounded-lg" />
-                <div className="h-3 w-1/4 bg-[#e8dfd0] dark:bg-white/10 rounded-lg" />
               </div>
             </div>
           ))}</div>
-        ) : filtered.length === 0 ? (
+        ) : jobs.length === 0 ? (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             className="text-center py-16 bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8">
             <span className="text-4xl block mb-2">💼</span>
@@ -114,7 +125,7 @@ export const ManageJobs = () => {
           </motion.div>
         ) : (
           <div className="space-y-3">
-            {filtered.map((job, i) => (
+            {jobs.map((job, i) => (
               <motion.div key={job._id}
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: Math.min(i * 0.04, 0.3), duration: 0.4 }}
@@ -134,29 +145,32 @@ export const ManageJobs = () => {
                     {job.description && (
                       <p className="text-xs text-[#9c8a78] mt-0.5 line-clamp-1">{job.description}</p>
                     )}
-                    <p className="text-xs text-[#b8a898] mt-1 flex items-center gap-2">
-                      {job.wage?.amount && <span>₹{job.wage.amount} {job.wage.unit}</span>}
-                      {job.location && <><span className="text-[#e8dfd0] dark:text-white/20">·</span><span>{job.location?.city || job.location}</span></>}
+                    <p className="text-xs text-[#b8a898] mt-1 flex flex-wrap items-center gap-2">
+                      {job.hirerId?.name && <span>by {job.hirerId.name}</span>}
+                      {job.wage?.amount != null && <><span className="text-[#e8dfd0] dark:text-white/20">·</span><span>₹{job.wage.amount} {job.wage.unit}</span></>}
+                      {job.location?.address && <><span className="text-[#e8dfd0] dark:text-white/20">·</span><span>{job.location.address}</span></>}
                       {job.createdAt && <><span className="text-[#e8dfd0] dark:text-white/20">·</span><span>{new Date(job.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span></>}
                     </p>
                   </div>
-                  <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                    onClick={() => handleDelete(job._id)}
-                    disabled={deletingId === job._id}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-red-200/70 dark:border-red-500/20 text-red-600 dark:text-red-400 text-xs font-bold hover:bg-red-50 dark:hover:bg-red-500/10 transition-all duration-200 disabled:opacity-50"
-                  >
-                    {deletingId === job._id ? (
-                      <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-30" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
-                        <path className="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                      </svg>
+                  <div className="flex items-center gap-2">
+                    {job.status !== 'cancelled' ? (
+                      <button
+                        onClick={() => handleModerate(job, 'cancelled')}
+                        disabled={busyId === job._id}
+                        className="px-3 py-2 rounded-xl border border-red-200/70 dark:border-red-500/20 text-red-600 dark:text-red-400 text-xs font-bold hover:bg-red-50 dark:hover:bg-red-500/10 transition-all disabled:opacity-50"
+                      >
+                        Cancel
+                      </button>
                     ) : (
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
+                      <button
+                        onClick={() => handleModerate(job, 'open')}
+                        disabled={busyId === job._id}
+                        className="px-3 py-2 rounded-xl border border-emerald-200/70 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-bold hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-all disabled:opacity-50"
+                      >
+                        Reopen
+                      </button>
                     )}
-                    Delete
-                  </motion.button>
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -166,3 +180,5 @@ export const ManageJobs = () => {
     </div>
   )
 }
+
+export default ManageJobs

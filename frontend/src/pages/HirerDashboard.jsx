@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { jobService } from "../services";
+import toast from "react-hot-toast";
+import { jobService, applicationService } from "../services";
+import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import useGeolocation from "../hooks/useGeolocation";
 import WorkerCard from "../components/worker/WorkerCard";
-import axios from "axios";
+import { makeConversationId } from "../utils/conversationId";
 
 const stagger = (i) => ({
   initial: { opacity: 0, y: 16 },
@@ -311,9 +313,9 @@ const HirerDashboard = () => {
 
   const fetchSuggestedWorkers = async () => {
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/workers?lat=${geo.latitude}&lng=${geo.longitude}&limit=6`,
-      );
+      const res = await api.get("/workers", {
+        params: { lat: geo.latitude, lng: geo.longitude, limit: 6 },
+      });
       const d = res.data;
       const workers =
         d?.data?.workers || d?.workers || (Array.isArray(d) ? d : []);
@@ -322,6 +324,17 @@ const HirerDashboard = () => {
       /* silent */
     } finally {
       setLoadingWorkers(false);
+    }
+  };
+
+  // Contact affordance must actually start a conversation, not just open a profile.
+  const handleContactWorker = async (workerUserId) => {
+    if (!workerUserId) return;
+    try {
+      await applicationService.contactWorker({ workerId: workerUserId });
+      navigate(`/messages/${makeConversationId(user?._id, workerUserId)}`);
+    } catch (err) {
+      toast.error(typeof err === "string" ? err : "Could not start conversation");
     }
   };
 
@@ -649,8 +662,8 @@ const HirerDashboard = () => {
 
                       <button
                         onClick={() =>
-                          navigate(
-                            `/worker/${worker.userId?._id || worker.userId}`,
+                          handleContactWorker(
+                            worker.userId?._id || worker.userId,
                           )
                         }
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] text-white text-[10px] font-bold shadow-sm hover:shadow-md transition-all duration-200"

@@ -13,7 +13,7 @@ class ApplicationService {
 
   async getMyApplications() {
     try {
-      const response = await api.get("/applications/my");
+      const response = await api.get("/applications/mine");
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -22,7 +22,7 @@ class ApplicationService {
 
   async applyForJob(jobId, data = {}) {
     try {
-      const response = await api.post(`/applications/job/${jobId}`, data);
+      const response = await api.post("/applications", { jobId, ...data });
       return response.data;
     } catch (error) {
       throw this.handleError(error);

@@ -13,14 +13,15 @@ import {
 import { Toaster } from "react-hot-toast";
 import { AnimatePresence, motion } from "framer-motion";
 import { AuthProvider } from "./context/AuthContext";
+import { SocketProvider } from "./context/SocketContext";
+import { AdminAuthProvider } from "./context/AdminAuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { LanguageProvider } from "./context/LanguageContext";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import AdminProtectedRoute from "./routes/AdminProtectedRoute";
 import Header from "./components/common/Header";
 import Footer from "./components/common/Footer";
 import Loader from "./components/common/Loader";
-import CustomCursor from "./components/common/CustomCursor";
-import ActionFAB from "./components/common/ActionFAB";
 
 // Lazy load pages for better performance
 const Home = lazy(() => import("./pages/Home"));
@@ -34,10 +35,36 @@ const JobDetails = lazy(() => import("./pages/JobDetails"));
 const MyApplications = lazy(() => import("./pages/MyApplications"));
 const PostJob = lazy(() => import("./pages/PostJob"));
 const MyJobs = lazy(() => import("./pages/MyJobs"));
-const Messages = lazy(() => import("./pages/Messages"));
-const Chat = lazy(() => import("./pages/Chat"));
+const Messenger = lazy(() => import("./pages/Messenger"));
 const Profile = lazy(() => import("./pages/Profile"));
+const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const ManageUsers = lazy(() => import("./pages/admin/ManageUsers"));
+const ManageJobs = lazy(() => import("./pages/admin/ManageJobs"));
+
+const Layout = ({ children }) => {
+  const location = useLocation();
+  const isMessenger = location.pathname.startsWith('/messages');
+  return (
+    <div className="w-full min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] transition-colors duration-300">
+      <Header />
+      <Suspense fallback={<Loader />}>
+        <AnimatedRoutes />
+      </Suspense>
+      {!isMessenger && <Footer />}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "var(--toast-bg)",
+            color: "var(--toast-text)",
+          },
+        }}
+      />
+    </div>
+  );
+};
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -163,7 +190,7 @@ const AnimatedRoutes = () => {
               path="/messages"
               element={
                 <ProtectedRoute>
-                  <Messages />
+                  <Messenger />
                 </ProtectedRoute>
               }
             />
@@ -176,30 +203,41 @@ const AnimatedRoutes = () => {
               }
             />
             <Route
-              path="/chat/:userId"
-              element={
-                <ProtectedRoute>
-                  <Chat />
-                </ProtectedRoute>
-              }
-            />
-            <Route
               path="/messages/:conversationId"
               element={
                 <ProtectedRoute>
-                  <Chat />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute allowedRoles={["admin"]}>
-                  <AdminDashboard />
+                  <Messenger />
                 </ProtectedRoute>
               }
             />
           </Route>
+
+          {/* Admin — separate auth (AdminAuthContext), not the marketplace guard */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route
+            path="/admin"
+            element={
+              <AdminProtectedRoute>
+                <AdminDashboard />
+              </AdminProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <AdminProtectedRoute>
+                <ManageUsers />
+              </AdminProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/jobs"
+            element={
+              <AdminProtectedRoute>
+                <ManageJobs />
+              </AdminProtectedRoute>
+            }
+          />
 
           {/* 404 */}
           <Route path="*" element={<Navigate to="/" replace />} />
@@ -215,25 +253,11 @@ function App() {
       <ThemeProvider>
         <LanguageProvider>
           <AuthProvider>
-            <div className="w-full min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] transition-colors duration-300">
-              <CustomCursor />
-              <Header />
-              <Suspense fallback={<Loader />}>
-                <AnimatedRoutes />
-              </Suspense>
-              <ActionFAB />
-              <Footer />
-              <Toaster
-                position="top-right"
-                toastOptions={{
-                  duration: 4000,
-                  style: {
-                    background: "var(--toast-bg)",
-                    color: "var(--toast-text)",
-                  },
-                }}
-              />
-            </div>
+            <SocketProvider>
+              <AdminAuthProvider>
+                <Layout />
+              </AdminAuthProvider>
+            </SocketProvider>
           </AuthProvider>
         </LanguageProvider>
       </ThemeProvider>

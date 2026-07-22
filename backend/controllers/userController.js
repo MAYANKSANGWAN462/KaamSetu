@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const WorkerProfile = require('../models/WorkerProfile');
-const { sanitizeUserDoc } = require('../utils/sanitizeUser');
+const { sanitizeUserDoc, toPublicUser } = require('../utils/sanitizeUser');
+const { hasInteraction } = require('../utils/interaction');
 
 // GET /api/users — admin only
 const getAllUsers = async (req, res) => {
@@ -32,7 +33,8 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-// GET /api/users/:id — public
+// GET /api/users/:id — public (optionalAuth). Contact info is only revealed to
+// the account owner, an admin, or a user with an existing interaction.
 const getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id)
@@ -43,7 +45,15 @@ const getUserById = async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    const plain = sanitizeUserDoc(user);
+    const requester = req.user || null;
+    const isOwner = requester && requester._id.toString() === user._id.toString();
+    const isAdmin = requester && requester.role === 'admin';
+    const includeContact =
+      isOwner ||
+      isAdmin ||
+      (requester ? await hasInteraction(requester._id, user._id) : false);
+
+    const plain = toPublicUser(user, { includeContact });
     const workerProfile = await WorkerProfile.findOne({ userId: user._id }).lean();
 
     return res.json({
