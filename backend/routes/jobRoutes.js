@@ -1,13 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {
-  createJob,
-  getJobs,
-  getMyJobs,
-  getJobById,
-  updateJob,
-  deleteJob
-} = require('../controllers/jobController');
+const { createJob, getJobs, getMyJobs, getJobById, updateJob, deleteJob, updateJobStatus } = require('../controllers/jobController');
 const { protect, requireMode } = require('../middleware/authMiddleware');
 
 // ── Public routes ──────────────────────────────
@@ -30,6 +23,8 @@ router.get('/applications/my', protect, requireMode('worker'), async (req, res) 
 });
 
 router.post('/', protect, requireMode('hirer'), createJob);
+
+router.patch('/:id/status', protect, requireMode('hirer'), updateJobStatus);
 
 // ── Dynamic routes LAST ────────────────────────
 router.get('/:id',    getJobById);

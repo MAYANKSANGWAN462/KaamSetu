@@ -31,7 +31,7 @@ class ApplicationService {
 
   async updateApplication(applicationId, status) {
     try {
-      const response = await api.patch(`/applications/${applicationId}`, {
+      const response = await api.put(`/applications/${applicationId}/status`, {
         status,
       });
       return response.data;

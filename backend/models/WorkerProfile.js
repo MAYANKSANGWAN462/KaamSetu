@@ -12,11 +12,7 @@ const locationSchema = new mongoose.Schema(
 const wageSchema = new mongoose.Schema(
   {
     amount: { type: Number, min: 0, default: 0 },
-    unit: {
-      type: String,
-      enum: ['hourly', 'daily', 'job'],
-      default: 'daily'
-    }
+    unit: { type: String, enum: ['hourly', 'daily', 'job'], default: 'daily' }
   },
   { _id: false }
 );
@@ -37,50 +33,31 @@ const workerProfileSchema = new mongoose.Schema(
       required: true,
       unique: true
     },
-    category: {
-      type: String,
-      trim: true,
-      default: ''
+    category:    { type: String, trim: true, default: '' },
+    subCategory: { type: String, trim: true, default: '' },
+    skills:      { type: [String], default: [] },
+    bio:         { type: String, maxlength: [500, 'Bio cannot exceed 500 characters'], trim: true, default: '' },
+
+    // NEW — how many years of experience
+    yearsOfExperience: { type: Number, min: 0, max: 50, default: 0 },
+
+    // NEW — availability: array of day strings e.g. ['Monday','Tuesday'] or date ranges
+    availability: {
+      days: {
+        type: [String],
+        enum: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
+        default: []
+      },
+      note: { type: String, trim: true, maxlength: 200, default: '' }
     },
-    subCategory: {
-      type: String,
-      trim: true,
-      default: ''
-    },
-    skills: {
-      type: [String],
-      default: []
-    },
-    bio: {
-      type: String,
-      maxlength: [300, 'Bio cannot exceed 300 characters'],
-      trim: true,
-      default: ''
-    },
-    wage: {
-      type: wageSchema,
-      default: () => ({ amount: 0, unit: 'daily' })
-    },
-    isAvailable: {
-      type: Boolean,
-      default: true
-    },
-    location: {
-      type: locationSchema,
-      default: () => ({})
-    },
-    portfolio: {
-      type: [String],
-      default: []
-    },
-    rating: {
-      type: ratingSchema,
-      default: () => ({ avg: 0, count: 0 })
-    }
+
+    wage:        { type: wageSchema,  default: () => ({ amount: 0, unit: 'daily' }) },
+    isAvailable: { type: Boolean, default: true },
+    location:    { type: locationSchema, default: () => ({}) },
+    portfolio:   { type: [String], default: [] },
+    rating:      { type: ratingSchema, default: () => ({ avg: 0, count: 0 }) }
   },
-  {
-    timestamps: true
-  }
+  { timestamps: true }
 );
 
 workerProfileSchema.index({ userId: 1 });

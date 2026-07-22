@@ -54,6 +54,15 @@ const jobSchema = new mongoose.Schema(
       min: [1, 'workersRequired must be at least 1'],
       default: 1
     },
+    duration: {
+      type: String,
+      trim: true,
+      default: ''
+    },
+    requiredSkills: {
+      type: [String],
+      default: []
+    },
     location: {
       type: locationSchema,
       default: () => ({})

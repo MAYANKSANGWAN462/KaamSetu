@@ -39,7 +39,7 @@ const SkeletonBlock = () => (
     <div className="h-px bg-[#e8dfd0] dark:bg-white/10 my-6" />
     <div className="space-y-3">
       {[...Array(4)].map((_, i) => (
-        <div key={i} className="h-4 bg-[#e8dfd0] dark:bg-white/10 rounded-lg" style={{ width: `${75 + Math.random() * 25}%` }} />
+        <div key={i} className="h-4 bg-[#e8dfd0] dark:bg-white/10 rounded-lg" style={{ width: `${75 + (i * 6)}%` }} />
       ))}
     </div>
   </div>
@@ -56,30 +56,33 @@ const JobDetails = () => {
   const [bookingId, setBookingId] = useState('')
   const [hasInteraction, setHasInteraction] = useState(false)
 
-  useEffect(() => {
-    const fetchJob = async () => {
-      try {
-        setLoading(true)
-        const response = await jobService.getJobById(id)
-        setJob(response.data || null)
-      } catch {
-        toast.error('Failed to load job details')
-        navigate('/jobs')
-      } finally {
-        setLoading(false)
-      }
+  const fetchJob = async () => {
+    try {
+      setLoading(true)
+      const response = await jobService.getJobById(id)
+      // FIX: backend wraps in { success, data: job } so actual job is response.data
+      const jobData = response?.data?.data || response?.data || null
+      setJob(jobData)
+    } catch {
+      toast.error('Failed to load job details')
+      navigate('/jobs')
+    } finally {
+      setLoading(false)
     }
-    fetchJob()
-  }, [id, navigate])
+  }
 
-  // Check if worker has already applied (interaction check)
+  useEffect(() => {
+    fetchJob()
+  }, [id])
+
+  // Check if worker has already applied
   useEffect(() => {
     if (!user || !id || user.activeMode !== 'worker') return
     const checkInteraction = async () => {
       try {
         const { applicationService } = await import('../services')
         const res = await applicationService.checkInteraction({ jobId: id })
-        setHasInteraction(res?.hasInteraction || false)
+        setHasInteraction(res?.data?.hasInteraction || res?.hasInteraction || false)
       } catch { /* silent */ }
     }
     checkInteraction()
@@ -99,8 +102,7 @@ const JobDetails = () => {
       await jobService.applyForJob(job._id, {})
       toast.success('Applied successfully!')
       setHasInteraction(true)
-      const refreshed = await jobService.getJobById(id)
-      setJob(refreshed.data || null)
+      await fetchJob()
     } catch (err) {
       toast.error(err?.response?.data?.message || 'Unable to apply')
     } finally {
@@ -111,10 +113,10 @@ const JobDetails = () => {
   const handleBookWorker = async (applicationId) => {
     try {
       setBookingId(applicationId)
-      await jobService.acceptApplication(job._id, applicationId)
+      // FIX: acceptApplication only needs applicationId (not jobId)
+      await jobService.acceptApplication(null, applicationId)
       toast.success('Worker booked!')
-      const refreshed = await jobService.getJobById(id)
-      setJob(refreshed.data || null)
+      await fetchJob()
     } catch {
       toast.error('Unable to book worker')
     } finally {
@@ -123,15 +125,23 @@ const JobDetails = () => {
   }
 
   const isOpen = job?.status === 'open'
-  const isOwner = user?._id && (job?.createdBy?._id === user._id || job?.createdBy === user._id)
-  const hirerId = typeof job?.createdBy === 'string' ? job?.createdBy : job?.createdBy?._id
+
+  // FIX: model uses hirerId not createdBy
+  const hirerId = typeof job?.hirerId === 'string'
+    ? job?.hirerId
+    : job?.hirerId?._id
+
+  const isOwner = user?._id && hirerId && (hirerId === user._id || hirerId === user._id?.toString())
+
   const myAcceptedApp = (job?.applications || []).find(a => {
     const wId = typeof a.workerId === 'string' ? a.workerId : a.workerId?._id
     return wId === user?._id && a.status === 'accepted'
   })
 
+  // FIX: conversationId for chat navigation
   const conversationId = user?._id && hirerId
-    ? [user._id, hirerId].sort().join('_') : null
+    ? [String(user._id), String(hirerId)].sort().join('_')
+    : null
 
   return (
     <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] pt-24 pb-12">
@@ -151,7 +161,6 @@ const JobDetails = () => {
             <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-7 shadow-sm mb-5">
               <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
                 <div className="flex-1 min-w-0">
-                  {/* Back */}
                   <button
                     onClick={() => navigate(-1)}
                     className="flex items-center gap-1.5 text-xs font-semibold text-[#9c8a78] hover:text-[#c8933a] transition-colors duration-200 mb-3"
@@ -178,7 +187,8 @@ const JobDetails = () => {
                         d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    {job.location?.city || job.locationText || 'Location not specified'}
+                    {/* FIX: model stores location.address not location.city */}
+                    {job.location?.address || job.location?.city || 'Location not specified'}
                   </p>
                 </div>
 
@@ -186,13 +196,13 @@ const JobDetails = () => {
                 <div className="bg-gradient-to-br from-[#faf7f2] to-[#f0e8da] dark:from-white/[0.06] dark:to-white/[0.03] rounded-2xl border border-[#e8dfd0] dark:border-white/10 px-6 py-4 text-right">
                   <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#9c8a78] mb-1">Wage</p>
                   <p className="text-2xl font-black text-[#c8933a]">
-                    ₹{job.wage?.amount || job.salary?.fixed || job.salary?.recommended || job.budget || 0}
+                    ₹{job.wage?.amount || 0}
                   </p>
                   <p className="text-xs text-[#9c8a78] capitalize">{job.wage?.unit || 'per day'}</p>
                 </div>
               </div>
 
-              {/* Action buttons — workers only */}
+              {/* Action buttons — workers only, not owner */}
               {!isOwner && user?.activeMode === 'worker' && (
                 <div className="flex flex-wrap gap-3 pt-5 border-t border-[#e8dfd0] dark:border-white/8">
                   {isOpen && !hasInteraction && (
@@ -235,7 +245,7 @@ const JobDetails = () => {
                       Message Hirer
                     </motion.button>
                   )}
-                  {hasInteraction && !myAcceptedApp && (
+                  {hasInteraction && (
                     <div className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -243,6 +253,23 @@ const JobDetails = () => {
                       Application submitted
                     </div>
                   )}
+                </div>
+              )}
+
+              {/* Hirer owns this job — show edit button */}
+              {isOwner && (
+                <div className="flex gap-3 pt-5 border-t border-[#e8dfd0] dark:border-white/8">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => navigate(`/jobs/${job._id}/edit`)}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-2xl border border-[#c8933a]/50 text-[#c8933a] font-bold text-sm hover:bg-[#c8933a]/5 transition-all duration-300"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Edit Job
+                  </motion.button>
                 </div>
               )}
             </div>
@@ -278,19 +305,22 @@ const JobDetails = () => {
                 {isOwner && (
                   <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-7 shadow-sm">
                     <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-4">
-                      Applicants ({(job.applications || []).length})
+                      Applicants ({job.applicationCount || 0})
                     </h2>
                     {(job.applications || []).length === 0 ? (
                       <div className="text-center py-8 text-[#9c8a78]">
                         <span className="text-3xl block mb-2">📭</span>
                         <p className="text-sm font-medium">No applications yet</p>
+                        <p className="text-xs mt-1 opacity-70">Applications will appear here once workers apply</p>
                       </div>
                     ) : (
                       <div className="space-y-3">
                         {job.applications.map(app => {
                           const worker = app.workerId || {}
                           const wId = typeof worker === 'string' ? worker : worker._id
-                          const workerConvId = user?._id && wId ? [user._id, wId].sort().join('_') : null
+                          const workerConvId = user?._id && wId
+                            ? [String(user._id), String(wId)].sort().join('_')
+                            : null
                           return (
                             <motion.div
                               key={app._id}
@@ -304,19 +334,17 @@ const JobDetails = () => {
                                 </div>
                                 <div>
                                   <p className="font-bold text-sm text-gray-900 dark:text-white">{worker.name || 'Worker'}</p>
-                                  <div className="flex items-center gap-2 mt-0.5">
-                                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                                      app.status === 'accepted' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400' :
-                                      app.status === 'rejected' ? 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400' :
-                                      'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400'
-                                    }`}>
-                                      {app.status}
-                                    </span>
-                                  </div>
+                                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                                    app.status === 'accepted' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400' :
+                                    app.status === 'rejected' ? 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400' :
+                                    'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400'
+                                  }`}>
+                                    {app.status}
+                                  </span>
                                 </div>
                               </div>
                               <div className="flex items-center gap-2">
-                                {app.status !== 'accepted' && (
+                                {app.status === 'pending' && (
                                   <motion.button
                                     whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
                                     onClick={() => handleBookWorker(app._id)}
@@ -326,7 +354,7 @@ const JobDetails = () => {
                                     {bookingId === app._id ? 'Booking…' : 'Book'}
                                   </motion.button>
                                 )}
-                                {app.status === 'accepted' && workerConvId && (
+                                {workerConvId && (
                                   <motion.button
                                     whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
                                     onClick={() => navigate(`/messages/${workerConvId}`)}
@@ -355,6 +383,10 @@ const JobDetails = () => {
                     label="Category" value={job.category}
                   />
                   <InfoRow
+                    icon={<svg className="w-4 h-4 text-[#c8933a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
+                    label="Location" value={job.location?.address || job.location?.city || '—'}
+                  />
+                  <InfoRow
                     icon={<svg className="w-4 h-4 text-[#c8933a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
                     label="Workers Needed" value={job.workersRequired || '1'}
                   />
@@ -371,7 +403,6 @@ const JobDetails = () => {
                     />
                   )}
 
-                  {/* Apply CTA for non-owners not logged in */}
                   {!user && (
                     <motion.button
                       whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
@@ -383,7 +414,6 @@ const JobDetails = () => {
                   )}
                 </div>
 
-                {/* Posted date */}
                 {job.createdAt && (
                   <div className="bg-[#faf7f2] dark:bg-white/[0.03] rounded-2xl border border-[#e8dfd0] dark:border-white/8 px-5 py-4">
                     <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#9c8a78] mb-1">Posted</p>

@@ -27,5 +27,7 @@ router.get('/check', checkInteraction);
 
 // Update status — hirer only
 router.put('/:id', requireMode('hirer'), updateApplicationStatus);
+// Alias — frontend jobService calls /:id/status for accept/reject
+router.put('/:id/status', requireMode('hirer'), updateApplicationStatus);
 
 module.exports = router;

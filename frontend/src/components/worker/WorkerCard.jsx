@@ -1,253 +1,250 @@
 // frontend/src/components/worker/WorkerCard.jsx
-// Premium worker card with rating, skills, availability, and hire action.
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { useAuth } from '../../context/AuthContext'
+import toast from 'react-hot-toast'
+import axios from 'axios'
 
-import RatingStars from '../reviews/RatingStars'
+const RatingStars = ({ rating = 0 }) => (
+  <div className="flex gap-0.5 items-center">
+    {[1,2,3,4,5].map(i => (
+      <svg key={i} className={`w-3.5 h-3.5 ${i <= Math.round(rating) ? 'text-[#c8933a]' : 'text-[#e8dfd0] dark:text-white/10'}`}
+        fill="currentColor" viewBox="0 0 20 20">
+        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+      </svg>
+    ))}
+    <span className="text-[10px] text-[#9c8a78] ml-1">{rating > 0 ? rating.toFixed(1) : '—'}</span>
+  </div>
+)
 
 const WorkerCard = ({ worker, compact = false }) => {
-  
+  const { user } = useAuth()
+  const navigate = useNavigate()
+  const [contacting, setContacting] = React.useState(false)
 
   if (!worker) return null
 
-  const normalizeLocation = (value) => {
-    if (!value) return ''
-    if (typeof value === 'string') return value
-    if (typeof value === 'object') {
-      return value.address || value.city || value.area || ''
+  // FIX: backend returns WorkerProfile populated with userId object
+  // name/photo/id live on worker.userId, not on worker directly
+  const userObj   = worker.userId || {}
+  const userId    = typeof userObj === 'string' ? userObj : userObj._id
+  const name      = userObj.name || worker.name || 'Worker'
+  const photo     = userObj.profilePhoto || worker.profileImage || null
+  const initial   = (name || 'W')[0].toUpperCase()
+
+  // FIX: model uses yearsOfExperience not experience
+  const experience     = worker.yearsOfExperience ?? worker.experience ?? 0
+  const skills         = worker.skills || []
+  const category       = worker.category || ''
+  const isAvailable    = worker.isAvailable ?? true
+  const ratingAvg      = worker.rating?.avg ?? (typeof worker.rating === 'number' ? worker.rating : 0)
+  const ratingCount    = worker.rating?.count ?? worker.totalReviews ?? 0
+  const wageAmount     = worker.wage?.amount ?? worker.hourlyRate ?? 0
+  const wageUnit       = worker.wage?.unit ?? 'daily'
+  const locationStr    = worker.location?.address || worker.location?.city ||
+    (typeof worker.location === 'string' ? worker.location : '') || ''
+  const availDays      = worker.availability?.days || []
+  const bio            = worker.bio || ''
+  const distanceKm     = worker.distanceKm != null ? Number(worker.distanceKm).toFixed(1) : null
+
+  const handleContact = async () => {
+    if (!user) { navigate('/login'); return }
+    if (user.activeMode !== 'hirer') {
+      toast.error('Switch to Hire Mode to contact workers')
+      return
     }
-    return ''
+    if (!userId) { toast.error('Worker profile incomplete'); return }
+    setContacting(true)
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/applications/contact`,
+        { workerId: userId },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+      )
+      const convId = [String(user._id), String(userId)].sort().join('_')
+      toast.success('Connected! Opening chat…')
+      navigate(`/messages/${convId}`)
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Could not contact worker')
+    } finally {
+      setContacting(false)
+    }
   }
 
-  const normalizeNumber = (value, fallback = 0) => {
-    const parsed = Number(value)
-    return Number.isFinite(parsed) ? parsed : fallback
-  }
-
-  const {
-    _id,
-    name,
-    profileImage,
-    category,
-    skills = [],
-    rating = 0,
-    totalReviews = 0,
-    experience,
-    hourlyRate,
-    location,
-    isAvailable = true,
-  } = worker
-
-  const workerRating = normalizeNumber(
-    typeof rating === 'object' && rating !== null ? rating.avg : rating,
-    0
-  )
-  const workerTotalReviews = normalizeNumber(
-    typeof totalReviews === 'object' && totalReviews !== null ? totalReviews.count : totalReviews,
-    typeof rating === 'object' && rating !== null ? rating.count : 0
-  )
-  const workerLocation = normalizeLocation(location)
-  const workerHourlyRate = normalizeNumber(
-    hourlyRate ?? worker.wage?.amount,
-    0
-  )
-
-  // ── Compact variant ───────────────────────────────────────────────
+  // ── Compact variant ──────────────────────────────────────────────
   if (compact) {
     return (
       <motion.div
-        whileHover={{ y: -3, boxShadow: '0 12px 32px rgba(0,0,0,0.1)' }}
-        transition={{ duration: 0.2 }}
-        className="bg-white dark:bg-[#16161f] rounded-2xl border border-gray-100 dark:border-white/8 p-4 flex items-center gap-3"
+        whileHover={{ y: -2 }}
+        className="bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e8dfd0] dark:border-white/8 p-4 flex items-center gap-3"
       >
-        {/* Avatar */}
-        <div className="relative shrink-0">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold text-lg shadow-md shadow-amber-500/25">
-            {profileImage
-              ? <img src={profileImage} alt={name} className="w-full h-full rounded-xl object-cover" />
-              : name?.charAt(0)?.toUpperCase()
-            }
-          </div>
-          <span className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dark:border-[#16161f] ${isAvailable ? 'bg-emerald-500' : 'bg-gray-400'}`} />
+        <div className="relative flex-shrink-0">
+          {photo
+            ? <img src={photo} alt={name} className="w-11 h-11 rounded-xl object-cover border border-[#e8dfd0] dark:border-white/10" />
+            : <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] flex items-center justify-center text-white font-bold text-base">{initial}</div>
+          }
+          <span className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dark:border-[#0e0d0b] ${isAvailable ? 'bg-emerald-500' : 'bg-gray-400'}`} />
         </div>
-
-        {/* Info */}
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-sm text-gray-900 dark:text-white truncate">{name}</h3>
-          <div className="flex items-center gap-1 mt-0.5">
-            <RatingStars rating={workerRating} size="small" />
-            <span className="text-xs text-gray-400 dark:text-gray-500">({workerTotalReviews})</span>
-          </div>
+          <p className="font-bold text-sm text-gray-900 dark:text-white truncate">{name}</p>
+          <RatingStars rating={ratingAvg} />
         </div>
-
-        {/* CTA */}
-        <Link
-          to={`/worker/${_id}`}
-          className="shrink-0 px-3 py-1.5 text-xs font-semibold rounded-lg
-            bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400
-            border border-amber-200 dark:border-amber-500/30
-            hover:bg-amber-100 dark:hover:bg-amber-500/20
-            transition-colors duration-200"
-        >
+        <Link to={`/worker/${userId}`}
+          className="px-3 py-1.5 text-xs font-semibold rounded-xl bg-amber-50 dark:bg-amber-500/10 text-[#c8933a] border border-amber-200 dark:border-amber-500/30 hover:bg-amber-100 transition-colors duration-200">
           View
         </Link>
       </motion.div>
     )
   }
 
-  // ── Full card variant ─────────────────────────────────────────────
+  // ── Full card ────────────────────────────────────────────────────
   return (
     <motion.div
-      whileHover={{ y: -6 }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
-      className="group bg-white dark:bg-[#16161f] rounded-2xl border border-gray-100 dark:border-white/8 overflow-hidden
-        shadow-sm hover:shadow-[0_20px_60px_rgba(0,0,0,0.12)] dark:hover:shadow-[0_20px_60px_rgba(0,0,0,0.4)]
-        transition-shadow duration-300"
+      whileHover={{ y: -4, boxShadow: '0 16px 48px rgba(0,0,0,0.10)' }}
+      transition={{ duration: 0.22, ease: 'easeOut' }}
+      className="group bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e8dfd0] dark:border-white/8 overflow-hidden shadow-sm transition-shadow duration-300 flex flex-col"
     >
       {/* Hero banner */}
-      <div className="relative h-28 bg-gradient-to-br from-amber-400 via-orange-400 to-amber-600 overflow-hidden">
-        {/* Decorative pattern */}
-        <div
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
-            backgroundSize: '20px 20px',
-          }}
-        />
-        {/* Soft orb */}
-        <div className="absolute -top-6 -right-6 w-28 h-28 rounded-full bg-white/15 blur-2xl" />
-
-        {profileImage && (
-          <img src={profileImage} alt={name} className="w-full h-full object-cover opacity-30" />
-        )}
+      <div className="relative h-24 bg-gradient-to-br from-[#d4963e] via-[#c8833a] to-[#b86e2a] overflow-hidden flex-shrink-0">
+        <div className="absolute inset-0 opacity-10"
+          style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '18px 18px' }} />
+        <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-white/15 blur-xl" />
 
         {/* Availability badge */}
-        <div className="absolute top-3 right-3">
-          <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold backdrop-blur-sm border ${
+        <div className="absolute top-2.5 right-2.5">
+          <span className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold backdrop-blur-sm border ${
             isAvailable
-              ? 'bg-emerald-500/20 border-emerald-400/40 text-emerald-100'
-              : 'bg-gray-900/30 border-gray-500/40 text-gray-300'
+              ? 'bg-emerald-500/20 border-emerald-400/40 text-white'
+              : 'bg-black/30 border-white/20 text-white/70'
           }`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${isAvailable ? 'bg-emerald-400 animate-pulse' : 'bg-gray-400'}`} />
+            <span className={`w-1.5 h-1.5 rounded-full ${isAvailable ? 'bg-emerald-300 animate-pulse' : 'bg-gray-400'}`} />
             {isAvailable ? 'Available' : 'Busy'}
           </span>
         </div>
 
-        {/* Category tag */}
+        {/* Category */}
         {category && (
-          <div className="absolute top-3 left-3">
-            <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-black/25 backdrop-blur-sm text-white border border-white/20">
+          <div className="absolute top-2.5 left-2.5">
+            <span className="px-2 py-1 rounded-full text-[10px] font-bold bg-black/25 backdrop-blur-sm text-white border border-white/20">
               {category}
+            </span>
+          </div>
+        )}
+
+        {/* Distance */}
+        {distanceKm !== null && (
+          <div className="absolute bottom-2.5 right-2.5">
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-black/25 backdrop-blur-sm text-white border border-white/15">
+              📍 {distanceKm} km
             </span>
           </div>
         )}
       </div>
 
-      {/* Avatar — floats over the banner */}
-      <div className="px-4 pb-0 -mt-6 flex items-end justify-between">
-        <div className="relative">
-          <div className="w-14 h-14 rounded-2xl bg-white dark:bg-[#16161f] p-1 shadow-lg ring-2 ring-white dark:ring-[#16161f]">
-            <div className="w-full h-full rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold text-xl overflow-hidden">
-              {profileImage
-                ? <img src={profileImage} alt={name} className="w-full h-full object-cover rounded-xl" />
-                : name?.charAt(0)?.toUpperCase()
-              }
-            </div>
+      {/* Avatar overlapping banner */}
+      <div className="px-4 -mt-5 flex items-end justify-between">
+        <div className="w-12 h-12 rounded-2xl bg-white dark:bg-[#0e0d0b] p-0.5 shadow-lg ring-2 ring-white dark:ring-[#0e0d0b]">
+          {photo
+            ? <img src={photo} alt={name} className="w-full h-full rounded-xl object-cover" />
+            : <div className="w-full h-full rounded-xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] flex items-center justify-center text-white font-black text-lg">{initial}</div>
+          }
+        </div>
+        {wageAmount > 0 && (
+          <div className="mb-1 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/25 flex-shrink-0">
+            <span className="text-xs font-black text-[#c8933a]">
+              ₹{wageAmount}
+              <span className="font-normal text-[#c8933a]/70 text-[10px]">
+                /{wageUnit === 'daily' ? 'day' : wageUnit === 'hourly' ? 'hr' : 'job'}
+              </span>
+            </span>
           </div>
-        </div>
-
-        {/* Hourly rate chip */}
-        <div className="mb-1 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/25">
-          <span className="text-xs text-amber-600 dark:text-amber-400 font-bold">
-            ₹{workerHourlyRate}<span className="font-normal text-amber-500/70">/hr</span>
-          </span>
-        </div>
+        )}
       </div>
 
       {/* Body */}
-      <div className="px-4 pt-3 pb-4 space-y-3">
+      <div className="px-4 pt-2.5 pb-4 space-y-2.5 flex-1 flex flex-col">
         {/* Name + rating */}
         <div>
-          <h3 className="font-bold text-gray-900 dark:text-white text-base leading-tight">{name}</h3>
+          <h3 className="font-bold text-gray-900 dark:text-white text-sm leading-tight">{name}</h3>
           <div className="flex items-center gap-2 mt-1">
-            <RatingStars rating={workerRating} />
-            <span className="text-xs text-gray-400 dark:text-gray-500">
-              {workerRating > 0 ? workerRating.toFixed(1) : '—'} · {workerTotalReviews} reviews
-            </span>
+            <RatingStars rating={ratingAvg} />
+            {ratingCount > 0 && (
+              <span className="text-[10px] text-[#9c8a78]">({ratingCount} reviews)</span>
+            )}
           </div>
         </div>
 
-        {/* Experience + location */}
-        <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
-          {experience && (
+        {/* Experience + location row */}
+        <div className="flex flex-wrap items-center gap-2 text-[11px] text-[#9c8a78]">
+          {experience > 0 && (
             <span className="flex items-center gap-1">
-              <svg className="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3 h-3 text-[#c8933a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
-              {experience}y exp
+              {experience} yr{experience !== 1 ? 's' : ''} exp
             </span>
           )}
-          {workerLocation && (
+          {locationStr && (
             <span className="flex items-center gap-1">
-              <svg className="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3 h-3 text-[#c8933a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              {workerLocation}
+              {locationStr}
             </span>
           )}
         </div>
+
+        {/* Bio */}
+        {bio && (
+          <p className="text-[11px] text-[#9c8a78] leading-relaxed line-clamp-2">{bio}</p>
+        )}
 
         {/* Skills */}
         {skills.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
-            {skills.slice(0, 3).map((skill, idx) => (
-              <span
-                key={idx}
-                className="px-2.5 py-1 text-[11px] font-medium rounded-lg
-                  bg-gray-100 dark:bg-white/8 text-gray-600 dark:text-gray-400
-                  border border-gray-200 dark:border-white/10"
-              >
+            {skills.slice(0, 3).map((skill, i) => (
+              <span key={i}
+                className="px-2 py-0.5 text-[10px] font-semibold rounded-lg bg-amber-50 dark:bg-amber-500/10 text-[#c8933a] border border-amber-200 dark:border-amber-500/25">
                 {skill}
               </span>
             ))}
             {skills.length > 3 && (
-              <span className="px-2.5 py-1 text-[11px] font-medium rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20">
-                +{skills.length - 3} more
+              <span className="px-2 py-0.5 text-[10px] font-semibold rounded-lg bg-[#faf7f2] dark:bg-white/[0.06] text-[#9c8a78] border border-[#e8dfd0] dark:border-white/10">
+                +{skills.length - 3}
               </span>
             )}
           </div>
         )}
 
-        {/* Divider */}
-        <div className="h-px bg-gradient-to-r from-transparent via-gray-100 dark:via-white/8 to-transparent" />
+        {/* Available days */}
+        {availDays.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {availDays.map(day => (
+              <span key={day}
+                className="px-1.5 py-0.5 text-[9px] font-bold rounded bg-[#faf7f2] dark:bg-white/[0.04] text-[#9c8a78] border border-[#e8dfd0] dark:border-white/8 uppercase tracking-wide">
+                {day.slice(0,3)}
+              </span>
+            ))}
+          </div>
+        )}
 
-        {/* Actions */}
-        <div className="flex gap-2 pt-0.5">
+        {/* Actions — pushed to bottom */}
+        <div className="mt-auto pt-3 border-t border-[#e8dfd0] dark:border-white/8 flex gap-2">
           <Link
-            to={`/worker/${_id}`}
-            className="flex-1 text-center py-2.5 text-sm font-semibold rounded-xl
-              border-2 border-gray-200 dark:border-white/10
-              text-gray-700 dark:text-gray-300
-              hover:border-amber-300 dark:hover:border-amber-500/40
-              hover:text-amber-600 dark:hover:text-amber-400
-              hover:bg-amber-50 dark:hover:bg-amber-500/5
-              transition-all duration-200"
+            to={`/worker/${userId}`}
+            className="flex-1 text-center py-2.5 text-xs font-bold rounded-xl border border-[#e8dfd0] dark:border-white/10 text-[#9c8a78] hover:border-[#c8933a]/50 hover:text-[#c8933a] hover:bg-amber-50 dark:hover:bg-amber-500/5 transition-all duration-200"
           >
             View Profile
           </Link>
           <motion.button
             whileTap={{ scale: 0.96 }}
-            disabled={!isAvailable}
-            className="flex-1 py-2.5 text-sm font-semibold rounded-xl text-white
-              bg-gradient-to-r from-amber-500 to-orange-500
-              hover:from-amber-400 hover:to-orange-400
-              disabled:opacity-40 disabled:cursor-not-allowed
-              shadow-md shadow-amber-500/20 hover:shadow-amber-500/35
-              transition-all duration-200"
+            onClick={handleContact}
+            disabled={!isAvailable || contacting}
+            className="flex-1 py-2.5 text-xs font-bold rounded-xl text-white bg-gradient-to-br from-[#d4963e] to-[#b86e2a] shadow-sm hover:shadow-md shadow-[#c8833a]/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
           >
-            Hire Now
+            {contacting ? 'Connecting…' : 'Contact'}
           </motion.button>
         </div>
       </div>

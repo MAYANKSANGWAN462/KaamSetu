@@ -33,9 +33,17 @@ const groupMessagesByDate = (messages) => {
 }
 
 const Chat = () => {
-  const { userId } = useParams()
+  // FIX: route param is :conversationId — extract the other user's ID from it
+  const { conversationId } = useParams()
   const { user } = useAuth()
   const navigate = useNavigate()
+
+  // The conversationId is [userId1, userId2].sort().join('_')
+  // So we extract the other user's ID by removing our own
+  const otherUserId = conversationId
+    ? conversationId.split('_').find(id => id !== String(user?._id))
+    : null
+
   const [messages, setMessages] = useState([])
   const [otherUser, setOtherUser] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -48,17 +56,18 @@ const Chat = () => {
   const typingTimerRef = useRef(null)
 
   useEffect(() => {
+    if (!otherUserId) return
     fetchMessages()
     fetchOtherUser()
-  }, [userId])
+  }, [otherUserId])
 
   useEffect(() => {
-    if (!user?._id || !userId) return
-    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+    if (!user?._id || !otherUserId) return
+    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000'
     const socketBase = apiBase.replace(/\/?api\/?$/i, '')
     const socket = io(socketBase, { transports: ['websocket', 'polling'] })
     socketRef.current = socket
-    const cid = makeConversationId(user._id, userId)
+    const cid = makeConversationId(user._id, otherUserId)
 
     socket.emit('join', user._id)
     socket.emit('joinConversation', cid)
@@ -68,10 +77,10 @@ const Chat = () => {
       if (String(payload.senderId) === String(user._id)) return
       setMessages(prev => [...prev, {
         _id: payload.messageId || `${Date.now()}`,
-        message: payload.message,
+        content: payload.content,
         senderId: payload.senderId,
         createdAt: payload.createdAt || new Date().toISOString(),
-        read: payload.read
+        read: payload.isRead
       }])
     })
 
@@ -88,7 +97,7 @@ const Chat = () => {
       socket.disconnect()
       socketRef.current = null
     }
-  }, [user?._id, userId])
+  }, [user?._id, otherUserId])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -96,14 +105,15 @@ const Chat = () => {
 
   const fetchMessages = async () => {
     try {
-      const res = await messageService.getMessages(userId)
-      setMessages(res?.messages || [])
+      // Backend GET /messages/:conversationId expects the id1_id2 conversationId
+      const res = await messageService.getMessages(conversationId)
+      setMessages(res?.messages || res?.data?.messages || [])
     } catch { /* silent */ } finally { setLoading(false) }
   }
 
   const fetchOtherUser = async () => {
     try {
-      const res = await userService.getUserById(userId)
+      const res = await userService.getUserById(otherUserId)
       setOtherUser(res?.data || res)
     } catch { /* silent */ }
   }
@@ -113,15 +123,22 @@ const Chat = () => {
     if (!text || sending) return
     setInput('')
     setSending(true)
-    // Optimistic
-    const optimistic = { _id: `opt-${Date.now()}`, message: text, senderId: user._id, createdAt: new Date().toISOString(), optimistic: true }
+    const optimistic = {
+      _id: `opt-${Date.now()}`,
+      message: text,
+      senderId: user._id,
+      createdAt: new Date().toISOString(),
+      optimistic: true
+    }
     setMessages(prev => [...prev, optimistic])
     try {
-      const res = await messageService.sendMessage(userId, text)
+      // FIX: send to otherUserId not conversationId
+      const res = await messageService.sendMessage(otherUserId, text)
       const sent = res?.data || res
       setMessages(prev => prev.map(m => m._id === optimistic._id ? { ...sent } : m))
     } catch {
       setMessages(prev => prev.filter(m => m._id !== optimistic._id))
+      toast?.error?.('Failed to send message')
     } finally { setSending(false) }
   }
 
@@ -131,8 +148,8 @@ const Chat = () => {
 
   const handleInputChange = (e) => {
     setInput(e.target.value)
-    if (socketRef.current && user?._id) {
-      const cid = makeConversationId(user._id, userId)
+    if (socketRef.current && user?._id && otherUserId) {
+      const cid = makeConversationId(user._id, otherUserId)
       socketRef.current.emit('typing', { conversationId: cid, senderId: user._id })
     }
   }
@@ -140,13 +157,26 @@ const Chat = () => {
   const otherInitial = (otherUser?.name || 'U')[0].toUpperCase()
   const grouped = groupMessagesByDate(messages)
 
+  if (!otherUserId) {
+    return (
+      <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-[#9c8a78] text-sm">Invalid conversation</p>
+          <button onClick={() => navigate('/messages')} className="mt-3 text-[#c8933a] text-sm font-semibold">
+            Back to messages
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] flex flex-col pt-16">
 
       {/* ── HEADER ── */}
       <div className="sticky top-16 z-20 bg-white/90 dark:bg-[#0e0d0b]/90 backdrop-blur-xl border-b border-[#e8dfd0] dark:border-white/8 px-4 py-3.5 flex items-center gap-3">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => navigate('/messages')}
           className="w-9 h-9 rounded-xl border border-[#e8dfd0] dark:border-white/10 flex items-center justify-center text-[#9c8a78] hover:text-[#c8933a] hover:border-[#c8933a]/40 transition-all duration-200"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -177,7 +207,7 @@ const Chat = () => {
               <p className="text-xs text-[#9c8a78] dark:text-gray-600">
                 {isTyping ? (
                   <span className="text-[#c8933a] font-medium">typing…</span>
-                ) : 'Online'}
+                ) : 'tap to view profile'}
               </p>
             </div>
           </div>
@@ -192,7 +222,7 @@ const Chat = () => {
             {[false, true, false, false, true].map((isMe, i) => (
               <div key={i} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                 <div className={`h-10 rounded-2xl animate-pulse ${isMe ? 'bg-[#c8933a]/20' : 'bg-[#e8dfd0] dark:bg-white/10'}`}
-                  style={{ width: `${120 + Math.random() * 140}px` }} />
+                  style={{ width: `${120 + i * 28}px` }} />
               </div>
             ))}
           </div>
@@ -211,7 +241,6 @@ const Chat = () => {
         ) : (
           grouped.map(([date, msgs]) => (
             <div key={date}>
-              {/* Date separator */}
               <div className="flex items-center gap-3 my-5">
                 <div className="flex-1 h-px bg-[#e8dfd0] dark:bg-white/8" />
                 <span className="text-[10px] font-bold tracking-[0.1em] uppercase text-[#b8a898] dark:text-gray-600 px-3 py-1 rounded-full bg-[#faf7f2] dark:bg-white/[0.04] border border-[#e8dfd0] dark:border-white/8">
@@ -233,7 +262,6 @@ const Chat = () => {
                       transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
                       className={`flex items-end gap-2 ${isMe ? 'justify-end' : 'justify-start'}`}
                     >
-                      {/* Other user avatar */}
                       {!isMe && (
                         <div className="flex-shrink-0 mb-0.5">
                           {showAvatar ? (
@@ -248,7 +276,7 @@ const Chat = () => {
                         </div>
                       )}
 
-                      <div className={`max-w-[72%] group`}>
+                      <div className="max-w-[72%] group">
                         <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                           isMe
                             ? 'bg-gradient-to-br from-[#d4963e] to-[#b86e2a] text-white rounded-br-sm shadow-sm shadow-[#c8833a]/20'
@@ -296,8 +324,8 @@ const Chat = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* ── INPUT ── */}
-      <div className="sticky bottom-0 bg-white/90 dark:bg-[#0e0d0b]/90 backdrop-blur-xl border-t border-[#e8dfd0] dark:border-white/8 px-4 py-4">
+      {/* ── INPUT BAR ── */}
+      <div className="sticky bottom-0 bg-white/95 dark:bg-[#0e0d0b]/95 backdrop-blur-xl border-t border-[#e8dfd0] dark:border-white/8 px-4 py-4 safe-area-bottom">
         <div className="max-w-3xl mx-auto flex items-end gap-3">
           <div className="flex-1 relative">
             <textarea
@@ -330,8 +358,8 @@ const Chat = () => {
             )}
           </motion.button>
         </div>
-        <p className="text-center text-[10px] text-[#b8a898] dark:text-gray-700 mt-2">
-          Press Enter to send · Shift+Enter for new line
+        <p className="text-center text-[10px] text-[#b8a898] dark:text-gray-700 mt-2 hidden sm:block">
+          Enter to send · Shift+Enter for new line
         </p>
       </div>
     </div>

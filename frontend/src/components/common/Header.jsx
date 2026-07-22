@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { config } from '../../config';
 import ThemeToggle from './ThemeToggle';
 import HeaderModeToggle from './HeaderModeToggle';
+import NotificationBell from './NotificationBell';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Header = () => {
@@ -138,6 +139,9 @@ const Header = () => {
 
               {/* Theme toggle — always */}
               <ThemeToggle />
+
+              {/* Notification bell — authenticated only */}
+              {isAuthenticated ? <NotificationBell /> : null}
 
               {/* ── Authenticated state (desktop md+) ── */}
               {isAuthenticated ? (

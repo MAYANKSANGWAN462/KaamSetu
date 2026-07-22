@@ -4,6 +4,7 @@
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { JOB_CATEGORY_GROUPS, PRICE_PRESETS } from "../../utils/constants";
+import CreatableSelect from "react-select/creatable";
 
 const InputWrapper = ({ label, hint, children, icon }) => (
   <div className="group">
@@ -25,16 +26,16 @@ const JobForm = ({ onSubmit, loading, initialData }) => {
     title: initialData?.title || "",
     description: initialData?.description || "",
     category: initialData?.category || "",
-    locationCity: initialData?.location?.city || "",
-    latitude: initialData?.location?.latitude || "",
-    longitude: initialData?.location?.longitude || "",
-    salaryMode: initialData?.salary?.mode || "fixed",
-    salaryFixed: initialData?.salary?.fixed || initialData?.wage?.amount || 600,
-    salaryMin: initialData?.salary?.min || 400,
-    salaryMax: initialData?.salary?.max || 1000,
+    locationCity: initialData?.location?.address || "",
+    latitude: initialData?.location?.lat || "",
+    longitude: initialData?.location?.lng || "",
+    salaryMode: "fixed",
+    salaryFixed: initialData?.wage?.amount || 600,
+    salaryMin: 400,
+    salaryMax: 1000,
     workersRequired: initialData?.workersRequired || 1,
     duration: initialData?.duration || "",
-    requiredSkills: (initialData?.requiredSkills || []).join(", "),
+    requiredSkills: (initialData?.requiredSkills || []).map((s) => ({ value: s.toLowerCase(), label: s })),
   });
 
   const [activeSection, setActiveSection] = useState(null);
@@ -68,37 +69,30 @@ const JobForm = ({ onSubmit, loading, initialData }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const salary =
+
+    const wageAmount =
       formData.salaryMode === "range"
-        ? {
-            mode: "range",
-            min: Number(formData.salaryMin),
-            max: Number(formData.salaryMax),
-            recommended: recommendedSalary,
-          }
-        : {
-            mode: "fixed",
-            fixed: Number(formData.salaryFixed),
-            recommended: recommendedSalary,
-          };
+        ? Math.round(
+            (Number(formData.salaryMin) + Number(formData.salaryMax)) / 2,
+          )
+        : Number(formData.salaryFixed);
 
     onSubmit({
       title: formData.title,
       description: formData.description,
       category: formData.category,
       location: {
-        city: formData.locationCity,
-        latitude: formData.latitude ? Number(formData.latitude) : undefined,
-        longitude: formData.longitude ? Number(formData.longitude) : undefined,
+        address: formData.locationCity,
+        lat: formData.latitude ? Number(formData.latitude) : undefined,
+        lng: formData.longitude ? Number(formData.longitude) : undefined,
       },
-      salary,
-      budget: salary.fixed || salary.recommended,
+      wage: {
+        amount: wageAmount,
+        unit: "daily",
+      },
       workersRequired: Number(formData.workersRequired),
       duration: formData.duration,
-      requiredSkills: formData.requiredSkills
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean),
+      requiredSkills: (formData.requiredSkills || []).map((s) => s.label || s.value),
     });
   };
 
@@ -414,34 +408,92 @@ const JobForm = ({ onSubmit, loading, initialData }) => {
       <InputWrapper
         label="Required Skills"
         icon="🛠️"
-        hint="Separate each skill with a comma — e.g. wiring, switchboard, maintenance"
+        hint="Type a skill and press Enter, or pick from suggestions"
       >
-        <input
-          type="text"
-          name="requiredSkills"
+        <CreatableSelect
+          isMulti
+          isClearable
+          placeholder="e.g. welding, scaffolding…"
           value={formData.requiredSkills}
-          onChange={handleChange}
-          className={baseInput}
-          placeholder="e.g. welding, scaffolding, safety gear"
+          onChange={(selected) =>
+            setFormData((prev) => ({ ...prev, requiredSkills: selected || [] }))
+          }
+          options={[
+            "Welding",
+            "Plumbing",
+            "Electrical wiring",
+            "Carpentry",
+            "Painting",
+            "Masonry",
+            "Scaffolding",
+            "Driving",
+            "Cooking",
+            "Cleaning",
+            "Loading/Unloading",
+            "Security",
+            "Tailoring",
+            "Farming",
+            "Mechanic",
+          ].map((s) => ({ value: s.toLowerCase(), label: s }))}
+          styles={{
+            control: (base, state) => ({
+              ...base,
+              borderRadius: "0.75rem",
+              borderColor: state.isFocused ? "#c8933a" : "#e8dfd0",
+              boxShadow: state.isFocused
+                ? "0 0 0 3px rgba(200,147,58,0.15)"
+                : "none",
+              backgroundColor: "transparent",
+              padding: "2px 4px",
+              fontSize: "0.875rem",
+              "&:hover": { borderColor: "#c8933a" },
+            }),
+            multiValue: (base) => ({
+              ...base,
+              backgroundColor: "rgba(200,147,58,0.12)",
+              borderRadius: "0.5rem",
+              border: "1px solid rgba(200,147,58,0.3)",
+            }),
+            multiValueLabel: (base) => ({
+              ...base,
+              color: "#c8933a",
+              fontWeight: "600",
+              fontSize: "0.75rem",
+            }),
+            multiValueRemove: (base) => ({
+              ...base,
+              color: "#c8933a",
+              borderRadius: "0 0.5rem 0.5rem 0",
+              "&:hover": {
+                backgroundColor: "rgba(200,147,58,0.2)",
+                color: "#b86e2a",
+              },
+            }),
+            menu: (base) => ({
+              ...base,
+              borderRadius: "0.75rem",
+              border: "1px solid #e8dfd0",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+              overflow: "hidden",
+            }),
+            option: (base, state) => ({
+              ...base,
+              fontSize: "0.875rem",
+              backgroundColor: state.isSelected
+                ? "rgba(200,147,58,0.15)"
+                : state.isFocused
+                  ? "rgba(200,147,58,0.07)"
+                  : "transparent",
+              color: state.isSelected ? "#b86e2a" : "inherit",
+            }),
+            placeholder: (base) => ({
+              ...base,
+              color: "#9c8a78",
+              fontSize: "0.875rem",
+            }),
+            input: (base) => ({ ...base, fontSize: "0.875rem" }),
+          }}
         />
-        {formData.requiredSkills && (
-          <div className="flex flex-wrap gap-1.5 mt-2">
-            {formData.requiredSkills
-              .split(",")
-              .map((s) => s.trim())
-              .filter(Boolean)
-              .map((skill, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  className="px-2.5 py-1 bg-amber-50 dark:bg-amber-500/10 text-[#c8933a] border border-amber-200 dark:border-amber-500/30 rounded-full text-xs font-medium"
-                >
-                  {skill}
-                </motion.span>
-              ))}
-          </div>
-        )}
       </InputWrapper>
 
       {/* Submit */}

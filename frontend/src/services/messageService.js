@@ -36,7 +36,7 @@ class MessageService {
   // Send a message
   async sendMessage(receiverId, message) {
     try {
-      const response = await api.post('/messages', { receiverId, message });
+      const response = await api.post('/messages', { receiverId, content: message });
       return response.data;
     } catch (error) {
       throw this.handleError(error);

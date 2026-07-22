@@ -64,6 +64,10 @@ const createJob = async (req, res) => {
 
     const wage = parseWage(req.body);
     const workersRequired = Math.max(1, toNum(req.body.workersRequired, 1));
+    const duration = String(req.body.duration || '').trim().slice(0, 100);
+    const requiredSkills = Array.isArray(req.body.requiredSkills)
+      ? req.body.requiredSkills.map((s) => String(s).trim()).filter(Boolean).slice(0, 30)
+      : [];
 
     let startDate = null;
     if (req.body.startDate) {
@@ -78,6 +82,8 @@ const createJob = async (req, res) => {
       category: String(category).trim(),
       wage,
       workersRequired,
+      duration,
+      requiredSkills,
       location: loc,
       status: 'open',
       startDate
@@ -311,6 +317,14 @@ const updateJob = async (req, res) => {
     if (req.body.workersRequired !== undefined) {
       job.workersRequired = Math.max(1, toNum(req.body.workersRequired, 1));
     }
+    if (req.body.duration !== undefined) {
+      job.duration = String(req.body.duration || '').trim().slice(0, 100);
+    }
+    if (req.body.requiredSkills !== undefined) {
+      job.requiredSkills = Array.isArray(req.body.requiredSkills)
+        ? req.body.requiredSkills.map((s) => String(s).trim()).filter(Boolean).slice(0, 30)
+        : [];
+    }
     if (req.body.location !== undefined) {
       job.location = normalizeJobLocation(req.body.location);
     }
@@ -396,11 +410,26 @@ const deleteJob = async (req, res) => {
   }
 };
 
-module.exports = {
-  createJob,
-  getJobs,
-  getMyJobs,
-  getJobById,
-  updateJob,
-  deleteJob
+/* ─── PATCH /api/jobs/:id/status ─────────────────────────── */
+const updateJobStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    if (!['open', 'cancelled'].includes(status)) {
+      return res.status(400).json({ success: false, message: 'Status must be open or cancelled' });
+    }
+    const job = await Job.findById(req.params.id);
+    if (!job) return res.status(404).json({ success: false, message: 'Job not found' });
+    if (job.hirerId.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Not authorized' });
+    }
+    job.status = status;
+    await job.save();
+    return res.json({ success: true, message: `Job ${status}`, data: { _id: job._id, status: job.status } });
+  } catch (error) {
+    console.error('[updateJobStatus]', error.message);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
+  }
 };
+
+
+module.exports = { createJob, getJobs, getMyJobs, getJobById, updateJob, deleteJob, updateJobStatus };

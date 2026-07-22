@@ -1,9 +1,9 @@
-const Application = require('../models/Application');
-const Job = require('../models/Job');
-const WorkerProfile = require('../models/WorkerProfile');
-const User = require('../models/User');
-const { makeConversationId } = require('../utils/conversationId');
-const { getIo } = require('../config/socket');
+const Application = require("../models/Application");
+const Job = require("../models/Job");
+const WorkerProfile = require("../models/WorkerProfile");
+const User = require("../models/User");
+const { makeConversationId } = require("../utils/conversationId");
+const { getIo } = require("../config/socket");
 
 /* ─── POST /api/applications ─────────────────────────────── */
 // Worker applies to a job
@@ -13,46 +13,43 @@ const applyToJob = async (req, res) => {
     const { jobId } = req.body;
 
     if (!jobId) {
-      return res.status(400).json({ success: false, message: 'jobId is required' });
+      return res
+        .status(400)
+        .json({ success: false, message: "jobId is required" });
     }
 
     const workerProfile = await WorkerProfile.findOne({
-      userId: req.user._id
+      userId: req.user._id,
     }).lean();
-    if (!workerProfile) {
-      return res.status(403).json({
-        success: false,
-        message: 'Please create your worker profile before applying for jobs'
-      });
-    }
+    // Worker profile is optional — allow applying without one
 
     const job = await Job.findById(jobId).lean();
     if (!job) {
-      return res.status(404).json({ success: false, message: 'Job not found' });
+      return res.status(404).json({ success: false, message: "Job not found" });
     }
 
-    if (job.status !== 'open') {
+    if (job.status !== "open") {
       return res.status(400).json({
         success: false,
-        message: 'This job is no longer accepting applications'
+        message: "This job is no longer accepting applications",
       });
     }
 
-    if (job.hirerId.toString() === req.user._id.toString()) {
+    if (job.hirerId && job.hirerId.toString() === req.user._id.toString()) {
       return res.status(400).json({
         success: false,
-        message: 'You cannot apply to your own job posting'
+        message: "You cannot apply to your own job posting",
       });
     }
 
     const existing = await Application.findOne({
       jobId,
-      workerId: req.user._id
+      workerId: req.user._id,
     }).lean();
     if (existing) {
       return res.status(409).json({
         success: false,
-        message: 'You have already applied for this job'
+        message: "You have already applied for this job",
       });
     }
 
@@ -60,31 +57,33 @@ const applyToJob = async (req, res) => {
       jobId,
       workerId: req.user._id,
       hirerId: job.hirerId,
-      status: 'pending'
+      status: "pending",
     });
 
     // Notify hirer via socket
     try {
       const io = getIo();
-      io.to(job.hirerId.toString()).emit('newApplication', {
+      io.to(job.hirerId.toString()).emit("newApplication", {
         jobId: job._id.toString(),
         jobTitle: job.title,
         workerId: req.user._id.toString(),
         applicationId: application._id.toString(),
-        message: 'A worker has applied for your job'
+        message: "A worker has applied for your job",
       });
     } catch (socketErr) {
-      console.warn('[applyToJob] Socket emit skipped:', socketErr.message);
+      console.warn("[applyToJob] Socket emit skipped:", socketErr.message);
     }
 
     return res.status(201).json({
       success: true,
-      message: 'Application submitted successfully',
-      data: application
+      message: "Application submitted successfully",
+      data: application,
     });
   } catch (error) {
-    console.error('[applyToJob]', error.message);
-    return res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error("[applyToJob]", error.message);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -96,18 +95,22 @@ const contactWorker = async (req, res) => {
     const { workerId } = req.body;
 
     if (!workerId) {
-      return res.status(400).json({ success: false, message: 'workerId is required' });
+      return res
+        .status(400)
+        .json({ success: false, message: "workerId is required" });
     }
 
     const worker = await User.findById(workerId).lean();
     if (!worker) {
-      return res.status(404).json({ success: false, message: 'Worker not found' });
+      return res
+        .status(404)
+        .json({ success: false, message: "Worker not found" });
     }
 
     if (workerId === req.user._id.toString()) {
       return res.status(400).json({
         success: false,
-        message: 'You cannot contact yourself'
+        message: "You cannot contact yourself",
       });
     }
 
@@ -115,17 +118,17 @@ const contactWorker = async (req, res) => {
     const existing = await Application.findOne({
       workerId,
       hirerId: req.user._id,
-      jobId: null
+      jobId: null,
     }).lean();
 
     if (existing) {
       return res.json({
         success: true,
-        message: 'Interaction already exists',
+        message: "Interaction already exists",
         data: {
           application: existing,
-          conversationId: makeConversationId(req.user._id, workerId)
-        }
+          conversationId: makeConversationId(req.user._id, workerId),
+        },
       });
     }
 
@@ -133,32 +136,34 @@ const contactWorker = async (req, res) => {
       jobId: null,
       workerId,
       hirerId: req.user._id,
-      status: 'pending'
+      status: "pending",
     });
 
     // Notify worker via socket
     try {
       const io = getIo();
-      io.to(workerId.toString()).emit('hirerContact', {
+      io.to(workerId.toString()).emit("hirerContact", {
         hirerId: req.user._id.toString(),
         applicationId: application._id.toString(),
-        message: 'A hirer wants to connect with you'
+        message: "A hirer wants to connect with you",
       });
     } catch (socketErr) {
-      console.warn('[contactWorker] Socket emit skipped:', socketErr.message);
+      console.warn("[contactWorker] Socket emit skipped:", socketErr.message);
     }
 
     return res.status(201).json({
       success: true,
-      message: 'Contact request sent',
+      message: "Contact request sent",
       data: {
         application,
-        conversationId: makeConversationId(req.user._id, workerId)
-      }
+        conversationId: makeConversationId(req.user._id, workerId),
+      },
     });
   } catch (error) {
-    console.error('[contactWorker]', error.message);
-    return res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error("[contactWorker]", error.message);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -168,15 +173,17 @@ const contactWorker = async (req, res) => {
 const getMyApplications = async (req, res) => {
   try {
     const applications = await Application.find({ workerId: req.user._id })
-      .populate('jobId', 'title description wage location status hirerId')
-      .populate('hirerId', 'name profilePhoto')
+      .populate("jobId", "title description wage location status hirerId")
+      .populate("hirerId", "name profilePhoto")
       .sort({ createdAt: -1 })
       .lean();
 
     return res.json({ success: true, data: applications });
   } catch (error) {
-    console.error('[getMyApplications]', error.message);
-    return res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error("[getMyApplications]", error.message);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -188,21 +195,21 @@ const getJobApplicants = async (req, res) => {
     const job = await Job.findById(req.params.jobId).lean();
 
     if (!job) {
-      return res.status(404).json({ success: false, message: 'Job not found' });
+      return res.status(404).json({ success: false, message: "Job not found" });
     }
 
     if (
       job.hirerId.toString() !== req.user._id.toString() &&
-      req.user.role !== 'admin'
+      req.user.role !== "admin"
     ) {
       return res.status(403).json({
         success: false,
-        message: 'Not authorized to view applicants for this job'
+        message: "Not authorized to view applicants for this job",
       });
     }
 
     const applications = await Application.find({ jobId: req.params.jobId })
-      .populate('workerId', 'name email phone profilePhoto')
+      .populate("workerId", "name email phone profilePhoto")
       .sort({ createdAt: -1 })
       .lean();
 
@@ -211,17 +218,19 @@ const getJobApplicants = async (req, res) => {
       applications.map(async (app) => {
         const workerProfile = app.workerId
           ? await WorkerProfile.findOne({ userId: app.workerId._id })
-              .select('category skills wage rating isAvailable')
+              .select("category skills wage rating isAvailable")
               .lean()
           : null;
         return { ...app, workerProfile };
-      })
+      }),
     );
 
     return res.json({ success: true, data: enriched });
   } catch (error) {
-    console.error('[getJobApplicants]', error.message);
-    return res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error("[getJobApplicants]", error.message);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -235,7 +244,7 @@ const checkInteraction = async (req, res) => {
     if (!jobId && !workerId) {
       return res.status(400).json({
         success: false,
-        message: 'Provide jobId or workerId as query parameter'
+        message: "Provide jobId or workerId as query parameter",
       });
     }
 
@@ -247,7 +256,7 @@ const checkInteraction = async (req, res) => {
       // Hirer checking if they have interacted with a worker
       query = {
         workerId,
-        hirerId: req.user._id
+        hirerId: req.user._id,
       };
     }
 
@@ -261,14 +270,16 @@ const checkInteraction = async (req, res) => {
         conversationId: interaction
           ? makeConversationId(
               req.user._id,
-              jobId ? interaction.hirerId : workerId
+              jobId ? interaction.hirerId : workerId,
             )
-          : null
-      }
+          : null,
+      },
     });
   } catch (error) {
-    console.error('[checkInteraction]', error.message);
-    return res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error("[checkInteraction]", error.message);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -279,47 +290,51 @@ const updateApplicationStatus = async (req, res) => {
   try {
     const { status } = req.body;
 
-    if (!['accepted', 'rejected'].includes(status)) {
+    if (!["accepted", "rejected"].includes(status)) {
       return res.status(400).json({
         success: false,
-        message: 'Status must be "accepted" or "rejected"'
+        message: 'Status must be "accepted" or "rejected"',
       });
     }
 
     const application = await Application.findById(req.params.id);
     if (!application) {
-      return res.status(404).json({ success: false, message: 'Application not found' });
+      return res
+        .status(404)
+        .json({ success: false, message: "Application not found" });
     }
 
     if (application.hirerId.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
-        message: 'Not authorized to update this application'
+        message: "Not authorized to update this application",
       });
     }
 
-    if (status === 'accepted' && application.jobId) {
+    if (status === "accepted" && application.jobId) {
       const job = await Job.findById(application.jobId);
       if (!job) {
-        return res.status(404).json({ success: false, message: 'Associated job not found' });
+        return res
+          .status(404)
+          .json({ success: false, message: "Associated job not found" });
       }
 
       const acceptedCount = await Application.countDocuments({
         jobId: application.jobId,
-        status: 'accepted'
+        status: "accepted",
       });
 
       if (acceptedCount >= job.workersRequired) {
         return res.status(400).json({
           success: false,
-          message: `This job only needs ${job.workersRequired} worker(s) and that quota is already filled`
+          message: `This job only needs ${job.workersRequired} worker(s) and that quota is already filled`,
         });
       }
 
-      application.status = 'accepted';
+      application.status = "accepted";
       const newCount = acceptedCount + 1;
       if (newCount >= job.workersRequired) {
-        job.status = 'filled';
+        job.status = "filled";
         await job.save();
       }
     } else {
@@ -331,23 +346,28 @@ const updateApplicationStatus = async (req, res) => {
     // Notify worker via socket
     try {
       const io = getIo();
-      io.to(application.workerId.toString()).emit('applicationStatusUpdate', {
+      io.to(application.workerId.toString()).emit("applicationStatusUpdate", {
         applicationId: application._id.toString(),
         status: application.status,
-        jobId: application.jobId?.toString()
+        jobId: application.jobId?.toString(),
       });
     } catch (socketErr) {
-      console.warn('[updateApplicationStatus] Socket emit skipped:', socketErr.message);
+      console.warn(
+        "[updateApplicationStatus] Socket emit skipped:",
+        socketErr.message,
+      );
     }
 
     return res.json({
       success: true,
       message: `Application ${status}`,
-      data: application
+      data: application,
     });
   } catch (error) {
-    console.error('[updateApplicationStatus]', error.message);
-    return res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error("[updateApplicationStatus]", error.message);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -357,5 +377,5 @@ module.exports = {
   getMyApplications,
   getJobApplicants,
   checkInteraction,
-  updateApplicationStatus
+  updateApplicationStatus,
 };

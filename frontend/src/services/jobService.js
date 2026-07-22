@@ -42,21 +42,21 @@ import api from "./api";
 
 class JobService {
   normalizeJobsPayload(responseData) {
-    const root = responseData?.data || responseData || {}
+    const root = responseData?.data || responseData || {};
 
     if (Array.isArray(root)) {
-      return root
+      return root;
     }
 
     if (Array.isArray(root.jobs)) {
-      return root.jobs
+      return root.jobs;
     }
 
     if (Array.isArray(responseData?.jobs)) {
-      return responseData.jobs
+      return responseData.jobs;
     }
 
-    return []
+    return [];
   }
 
   // Get all jobs with filters
@@ -72,7 +72,7 @@ class JobService {
       const queryString = params.toString();
       const endpoint = `/jobs${queryString ? `?${queryString}` : ""}`;
       const response = await api.get(endpoint);
-      const jobs = this.normalizeJobsPayload(response.data)
+      const jobs = this.normalizeJobsPayload(response.data);
 
       return {
         success: true,
@@ -86,7 +86,7 @@ class JobService {
   }
 
   async getAllJobs() {
-    return this.getJobs()
+    return this.getJobs();
   }
 
   // Get job by ID
@@ -142,7 +142,10 @@ class JobService {
   // Apply for job
   async applyForJob(jobId, applicationData) {
     try {
-      const response = await api.post(`/jobs/${jobId}/apply`, applicationData);
+      const response = await api.post("/applications", {
+        jobId,
+        ...applicationData,
+      });
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -162,7 +165,7 @@ class JobService {
   // Get applications submitted by current user
   async getMyApplications() {
     try {
-      const response = await api.get('/jobs/applications/my');
+      const response = await api.get("/applications/mine");
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -172,8 +175,8 @@ class JobService {
   // Accept application
   async acceptApplication(jobId, applicationId) {
     try {
-      const response = await api.put(`/jobs/${jobId}/applications/${applicationId}`, {
-        status: 'accepted'
+      const response = await api.put(`/applications/${applicationId}/status`, {
+        status: "accepted",
       });
       return response.data;
     } catch (error) {
@@ -181,11 +184,10 @@ class JobService {
     }
   }
 
-  // Reject application
   async rejectApplication(jobId, applicationId) {
     try {
-      const response = await api.put(`/jobs/${jobId}/applications/${applicationId}`, {
-        status: 'rejected'
+      const response = await api.put(`/applications/${applicationId}/status`, {
+        status: "rejected",
       });
       return response.data;
     } catch (error) {
