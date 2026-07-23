@@ -244,12 +244,12 @@ const loginUser = async (req, res) => {
 
 const googleLogin = async (req, res) => {
   try {
-    const { credential } = req.body;
+    const { code, credential } = req.body;
 
-    if (!credential) {
+    if (!code && !credential) {
       return res.status(400).json({
         success: false,
-        message: 'Google credential is required'
+        message: 'Google authorization code is required'
       });
     }
 
@@ -260,22 +260,50 @@ const googleLogin = async (req, res) => {
       });
     }
 
-    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-    let ticket;
-    try {
-      ticket = await client.verifyIdToken({
-        idToken: credential,
-        audience: process.env.GOOGLE_CLIENT_ID
-      });
-    } catch (err) {
-      console.error('[googleLogin] Token verification failed:', err.message);
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid Google token'
-      });
-    }
+    let payload;
 
-    const payload = ticket.getPayload();
+    if (code) {
+      // Auth-code flow (popup opened from your own button — never blocked by browsers)
+      const client = new OAuth2Client({
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        redirectUri: 'postmessage',
+      });
+      let tokens;
+      try {
+        const tokenResponse = await client.getToken(code);
+        tokens = tokenResponse.tokens;
+      } catch (err) {
+        console.error('[googleLogin] Code exchange failed:', err.message);
+        return res.status(401).json({ success: false, message: 'Invalid Google authorization code' });
+      }
+      const verifyClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+      let ticket;
+      try {
+        ticket = await verifyClient.verifyIdToken({
+          idToken: tokens.id_token,
+          audience: process.env.GOOGLE_CLIENT_ID,
+        });
+      } catch (err) {
+        console.error('[googleLogin] Token verification failed:', err.message);
+        return res.status(401).json({ success: false, message: 'Invalid Google token' });
+      }
+      payload = ticket.getPayload();
+    } else {
+      // Legacy credential flow (kept for backward compatibility)
+      const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+      let ticket;
+      try {
+        ticket = await client.verifyIdToken({
+          idToken: credential,
+          audience: process.env.GOOGLE_CLIENT_ID
+        });
+      } catch (err) {
+        console.error('[googleLogin] Token verification failed:', err.message);
+        return res.status(401).json({ success: false, message: 'Invalid Google token' });
+      }
+      payload = ticket.getPayload();
+    }
     if (!payload?.email) {
       return res.status(400).json({ success: false, message: 'Invalid Google payload' });
     }

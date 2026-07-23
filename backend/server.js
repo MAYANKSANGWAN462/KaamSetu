@@ -56,7 +56,7 @@ const generalLimiter = rateLimit({
 
 const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:3000')
   .split(',')
-  .map((o) => o.trim())
+  .map((o) => o.trim().replace(/\/$/, ''))
   .filter(Boolean);
 
 const corsOptions = {
