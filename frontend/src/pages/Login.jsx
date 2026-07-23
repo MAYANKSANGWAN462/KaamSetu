@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../context/AuthContext'
@@ -6,10 +6,31 @@ import LoginForm from '../components/auth/LoginForm'
 
 
 const Login = () => {
-  const { login } = useAuth()
+  const { login, googleLogin } = useAuth()
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [error, setError] = useState('')
+  const [googleLoading, setGoogleLoading] = useState(false)
+
+  // Handle Google redirect callback — Google sends ?code= back to this page
+  useEffect(() => {
+    const code = searchParams.get('code')
+    if (!code) return
+
+    setSearchParams({}, { replace: true }) // remove ?code= from URL immediately
+    setGoogleLoading(true)
+
+    googleLogin(code, window.location.origin + '/login')
+      .then((result) => {
+        if (result?.success) {
+          navigate('/dashboard', { replace: true })
+        } else {
+          setError(result?.message || 'Google login failed')
+        }
+      })
+      .catch(() => setError('Google login failed. Please try again.'))
+      .finally(() => setGoogleLoading(false))
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSubmit = async (email, password) => {
     setError('')
@@ -25,20 +46,6 @@ const Login = () => {
     }
     return result
   }
-
-  // const handleGoogleLogin = async (credential) => {
-  //   setError('')
-  //   const result = await googleLogin(credential)
-  //   if (result.success) {
-  //     const redirect = searchParams.get('redirect')
-  //     const safe =
-  //       redirect && redirect.startsWith('/') && !redirect.startsWith('//')
-  //         ? redirect : '/dashboard'
-  //     navigate(safe)
-  //   } else {
-  //     setError(result.message || 'Google login failed')
-  //   }
-  // }
 
   return (
     <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] flex">
@@ -158,7 +165,17 @@ const Login = () => {
 
           {/* Form card */}
           <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/[0.08] p-7 shadow-sm">
-            <LoginForm onSubmit={handleSubmit} />
+            {googleLoading ? (
+              <div className="flex flex-col items-center justify-center py-10 gap-3">
+                <svg className="animate-spin w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Signing you in with Google...</p>
+              </div>
+            ) : (
+              <LoginForm onSubmit={handleSubmit} />
+            )}
           </div>
 
           {/* Footer */}

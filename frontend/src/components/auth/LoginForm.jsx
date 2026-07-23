@@ -7,22 +7,10 @@ const LoginForm = ({ onSubmit }) => {
   const [email, setEmail] = useState("");
   const { googleLogin } = useAuth();
 
-  const googleLoginPopup = useGoogleLogin({
+  const googleLoginRedirect = useGoogleLogin({
     flow: 'auth-code',
-    onSuccess: async (codeResponse) => {
-      try {
-        const result = await googleLogin(codeResponse.code);
-        if (!result?.success) {
-          setSubmitError(result?.message || "Google login failed");
-          return;
-        }
-        window.location.href = "/dashboard";
-      } catch (err) {
-        console.error("Google login error:", err);
-        setSubmitError("Google login failed. Please try again.");
-      }
-    },
-    onError: () => setSubmitError("Google sign-in was cancelled or failed. Please try again."),
+    ux_mode: 'redirect',
+    redirect_uri: window.location.origin + '/login',
   });
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -74,7 +62,7 @@ const LoginForm = ({ onSubmit }) => {
       >
         <button
           type="button"
-          onClick={() => googleLoginPopup()}
+          onClick={() => googleLoginRedirect()}
           className="w-full flex items-center justify-center gap-3 rounded-xl border-2 border-gray-200 dark:border-white/10 bg-white/60 dark:bg-white/5 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-200 hover:border-gray-300 dark:hover:border-white/20 hover:bg-white dark:hover:bg-white/10 transition-all duration-300"
         >
           <svg viewBox="0 0 24 24" className="w-5 h-5 flex-shrink-0">

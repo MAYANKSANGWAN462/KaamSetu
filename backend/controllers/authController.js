@@ -244,7 +244,7 @@ const loginUser = async (req, res) => {
 
 const googleLogin = async (req, res) => {
   try {
-    const { code, credential } = req.body;
+    const { code, credential, redirect_uri } = req.body;
 
     if (!code && !credential) {
       return res.status(400).json({
@@ -267,7 +267,7 @@ const googleLogin = async (req, res) => {
       const client = new OAuth2Client({
         clientId: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        redirectUri: 'postmessage',
+        redirectUri: redirect_uri || 'postmessage',
       });
       let tokens;
       try {

@@ -142,11 +142,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const googleLogin = async (code) => {
+  const googleLogin = async (code, redirectUri) => {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/auth/google`,
-        { code },
+        { code, redirect_uri: redirectUri },
         { withCredentials: true },
       );
 
