@@ -131,6 +131,9 @@ const createReview = async (req, res) => {
 const getWorkerReviews = async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
+    if (!mongoose.isValidObjectId(req.params.workerId)) {
+      return res.status(400).json({ success: false, message: 'Invalid worker id' });
+    }
     const pageNum = Math.max(1, parseInt(page, 10));
     const limitNum = Math.max(1, parseInt(limit, 10));
     const skip = (pageNum - 1) * limitNum;

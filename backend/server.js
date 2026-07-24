@@ -28,22 +28,9 @@ app.set('trust proxy', 1);
 
 /* ===================== RATE LIMITERS ===================== */
 
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
-  message: { success: false, message: 'Too many attempts. Try again after 15 minutes.' },
-  standardHeaders: true,
-  legacyHeaders: false
-});
-
-const registerLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000,
-  max: 3,
-  message: { success: false, message: 'Too many registrations. Try again after an hour.' },
-  standardHeaders: true,
-  legacyHeaders: false
-});
-
+// NOTE: Auth-specific limits (login/register/google) live in authRoutes.js and
+// are environment-aware (relaxed in development). Only the app-wide limiter is
+// defined here to avoid double-limiting the auth endpoints.
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
@@ -116,10 +103,7 @@ app.get('/api/test', (req, res) => {
 
 /* ===================== API ROUTES ===================== */
 
-// Auth routes with specific rate limits on sensitive endpoints
-app.use('/api/auth/login', authLimiter);
-app.use('/api/auth/register', registerLimiter);
-
+// Auth-specific rate limits are applied per-route in authRoutes.js.
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/workers', workerRoutes);

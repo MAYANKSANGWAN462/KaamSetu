@@ -6,6 +6,14 @@ const User = require('../models/User');
 const { setTokenCookie, clearTokenCookie } = require('../utils/generateToken');
 const { sanitizeUserDoc } = require('../utils/sanitizeUser');
 
+/**
+ * One-way hash used to store email-verification and password-reset tokens at
+ * rest. The raw token is emailed to the user; only its SHA-256 digest is
+ * persisted, so a database read alone cannot be used to take over an account.
+ */
+const hashToken = (raw) =>
+  crypto.createHash('sha256').update(String(raw)).digest('hex');
+
 /* ─── Email ─────────────────────────────────────────────── */
 
 async function sendVerificationEmail(toEmail, token) {
@@ -141,8 +149,10 @@ const registerUser = async (req, res) => {
       isVerified: isDev
     };
 
+    let rawVerificationToken = null;
     if (!isDev) {
-      createPayload.verificationToken = crypto.randomBytes(32).toString('hex');
+      rawVerificationToken = crypto.randomBytes(32).toString('hex');
+      createPayload.verificationToken = hashToken(rawVerificationToken);
       createPayload.verificationExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
     }
 
@@ -157,8 +167,8 @@ const registerUser = async (req, res) => {
     const userPayload = buildSafeUser(user);
     const token = setTokenCookie(res, user._id);
 
-    if (!isDev && createPayload.verificationToken) {
-      sendVerificationEmail(emailNormalized, createPayload.verificationToken).catch(
+    if (!isDev && rawVerificationToken) {
+      sendVerificationEmail(emailNormalized, rawVerificationToken).catch(
         (err) => console.error('[auth] Verification email failed:', err.message)
       );
     }
@@ -462,7 +472,7 @@ const verifyEmail = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ verificationToken: token }).select(
+    const user = await User.findOne({ verificationToken: hashToken(token) }).select(
       '+verificationToken +verificationExpiry'
     );
 
@@ -500,17 +510,19 @@ const forgotPassword = async (req, res) => {
     if (!user) return res.json({ success: true, message: successMsg });
 
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      console.warn('[auth] Email not configured — cannot send reset email');
-      return res.status(503).json({ success: false, message: 'Email service is not configured. Contact support.' });
+      // Return the same generic response as the "no such user" branch so a
+      // misconfigured mailer can't be used to enumerate registered emails.
+      console.error('[auth] Email not configured — reset email NOT sent for a registered user');
+      return res.json({ success: true, message: successMsg });
     }
 
-    const token = crypto.randomBytes(32).toString('hex');
-    user.resetPasswordToken = token;
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    user.resetPasswordToken = hashToken(rawToken);
     user.resetPasswordExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
     await user.save();
 
     const baseUrl = (process.env.FRONTEND_URL || 'http://localhost:3000').split(',')[0].trim().replace(/\/$/, '');
-    const link = `${baseUrl}/reset-password?token=${encodeURIComponent(token)}`;
+    const link = `${baseUrl}/reset-password?token=${encodeURIComponent(rawToken)}`;
 
     const transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST || 'smtp.gmail.com',
@@ -566,7 +578,7 @@ const resetPassword = async (req, res) => {
       }
     }
 
-    const user = await User.findOne({ resetPasswordToken: token }).select('+resetPasswordToken +resetPasswordExpiry');
+    const user = await User.findOne({ resetPasswordToken: hashToken(token) }).select('+resetPasswordToken +resetPasswordExpiry');
 
     if (!user || !user.resetPasswordExpiry || user.resetPasswordExpiry < new Date()) {
       return res.status(400).json({ success: false, message: 'This reset link is invalid or has expired. Please request a new one.' });

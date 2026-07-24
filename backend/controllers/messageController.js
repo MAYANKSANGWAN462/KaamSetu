@@ -111,6 +111,15 @@ const getConversation = async (req, res) => {
     }
 
     const myId = req.user._id.toString();
+    // The requester MUST be one of the two participants encoded in the id —
+    // otherwise a user could read a conversation between two other people by
+    // guessing/constructing their conversationId. Mirrors the socket-layer guard.
+    if (!parts.includes(myId)) {
+      return res.status(403).json({
+        success: false,
+        message: 'You do not have access to this conversation'
+      });
+    }
     const otherId = parts[0] === myId ? parts[1] : parts[0];
 
     const allowed = await hasInteraction(req.user._id, otherId);
