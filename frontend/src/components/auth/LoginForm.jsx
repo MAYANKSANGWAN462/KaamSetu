@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useAuth } from '../../context/AuthContext';
@@ -107,9 +108,17 @@ const LoginForm = ({ onSubmit }) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <label className="block text-xs font-semibold uppercase tracking-widest text-gray-500 mb-2">
-          Password
-        </label>
+        <div className="flex items-center justify-between mb-2">
+          <label className="block text-xs font-semibold uppercase tracking-widest text-gray-500">
+            Password
+          </label>
+          <Link
+            to="/forgot-password"
+            className="text-xs text-[#c8933a] font-semibold hover:text-[#a8732a] transition-colors duration-200"
+          >
+            Forgot password?
+          </Link>
+        </div>
         <input
           type={showPassword ? "text" : "password"}
           value={password}

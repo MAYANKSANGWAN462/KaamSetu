@@ -11,7 +11,9 @@ const {
   updateActiveMode,
   changePassword,
   logoutUser,
-  verifyEmail
+  verifyEmail,
+  forgotPassword,
+  resetPassword
 } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
 const { validate } = require('../middleware/validate');
@@ -74,10 +76,11 @@ const googleValidation = [
 
 function googleBodyGuard(req, res, next) {
   if (req.body.credential) return next();
+  if (req.body.code) return next();
   if (req.body.email && req.body.googleId) return next();
   return res.status(400).json({
     success: false,
-    message: 'Provide Google credential (ID token) or email + googleId'
+    message: 'Provide Google credential (ID token) or authorization code'
   });
 }
 
@@ -87,6 +90,8 @@ router.post('/login',    loginLimiter,    loginValidation,    validate, loginUse
 router.post('/google',   googleLimiter,   googleValidation,   validate, googleBodyGuard, googleLogin);
 router.get('/verify-email', verifyEmail);
 router.post('/logout', logoutUser);
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password', resetPassword);
 
 // Protected routes
 router.get('/me', protect, getUserProfile);

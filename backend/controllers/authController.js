@@ -485,6 +485,106 @@ const verifyEmail = async (req, res) => {
   }
 };
 
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Email is required' });
+    }
+
+    const emailNormalized = String(email).toLowerCase().trim();
+    const user = await User.findOne({ email: emailNormalized });
+
+    // Always respond with success to prevent email enumeration
+    const successMsg = 'If that email is registered, a password reset link has been sent.';
+    if (!user) return res.json({ success: true, message: successMsg });
+
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.warn('[auth] Email not configured — cannot send reset email');
+      return res.status(503).json({ success: false, message: 'Email service is not configured. Contact support.' });
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    user.resetPasswordToken = token;
+    user.resetPasswordExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+    await user.save();
+
+    const baseUrl = (process.env.FRONTEND_URL || 'http://localhost:3000').split(',')[0].trim().replace(/\/$/, '');
+    const link = `${baseUrl}/reset-password?token=${encodeURIComponent(token)}`;
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+      port: parseInt(process.env.EMAIL_PORT || '587', 10),
+      secure: false,
+      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+    });
+
+    await transporter.sendMail({
+      from: `"KaamSetu" <${process.env.EMAIL_USER}>`,
+      to: emailNormalized,
+      subject: 'Reset your KaamSetu password',
+      text: `Click to reset your password: ${link}\n\nThis link expires in 1 hour.`,
+      html: `
+        <h2>Password Reset Request</h2>
+        <p>Click the link below to reset your KaamSetu password:</p>
+        <a href="${link}" style="
+          display:inline-block;padding:12px 24px;
+          background:#7C3AED;color:#fff;
+          border-radius:6px;text-decoration:none;font-weight:600;
+        ">Reset Password</a>
+        <p>This link expires in <strong>1 hour</strong>.</p>
+        <p>If you did not request a password reset, ignore this email — your password will not change.</p>
+      `
+    });
+
+    return res.json({ success: true, message: successMsg });
+  } catch (error) {
+    console.error('[forgotPassword]', error.message);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+    const isDev = process.env.NODE_ENV === 'development';
+
+    if (!token || !password) {
+      return res.status(400).json({ success: false, message: 'Token and new password are required' });
+    }
+
+    if (isDev) {
+      if (String(password).length < 6) {
+        return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
+      }
+    } else {
+      if (!PASSWORD_REGEX.test(String(password))) {
+        return res.status(400).json({
+          success: false,
+          message: 'Password must be at least 10 characters and include uppercase, lowercase, number, and special character'
+        });
+      }
+    }
+
+    const user = await User.findOne({ resetPasswordToken: token }).select('+resetPasswordToken +resetPasswordExpiry');
+
+    if (!user || !user.resetPasswordExpiry || user.resetPasswordExpiry < new Date()) {
+      return res.status(400).json({ success: false, message: 'This reset link is invalid or has expired. Please request a new one.' });
+    }
+
+    const salt = await bcrypt.genSalt(12);
+    user.passwordHash = await bcrypt.hash(String(password), salt);
+    user.resetPasswordToken = null;
+    user.resetPasswordExpiry = null;
+    await user.save();
+
+    return res.json({ success: true, message: 'Password reset successful. You can now log in with your new password.' });
+  } catch (error) {
+    console.error('[resetPassword]', error.message);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
 const updateActiveMode = async (req, res) => {
   try {
     const { mode } = req.body;
@@ -518,5 +618,7 @@ module.exports = {
   updateActiveMode,
   changePassword,
   logoutUser,
-  verifyEmail
+  verifyEmail,
+  forgotPassword,
+  resetPassword
 };

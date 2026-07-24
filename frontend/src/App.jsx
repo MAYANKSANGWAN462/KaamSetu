@@ -37,6 +37,8 @@ const PostJob = lazy(() => import("./pages/PostJob"));
 const MyJobs = lazy(() => import("./pages/MyJobs"));
 const Messenger = lazy(() => import("./pages/Messenger"));
 const Profile = lazy(() => import("./pages/Profile"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const ManageUsers = lazy(() => import("./pages/admin/ManageUsers"));
@@ -83,6 +85,8 @@ const AnimatedRoutes = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/search" element={<Search />} />
           <Route path="/jobs" element={<Search />} />
           <Route path="/jobs/:id" element={<JobDetails />} />
