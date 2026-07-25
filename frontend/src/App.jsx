@@ -51,8 +51,8 @@ const Layout = ({ children }) => {
   return (
     <div className="w-full min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] transition-colors duration-300">
       <Header />
-      {/* Bottom padding on mobile so content clears the fixed tab bar (hidden on messenger). */}
-      <main className={!isMessenger ? "pb-20 md:pb-0" : undefined}>
+      {/* Bottom padding on mobile so content clears the fixed tab bar. */}
+      <main className="pb-20 md:pb-0">
         <Suspense fallback={<Loader />}>
           <AnimatedRoutes />
         </Suspense>
@@ -63,8 +63,8 @@ const Layout = ({ children }) => {
           <Footer />
         </div>
       )}
-      {/* Native-app-style bottom navigation — mobile only, hidden on messenger. */}
-      {!isMessenger && <MobileTabBar />}
+      {/* Native-app-style bottom navigation — mobile only. */}
+      <MobileTabBar />
       <Toaster
         position="top-right"
         toastOptions={{
