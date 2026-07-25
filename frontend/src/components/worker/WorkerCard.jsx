@@ -142,9 +142,9 @@ const WorkerCard = ({ worker, compact = false }) => {
         )}
       </div>
 
-      {/* Avatar overlapping banner */}
-      <div className="px-4 -mt-5 flex items-end justify-between">
-        <div className="w-12 h-12 rounded-2xl bg-white dark:bg-[#0b0e14] p-0.5 shadow-lg ring-2 ring-white dark:ring-[#0b0e14]">
+      {/* Avatar overlapping banner — relative z-10 ensures it stacks above the positioned banner */}
+      <div className="relative z-10 px-4 -mt-5 flex items-end justify-between">
+        <div className="w-12 h-12 rounded-2xl bg-white dark:bg-[#0b0e14] p-0.5 shadow-lg ring-4 ring-white dark:ring-[#0b0e14]">
           {photo
             ? <img src={photo} alt={name} className="w-full h-full rounded-xl object-cover" />
             : <div className="w-full h-full rounded-xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] flex items-center justify-center text-white font-black text-lg">{initial}</div>
