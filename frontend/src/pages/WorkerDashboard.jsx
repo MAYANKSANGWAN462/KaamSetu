@@ -31,13 +31,13 @@ const StatusBadge = ({ status }) => {
 }
 
 const SkeletonCard = () => (
-  <div className="bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e8dfd0] dark:border-white/8 p-5 animate-pulse">
+  <div className="bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8 p-5 animate-pulse">
     <div className="space-y-3">
-      <div className="h-5 w-2/3 bg-[#e8dfd0] dark:bg-white/10 rounded-lg" />
-      <div className="h-3 w-1/3 bg-[#e8dfd0] dark:bg-white/10 rounded-lg" />
+      <div className="h-5 w-2/3 bg-[#e6e8ec] dark:bg-white/10 rounded-lg" />
+      <div className="h-3 w-1/3 bg-[#e6e8ec] dark:bg-white/10 rounded-lg" />
       <div className="flex gap-2 pt-2">
-        <div className="h-7 w-20 bg-[#e8dfd0] dark:bg-white/10 rounded-xl" />
-        <div className="h-7 w-16 bg-[#e8dfd0] dark:bg-white/10 rounded-xl" />
+        <div className="h-7 w-20 bg-[#e6e8ec] dark:bg-white/10 rounded-xl" />
+        <div className="h-7 w-16 bg-[#e6e8ec] dark:bg-white/10 rounded-xl" />
       </div>
     </div>
   </div>
@@ -46,12 +46,12 @@ const SkeletonCard = () => (
 const RatingStars = ({ rating = 0 }) => (
   <div className="flex gap-0.5">
     {[1,2,3,4,5].map(i => (
-      <svg key={i} className={`w-4 h-4 ${i <= Math.round(rating) ? 'text-[#c8933a]' : 'text-[#e8dfd0] dark:text-white/10'}`}
+      <svg key={i} className={`w-4 h-4 ${i <= Math.round(rating) ? 'text-[#c8933a]' : 'text-[#e6e8ec] dark:text-white/10'}`}
         fill="currentColor" viewBox="0 0 20 20">
         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
       </svg>
     ))}
-    <span className="text-xs text-[#9c8a78] ml-1">{rating.toFixed(1)}</span>
+    <span className="text-xs text-[#6b7280] ml-1">{rating.toFixed(1)}</span>
   </div>
 )
 
@@ -115,7 +115,7 @@ const WorkerDashboard = () => {
   const hasProfile = !!workerProfile
 
   return (
-    <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] pt-24 pb-12">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pt-24 pb-12">
       <div className="max-w-6xl mx-auto px-4 space-y-8">
 
         {/* ── GREETING ── */}
@@ -126,7 +126,7 @@ const WorkerDashboard = () => {
               <h1 className="text-3xl font-black text-gray-900 dark:text-white">
                 Hello, {user?.name?.split(' ')[0]} 👷
               </h1>
-              <p className="text-sm text-[#9c8a78] mt-1">Find jobs near you and let hirers find you.</p>
+              <p className="text-sm text-[#6b7280] mt-1">Find jobs near you and let hirers find you.</p>
             </div>
             {/* POST AVAILABILITY BUTTON */}
             <motion.button
@@ -197,7 +197,7 @@ const WorkerDashboard = () => {
                 </div>
               ) : (
                 /* Profile card — shows current post status */
-                <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-6 shadow-sm">
+                <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8 p-6 shadow-sm">
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div className="flex items-center gap-4">
                       <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] flex items-center justify-center text-white font-black text-xl shadow-md shadow-[#c8833a]/20 flex-shrink-0">
@@ -205,13 +205,13 @@ const WorkerDashboard = () => {
                       </div>
                       <div>
                         <p className="font-black text-gray-900 dark:text-white">{user?.name}</p>
-                        <p className="text-xs text-[#9c8a78] mt-0.5">{workerProfile.category || 'Worker'}</p>
+                        <p className="text-xs text-[#6b7280] mt-0.5">{workerProfile.category || 'Worker'}</p>
                         <div className="mt-1.5 flex flex-wrap items-center gap-3">
                           <RatingStars rating={workerProfile.rating?.avg || 0} />
                           <span className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase ${
-                            workerProfile.isAvailable ? 'text-emerald-600 dark:text-emerald-400' : 'text-[#9c8a78]'
+                            workerProfile.isAvailable ? 'text-emerald-600 dark:text-emerald-400' : 'text-[#6b7280]'
                           }`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${workerProfile.isAvailable ? 'bg-emerald-500 animate-pulse' : 'bg-[#b8a898]'}`} />
+                            <span className={`w-1.5 h-1.5 rounded-full ${workerProfile.isAvailable ? 'bg-emerald-500 animate-pulse' : 'bg-[#94a3b8]'}`} />
                             {workerProfile.isAvailable ? 'Available for work' : 'Not available'}
                           </span>
                         </div>
@@ -221,17 +221,17 @@ const WorkerDashboard = () => {
                     {/* Post summary pills */}
                     <div className="flex flex-wrap gap-2">
                       {workerProfile.wage?.amount > 0 && (
-                        <span className="px-3 py-1.5 rounded-xl bg-[#faf7f2] dark:bg-white/[0.06] border border-[#e8dfd0] dark:border-white/10 text-xs font-bold text-[#c8933a]">
+                        <span className="px-3 py-1.5 rounded-xl bg-[#f6f7f9] dark:bg-white/[0.06] border border-[#e6e8ec] dark:border-white/10 text-xs font-bold text-[#c8933a]">
                           ₹{workerProfile.wage.amount}/{workerProfile.wage.unit === 'daily' ? 'day' : workerProfile.wage.unit}
                         </span>
                       )}
                       {workerProfile.yearsOfExperience > 0 && (
-                        <span className="px-3 py-1.5 rounded-xl bg-[#faf7f2] dark:bg-white/[0.06] border border-[#e8dfd0] dark:border-white/10 text-xs font-semibold text-[#9c8a78]">
+                        <span className="px-3 py-1.5 rounded-xl bg-[#f6f7f9] dark:bg-white/[0.06] border border-[#e6e8ec] dark:border-white/10 text-xs font-semibold text-[#6b7280]">
                           {workerProfile.yearsOfExperience} yrs exp
                         </span>
                       )}
                       {(workerProfile.availability?.days || []).length > 0 && (
-                        <span className="px-3 py-1.5 rounded-xl bg-[#faf7f2] dark:bg-white/[0.06] border border-[#e8dfd0] dark:border-white/10 text-xs font-semibold text-[#9c8a78]">
+                        <span className="px-3 py-1.5 rounded-xl bg-[#f6f7f9] dark:bg-white/[0.06] border border-[#e6e8ec] dark:border-white/10 text-xs font-semibold text-[#6b7280]">
                           {workerProfile.availability.days.map(d => d.slice(0,3)).join(', ')}
                         </span>
                       )}
@@ -240,7 +240,7 @@ const WorkerDashboard = () => {
 
                   {/* Skills row */}
                   {(workerProfile.skills || []).length > 0 && (
-                    <div className="mt-4 pt-4 border-t border-[#e8dfd0] dark:border-white/8">
+                    <div className="mt-4 pt-4 border-t border-[#e6e8ec] dark:border-white/8">
                       <div className="flex flex-wrap gap-1.5">
                         {workerProfile.skills.slice(0, 8).map(skill => (
                           <span key={skill}
@@ -249,7 +249,7 @@ const WorkerDashboard = () => {
                           </span>
                         ))}
                         {workerProfile.skills.length > 8 && (
-                          <span className="px-2.5 py-1 rounded-lg bg-[#faf7f2] dark:bg-white/[0.06] border border-[#e8dfd0] dark:border-white/10 text-[10px] font-semibold text-[#9c8a78]">
+                          <span className="px-2.5 py-1 rounded-lg bg-[#f6f7f9] dark:bg-white/[0.06] border border-[#e6e8ec] dark:border-white/10 text-[10px] font-semibold text-[#6b7280]">
                             +{workerProfile.skills.length - 8} more
                           </span>
                         )}
@@ -259,7 +259,7 @@ const WorkerDashboard = () => {
 
                   {/* Bio */}
                   {workerProfile.bio && (
-                    <p className="mt-3 text-xs text-[#9c8a78] leading-relaxed line-clamp-2">
+                    <p className="mt-3 text-xs text-[#6b7280] leading-relaxed line-clamp-2">
                       {workerProfile.bio}
                     </p>
                   )}
@@ -279,10 +279,10 @@ const WorkerDashboard = () => {
               { label: 'Earnings',     value: `₹${stats.earnings.toLocaleString()}`, icon: '💰', color: 'text-blue-600 dark:text-blue-400' },
             ].map(({ label, value, icon, color }) => (
               <div key={label}
-                className="bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e8dfd0] dark:border-white/8 p-5 shadow-sm">
+                className="bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8 p-5 shadow-sm">
                 <p className="text-2xl mb-2">{icon}</p>
                 <p className={`text-2xl font-black ${color}`}>{value}</p>
-                <p className="text-xs text-[#9c8a78] font-semibold mt-0.5">{label}</p>
+                <p className="text-xs text-[#6b7280] font-semibold mt-0.5">{label}</p>
               </div>
             ))}
           </div>
@@ -308,10 +308,10 @@ const WorkerDashboard = () => {
               {[...Array(6)].map((_, i) => <SkeletonCard key={i} />)}
             </div>
           ) : nearbyJobs.length === 0 ? (
-            <div className="text-center py-12 bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e8dfd0] dark:border-white/8">
+            <div className="text-center py-12 bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8">
               <span className="text-3xl block mb-2">📍</span>
-              <p className="text-sm font-medium text-[#9c8a78] mb-1">No jobs near you yet</p>
-              <p className="text-xs text-[#b8a898]">Enable location to see nearby job posts from hirers.</p>
+              <p className="text-sm font-medium text-[#6b7280] mb-1">No jobs near you yet</p>
+              <p className="text-xs text-[#94a3b8]">Enable location to see nearby job posts from hirers.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -350,10 +350,10 @@ const WorkerDashboard = () => {
             <div className="space-y-3">{[...Array(3)].map((_, i) => <SkeletonCard key={i} />)}</div>
           ) : applications.length === 0 ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-              className="text-center py-14 bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e8dfd0] dark:border-white/8 border-dashed">
+              className="text-center py-14 bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8 border-dashed">
               <span className="text-4xl block mb-3">📋</span>
               <p className="font-bold text-gray-700 dark:text-gray-300 mb-1">No applications yet</p>
-              <p className="text-sm text-[#9c8a78] mb-5">Browse job posts from hirers and apply to get started.</p>
+              <p className="text-sm text-[#6b7280] mb-5">Browse job posts from hirers and apply to get started.</p>
               <Link to="/search">
                 <motion.span whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] text-white font-bold text-sm shadow-lg shadow-[#c8833a]/25">
@@ -372,7 +372,7 @@ const WorkerDashboard = () => {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05, duration: 0.4 }}
-                    className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e8dfd0] dark:border-white/8 px-5 py-4 shadow-sm"
+                    className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8 px-5 py-4 shadow-sm"
                   >
                     <div className="flex items-center gap-4 min-w-0">
                       <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#d4963e]/20 to-[#b86e2a]/20 border border-[#c8933a]/20 flex items-center justify-center text-[#c8933a] font-black text-sm flex-shrink-0">
@@ -382,7 +382,7 @@ const WorkerDashboard = () => {
                         <p className="font-bold text-sm text-gray-900 dark:text-white truncate">
                           {job.title || 'Job Application'}
                         </p>
-                        <p className="text-xs text-[#9c8a78] mt-0.5">
+                        <p className="text-xs text-[#6b7280] mt-0.5">
                           Applied {new Date(app.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                         </p>
                       </div>

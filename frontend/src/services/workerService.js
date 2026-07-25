@@ -44,7 +44,7 @@ class WorkerService {
   // Create or update worker profile
   async createWorkerProfile(profileData) {
     try {
-      const response = await api.post("/worker/profile", profileData);
+      const response = await api.post("/workers/profile", profileData);
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -54,7 +54,7 @@ class WorkerService {
   // Update worker profile
   async updateWorkerProfile(id, profileData) {
     try {
-      const response = await api.put('/worker/profile', profileData);
+      const response = await api.put('/workers/profile', profileData);
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -66,7 +66,7 @@ class WorkerService {
     try {
       const formData = new FormData();
       formData.append('images', file);
-      const response = await api.post("/worker/portfolio", formData, {
+      const response = await api.post("/workers/portfolio", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       return response.data;
@@ -75,10 +75,10 @@ class WorkerService {
     }
   }
 
-  // Update availability
-  async updateAvailability(availability) {
+  // Update availability — backend expects { isAvailable: boolean }
+  async updateAvailability(isAvailable) {
     try {
-      const response = await api.put("/worker/availability", { availability });
+      const response = await api.put("/workers/availability", { isAvailable });
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -88,7 +88,7 @@ class WorkerService {
   // Error handler
   handleError(error) {
     if (error.response) {
-      return error.response.data.message || "An error occurred";
+      return error.response.data?.message || "An error occurred";
     }
     return error.message || "Network error";
   }

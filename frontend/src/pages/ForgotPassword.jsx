@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import axios from 'axios'
+import { validateEmail } from '../utils/validators'
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('')
@@ -12,6 +13,10 @@ const ForgotPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    if (!validateEmail(email)) {
+      setError('Please enter a valid email address')
+      return
+    }
     setLoading(true)
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/forgot-password`, { email })
@@ -24,7 +29,7 @@ const ForgotPassword = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] flex items-center justify-center px-4 py-12">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -43,7 +48,7 @@ const ForgotPassword = () => {
           </Link>
         </div>
 
-        <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/[0.08] p-8 shadow-sm">
+        <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/[0.08] p-8 shadow-sm">
           {sent ? (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -73,7 +78,7 @@ const ForgotPassword = () => {
             <>
               <div className="mb-6">
                 <h1 className="text-2xl font-black text-gray-900 dark:text-white mb-1.5">Forgot password?</h1>
-                <p className="text-sm text-[#9c8a78] dark:text-gray-500">
+                <p className="text-sm text-[#6b7280] dark:text-gray-500">
                   Enter your email and we'll send you a reset link.
                 </p>
               </div>
@@ -138,7 +143,7 @@ const ForgotPassword = () => {
           )}
         </div>
 
-        <p className="text-center mt-6 text-sm text-[#9c8a78] dark:text-gray-500">
+        <p className="text-center mt-6 text-sm text-[#6b7280] dark:text-gray-500">
           Remember your password?{' '}
           <Link to="/login" className="text-[#c8933a] font-semibold hover:text-[#a8732a] transition-colors duration-200">
             Sign in

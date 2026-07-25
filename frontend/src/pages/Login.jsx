@@ -48,12 +48,12 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] flex">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] flex">
 
       {/* ── LEFT PANEL (decorative, desktop only) ── */}
       <div className="hidden lg:flex lg:w-5/12 relative overflow-hidden flex-col justify-between p-12">
         {/* BG */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1a1208] via-[#2d1f0a] to-[#1a1208]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
         <div className="absolute inset-0 opacity-[0.035]"
           style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")` }} />
         <div className="absolute top-1/4 -right-20 w-72 h-72 rounded-full bg-[#c8833a]/20 blur-[80px]" />
@@ -83,7 +83,7 @@ const Login = () => {
               <span className="text-[#c8933a]">India's trusted</span><br />
               job marketplace
             </h2>
-            <p className="text-[#a89070] text-sm leading-relaxed">
+            <p className="text-slate-300 text-sm leading-relaxed">
               Connecting daily-wage workers and hirers across India — locally, quickly, reliably.
             </p>
           </motion.div>
@@ -103,7 +103,7 @@ const Login = () => {
               <span className="text-2xl">{icon}</span>
               <div>
                 <p className="text-[#c8933a] font-black text-lg leading-none">{stat}</p>
-                <p className="text-[#6e5c48] text-xs mt-0.5">{label}</p>
+                <p className="text-slate-400 text-xs mt-0.5">{label}</p>
               </div>
             </motion.div>
           ))}
@@ -111,7 +111,7 @@ const Login = () => {
 
         {/* Bottom note */}
         <div className="relative">
-          <p className="text-[#4a3c2e] text-xs">© 2025 KaamSetu. All rights reserved.</p>
+          <p className="text-slate-500 text-xs">© 2025 KaamSetu. All rights reserved.</p>
         </div>
       </div>
 
@@ -138,7 +138,7 @@ const Login = () => {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-2xl font-black text-gray-900 dark:text-white mb-1.5">Sign in</h1>
-            <p className="text-sm text-[#9c8a78] dark:text-gray-500">
+            <p className="text-sm text-[#6b7280] dark:text-gray-500">
               Don't have an account?{' '}
               <Link to="/register" className="text-[#c8933a] font-semibold hover:text-[#a8732a] transition-colors duration-200">
                 Create one free
@@ -164,7 +164,7 @@ const Login = () => {
           </AnimatePresence>
 
           {/* Form card */}
-          <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/[0.08] p-7 shadow-sm">
+          <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/[0.08] p-7 shadow-sm">
             {googleLoading ? (
               <div className="flex flex-col items-center justify-center py-10 gap-3">
                 <svg className="animate-spin w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24">
@@ -179,7 +179,7 @@ const Login = () => {
           </div>
 
           {/* Footer */}
-          <p className="text-center mt-6 text-xs text-[#b8a898] dark:text-gray-600">
+          <p className="text-center mt-6 text-xs text-[#94a3b8] dark:text-gray-600">
             By signing in you agree to our{' '}
             <span className="text-[#c8933a] cursor-pointer hover:underline">Terms</span>
             {' '}and{' '}

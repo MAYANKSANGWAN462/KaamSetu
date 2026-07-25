@@ -56,7 +56,7 @@ const LocationAutocomplete = ({
     }
   }
 
-  const defaultInput = `w-full rounded-2xl px-4 ${icon ? 'pl-11' : ''} py-3.5 text-sm font-medium bg-[#faf7f2] dark:bg-white/[0.06] border border-[#e8dfd0] dark:border-white/10 text-gray-800 dark:text-gray-200 placeholder:text-[#b8a898] dark:placeholder:text-gray-600 outline-none focus:border-[#c8933a] focus:shadow-[0_0_0_3px_rgba(200,147,58,0.15)] transition-all duration-200`
+  const defaultInput = `w-full rounded-2xl px-4 ${icon ? 'pl-11' : ''} py-3.5 text-sm font-medium bg-[#f6f7f9] dark:bg-white/[0.06] border border-[#e6e8ec] dark:border-white/10 text-gray-800 dark:text-gray-200 placeholder:text-[#94a3b8] dark:placeholder:text-gray-600 outline-none focus:border-[#c8933a] focus:shadow-[0_0_0_3px_rgba(200,147,58,0.15)] transition-all duration-200`
 
   return (
     <div ref={wrapRef} className={`relative ${className}`}>
@@ -91,7 +91,7 @@ const LocationAutocomplete = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.15 }}
-            className="absolute z-30 left-0 right-0 mt-2 py-1.5 rounded-2xl bg-white dark:bg-[#1a1712] border border-[#e8dfd0] dark:border-white/10 shadow-xl shadow-black/5 overflow-hidden max-h-64 overflow-y-auto"
+            className="absolute z-30 left-0 right-0 mt-2 py-1.5 rounded-2xl bg-white dark:bg-[#141824] border border-[#e6e8ec] dark:border-white/10 shadow-xl shadow-black/5 overflow-hidden max-h-64 overflow-y-auto"
           >
             {suggestions.map((city, i) => (
               <li key={city}>
@@ -102,7 +102,7 @@ const LocationAutocomplete = ({
                   className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-left text-sm font-medium transition-colors duration-150 ${
                     i === active
                       ? 'bg-[#c8933a]/10 text-[#c8933a]'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-[#faf7f2] dark:hover:bg-white/[0.04]'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-[#f6f7f9] dark:hover:bg-white/[0.04]'
                   }`}
                 >
                   <svg className="w-3.5 h-3.5 flex-shrink-0 text-[#c8933a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">

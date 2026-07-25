@@ -29,13 +29,13 @@ const StatusBadge = ({ status }) => {
 }
 
 const SkeletonRow = () => (
-  <div className="flex items-center gap-4 bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e8dfd0] dark:border-white/8 p-5 animate-pulse">
-    <div className="w-10 h-10 rounded-2xl bg-[#e8dfd0] dark:bg-white/10 flex-shrink-0" />
+  <div className="flex items-center gap-4 bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8 p-5 animate-pulse">
+    <div className="w-10 h-10 rounded-2xl bg-[#e6e8ec] dark:bg-white/10 flex-shrink-0" />
     <div className="flex-1 space-y-2">
-      <div className="h-4 w-1/2 bg-[#e8dfd0] dark:bg-white/10 rounded-lg" />
-      <div className="h-3 w-1/3 bg-[#e8dfd0] dark:bg-white/10 rounded-lg" />
+      <div className="h-4 w-1/2 bg-[#e6e8ec] dark:bg-white/10 rounded-lg" />
+      <div className="h-3 w-1/3 bg-[#e6e8ec] dark:bg-white/10 rounded-lg" />
     </div>
-    <div className="h-7 w-20 bg-[#e8dfd0] dark:bg-white/10 rounded-xl" />
+    <div className="h-7 w-20 bg-[#e6e8ec] dark:bg-white/10 rounded-xl" />
   </div>
 )
 
@@ -58,12 +58,12 @@ const MyApplications = () => {
   }, [])
 
   return (
-    <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] pt-24 pb-12">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pt-24 pb-12">
       <div className="max-w-3xl mx-auto px-4">
         <motion.div {...stagger(0)} className="mb-7">
           <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#c8933a] mb-1">Worker Mode</p>
           <h1 className="text-3xl font-black text-gray-900 dark:text-white">My Applications</h1>
-          <p className="text-sm text-[#9c8a78] mt-1">Track all the jobs you've applied to.</p>
+          <p className="text-sm text-[#6b7280] mt-1">Track all the jobs you've applied to.</p>
         </motion.div>
 
         <AnimatePresence>
@@ -79,10 +79,10 @@ const MyApplications = () => {
           <div className="space-y-3">{[...Array(4)].map((_, i) => <SkeletonRow key={i} />)}</div>
         ) : applications.length === 0 ? (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            className="text-center py-20 bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 border-dashed">
+            className="text-center py-20 bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8 border-dashed">
             <span className="text-5xl block mb-3">📋</span>
             <p className="font-black text-gray-700 dark:text-gray-300 text-lg mb-1">No applications yet</p>
-            <p className="text-sm text-[#9c8a78] mb-6">Browse job posts from hirers and apply to get started.</p>
+            <p className="text-sm text-[#6b7280] mb-6">Browse job posts from hirers and apply to get started.</p>
             <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
               onClick={() => navigate('/search')}
               className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] text-white font-bold text-sm shadow-lg shadow-[#c8833a]/25">
@@ -99,7 +99,7 @@ const MyApplications = () => {
 
               return (
                 <motion.div key={app._id} {...stagger(i)}
-                  className="flex flex-wrap items-center justify-between gap-4 bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e8dfd0] dark:border-white/8 px-5 py-4 shadow-sm hover:shadow-md transition-shadow duration-300"
+                  className="flex flex-wrap items-center justify-between gap-4 bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8 px-5 py-4 shadow-sm hover:shadow-md transition-shadow duration-300"
                 >
                   <div className="flex items-center gap-4 min-w-0">
                     <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#d4963e]/15 to-[#b86e2a]/15 border border-[#c8933a]/20 flex items-center justify-center text-[#c8933a] text-lg flex-shrink-0">
@@ -109,14 +109,14 @@ const MyApplications = () => {
                       <p className="font-bold text-sm text-gray-900 dark:text-white truncate">
                         {job.title || 'Job Application'}
                       </p>
-                      <p className="text-xs text-[#9c8a78] mt-0.5 flex items-center gap-1.5">
+                      <p className="text-xs text-[#6b7280] mt-0.5 flex items-center gap-1.5">
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75}
                             d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                         {job.location?.city || job.location || 'Location not specified'}
-                        <span className="text-[#e8dfd0] dark:text-white/20">·</span>
+                        <span className="text-[#e6e8ec] dark:text-white/20">·</span>
                         {new Date(app.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                       </p>
                     </div>
@@ -138,7 +138,7 @@ const MyApplications = () => {
                     {job._id && (
                       <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                         onClick={() => navigate(`/jobs/${job._id}`)}
-                        className="text-xs font-semibold text-[#9c8a78] hover:text-[#c8933a] transition-colors duration-200 px-2">
+                        className="text-xs font-semibold text-[#6b7280] hover:text-[#c8933a] transition-colors duration-200 px-2">
                         View →
                       </motion.button>
                     )}

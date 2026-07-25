@@ -16,11 +16,11 @@ const StatCard = ({ label, value, icon, color, delay }) => (
     initial={{ opacity: 0, y: 16 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-    className="bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e8dfd0] dark:border-white/8 p-6 shadow-sm"
+    className="bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8 p-6 shadow-sm"
   >
     <p className="text-2xl mb-3">{icon}</p>
     <p className={`text-3xl font-black ${color}`}>{value ?? '—'}</p>
-    <p className="text-xs font-bold uppercase tracking-wider text-[#9c8a78] mt-1">{label}</p>
+    <p className="text-xs font-bold uppercase tracking-wider text-[#6b7280] mt-1">{label}</p>
   </motion.div>
 )
 
@@ -63,7 +63,7 @@ const AdminDashboard = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] pt-24 pb-12">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pt-24 pb-12">
       <div className="max-w-5xl mx-auto px-4">
 
         <motion.div {...stagger(0)} className="mb-8 flex items-start justify-between gap-4">
@@ -77,11 +77,11 @@ const AdminDashboard = () => {
               <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#c8933a]">Admin Panel</p>
             </div>
             <h1 className="text-3xl font-black text-gray-900 dark:text-white">Dashboard</h1>
-            <p className="text-sm text-[#9c8a78] mt-1">Signed in as {admin?.name || admin?.email}.</p>
+            <p className="text-sm text-[#6b7280] mt-1">Signed in as {admin?.name || admin?.email}.</p>
           </div>
           <button
             onClick={handleLogout}
-            className="px-4 py-2 rounded-xl border border-[#e8dfd0] dark:border-white/10 text-xs font-bold text-[#9c8a78] hover:text-red-500 hover:border-red-300 transition-colors"
+            className="px-4 py-2 rounded-xl border border-[#e6e8ec] dark:border-white/10 text-xs font-bold text-[#6b7280] hover:text-red-500 hover:border-red-300 transition-colors"
           >
             Sign out
           </button>
@@ -99,10 +99,10 @@ const AdminDashboard = () => {
         {loading ? (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e8dfd0] dark:border-white/8 p-6 animate-pulse">
-                <div className="h-6 w-6 bg-[#e8dfd0] dark:bg-white/10 rounded-lg mb-3" />
-                <div className="h-8 w-16 bg-[#e8dfd0] dark:bg-white/10 rounded-lg mb-2" />
-                <div className="h-3 w-20 bg-[#e8dfd0] dark:bg-white/10 rounded-lg" />
+              <div key={i} className="bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8 p-6 animate-pulse">
+                <div className="h-6 w-6 bg-[#e6e8ec] dark:bg-white/10 rounded-lg mb-3" />
+                <div className="h-8 w-16 bg-[#e6e8ec] dark:bg-white/10 rounded-lg mb-2" />
+                <div className="h-3 w-20 bg-[#e6e8ec] dark:bg-white/10 rounded-lg" />
               </div>
             ))}
           </div>
@@ -116,8 +116,8 @@ const AdminDashboard = () => {
 
         {/* System health */}
         {stats?.health && (
-          <motion.div {...stagger(1)} className="mb-8 bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e8dfd0] dark:border-white/8 p-5">
-            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#9c8a78] mb-3">System Health</p>
+          <motion.div {...stagger(1)} className="mb-8 bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8 p-5">
+            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#6b7280] mb-3">System Health</p>
             <div className="flex flex-wrap gap-6 text-sm">
               <div className="flex items-center gap-2">
                 <span className={`w-2 h-2 rounded-full ${stats.health.db === 'connected' ? 'bg-emerald-500' : 'bg-red-500'}`} />
@@ -131,16 +131,16 @@ const AdminDashboard = () => {
 
         {/* Recent registrations */}
         {stats?.recentUsers?.length > 0 && (
-          <motion.div {...stagger(2)} className="mb-8 bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e8dfd0] dark:border-white/8 p-5">
-            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#9c8a78] mb-3">Recent Registrations</p>
-            <div className="divide-y divide-[#e8dfd0] dark:divide-white/8">
+          <motion.div {...stagger(2)} className="mb-8 bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8 p-5">
+            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#6b7280] mb-3">Recent Registrations</p>
+            <div className="divide-y divide-[#e6e8ec] dark:divide-white/8">
               {stats.recentUsers.map((u) => (
                 <div key={u._id} className="flex items-center justify-between py-2.5">
                   <div className="min-w-0">
                     <p className="text-sm font-bold text-gray-900 dark:text-white truncate">{u.name}</p>
-                    <p className="text-xs text-[#9c8a78] truncate">{u.email}</p>
+                    <p className="text-xs text-[#6b7280] truncate">{u.email}</p>
                   </div>
-                  <span className="text-[10px] text-[#b8a898] flex-shrink-0 ml-3">
+                  <span className="text-[10px] text-[#94a3b8] flex-shrink-0 ml-3">
                     {new Date(u.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                   </span>
                 </div>
@@ -151,7 +151,7 @@ const AdminDashboard = () => {
 
         {/* Management links */}
         <motion.div {...stagger(3)}>
-          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#9c8a78] mb-4">Management</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#6b7280] mb-4">Management</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
               { to: '/admin/users', icon: '👥', title: 'Manage Users', desc: 'View, suspend, activate, and delete accounts', color: 'from-blue-500/10 to-blue-600/5 border-blue-200/50 dark:border-blue-500/20' },
@@ -164,7 +164,7 @@ const AdminDashboard = () => {
                     <span className="text-3xl group-hover:scale-110 transition-transform duration-300">{icon}</span>
                     <div>
                       <h2 className="font-black text-gray-900 dark:text-white mb-1">{title}</h2>
-                      <p className="text-xs text-[#9c8a78] leading-relaxed">{desc}</p>
+                      <p className="text-xs text-[#6b7280] leading-relaxed">{desc}</p>
                     </div>
                   </div>
                 </motion.div>

@@ -2,11 +2,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGoogleLogin } from "@react-oauth/google";
-import { useAuth } from '../../context/AuthContext';
+import { validateEmail } from '../../utils/validators';
 
 const LoginForm = ({ onSubmit }) => {
   const [email, setEmail] = useState("");
-  const { googleLogin } = useAuth();
 
   const googleLoginRedirect = useGoogleLogin({
     flow: 'auth-code',
@@ -22,6 +21,10 @@ const LoginForm = ({ onSubmit }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitError("");
+    if (!validateEmail(email)) {
+      setSubmitError("Please enter a valid email address");
+      return;
+    }
     setLoading(true);
     try {
       const result = await onSubmit(email, password);

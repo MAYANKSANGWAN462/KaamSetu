@@ -12,7 +12,7 @@ const stagger = (i) => ({
 
 const Field = ({ label, children }) => (
   <div>
-    <label className="block text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] dark:text-gray-500 mb-2 ml-0.5">
+    <label className="block text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] dark:text-gray-500 mb-2 ml-0.5">
       {label}
     </label>
     {children}
@@ -22,9 +22,9 @@ const Field = ({ label, children }) => (
 const inputCls = (editing) =>
   `w-full rounded-2xl px-4 py-3.5 text-sm font-medium outline-none transition-all duration-300 ${
     editing
-      ? "bg-[#faf7f2] dark:bg-white/[0.06] border border-[#e8dfd0] dark:border-white/10 text-gray-800 dark:text-gray-200 focus:border-[#c8933a] dark:focus:border-[#c8933a] focus:shadow-[0_0_0_3px_rgba(200,147,58,0.15)] focus:bg-white dark:focus:bg-white/[0.09]"
+      ? "bg-[#f6f7f9] dark:bg-white/[0.06] border border-[#e6e8ec] dark:border-white/10 text-gray-800 dark:text-gray-200 focus:border-[#c8933a] dark:focus:border-[#c8933a] focus:shadow-[0_0_0_3px_rgba(200,147,58,0.15)] focus:bg-white dark:focus:bg-white/[0.09]"
       : "bg-transparent border border-transparent text-gray-800 dark:text-gray-200 cursor-default select-none"
-  } placeholder:text-[#b8a898] dark:placeholder:text-gray-600`;
+  } placeholder:text-[#94a3b8] dark:placeholder:text-gray-600`;
 
 const Profile = () => {
   const { user, updateProfile } = useAuth();
@@ -105,7 +105,7 @@ const Profile = () => {
   const initial = (form.name || "U")[0].toUpperCase();
 
   return (
-    <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] pt-24 pb-12">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pt-24 pb-12">
       <div className="max-w-3xl mx-auto px-4">
         {/* Success toast */}
         <AnimatePresence>
@@ -148,7 +148,7 @@ const Profile = () => {
             onClick={() => setIsEditing((p) => !p)}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold text-sm transition-all duration-300 ${
               isEditing
-                ? "bg-[#faf7f2] dark:bg-white/[0.06] border border-[#e8dfd0] dark:border-white/10 text-[#9c8a78] hover:border-[#c8933a]/40 hover:text-[#c8933a]"
+                ? "bg-[#f6f7f9] dark:bg-white/[0.06] border border-[#e6e8ec] dark:border-white/10 text-[#6b7280] hover:border-[#c8933a]/40 hover:text-[#c8933a]"
                 : "bg-gradient-to-br from-[#d4963e] to-[#b86e2a] text-white shadow-lg shadow-[#c8833a]/25 hover:shadow-[#c8833a]/40"
             }`}
           >
@@ -194,7 +194,7 @@ const Profile = () => {
           {/* Avatar card */}
           <motion.div
             {...stagger(1)}
-            className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-7 shadow-sm mb-5"
+            className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8 p-7 shadow-sm mb-5"
           >
             <div className="flex items-center gap-5">
               <div className="relative flex-shrink-0">
@@ -212,7 +212,7 @@ const Profile = () => {
                   )}
                 </div>
                 {isEditing && (
-                  <label className="absolute -bottom-1 -right-1 w-7 h-7 rounded-xl bg-white dark:bg-[#1a1208] border border-[#e8dfd0] dark:border-white/10 flex items-center justify-center cursor-pointer shadow-sm hover:border-[#c8933a]/50 transition-colors duration-200">
+                  <label className="absolute -bottom-1 -right-1 w-7 h-7 rounded-xl bg-white dark:bg-[#141824] border border-[#e6e8ec] dark:border-white/10 flex items-center justify-center cursor-pointer shadow-sm hover:border-[#c8933a]/50 transition-colors duration-200">
                     <svg
                       className="w-3.5 h-3.5 text-[#c8933a]"
                       fill="none"
@@ -246,7 +246,7 @@ const Profile = () => {
                 <p className="font-black text-xl text-gray-900 dark:text-white">
                   {form.name || "Your Name"}
                 </p>
-                <p className="text-sm text-[#9c8a78] mt-0.5">{form.email}</p>
+                <p className="text-sm text-[#6b7280] mt-0.5">{form.email}</p>
                 <div className="flex items-center gap-2 mt-2">
                   <span
                     className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
@@ -282,9 +282,9 @@ const Profile = () => {
           {/* Personal Info */}
           <motion.div
             {...stagger(2)}
-            className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-7 shadow-sm mb-5"
+            className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8 p-7 shadow-sm mb-5"
           >
-            <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-5">
+            <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-5">
               Personal Information
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -292,7 +292,7 @@ const Profile = () => {
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
                     <svg
-                      className={`w-4 h-4 transition-colors duration-300 ${focusedField === "name" ? "text-[#c8933a]" : "text-[#b8a898] dark:text-gray-600"}`}
+                      className={`w-4 h-4 transition-colors duration-300 ${focusedField === "name" ? "text-[#c8933a]" : "text-[#94a3b8] dark:text-gray-600"}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -324,7 +324,7 @@ const Profile = () => {
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
                     <svg
-                      className={`w-4 h-4 transition-colors duration-300 ${focusedField === "email" ? "text-[#c8933a]" : "text-[#b8a898] dark:text-gray-600"}`}
+                      className={`w-4 h-4 transition-colors duration-300 ${focusedField === "email" ? "text-[#c8933a]" : "text-[#94a3b8] dark:text-gray-600"}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -356,7 +356,7 @@ const Profile = () => {
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
                     <svg
-                      className={`w-4 h-4 transition-colors duration-300 ${focusedField === "phone" ? "text-[#c8933a]" : "text-[#b8a898] dark:text-gray-600"}`}
+                      className={`w-4 h-4 transition-colors duration-300 ${focusedField === "phone" ? "text-[#c8933a]" : "text-[#94a3b8] dark:text-gray-600"}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -388,7 +388,7 @@ const Profile = () => {
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
                     <svg
-                      className={`w-4 h-4 transition-colors duration-300 ${focusedField === "location" ? "text-[#c8933a]" : "text-[#b8a898] dark:text-gray-600"}`}
+                      className={`w-4 h-4 transition-colors duration-300 ${focusedField === "location" ? "text-[#c8933a]" : "text-[#94a3b8] dark:text-gray-600"}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -444,9 +444,9 @@ const Profile = () => {
           {/* Mode & Worker Settings */}
           <motion.div
             {...stagger(3)}
-            className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-7 shadow-sm mb-5"
+            className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8 p-7 shadow-sm mb-5"
           >
-            <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-5">
+            <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-5">
               Mode & Role
             </h2>
 
@@ -463,7 +463,7 @@ const Profile = () => {
                     className={`flex-1 py-3 rounded-2xl text-sm font-bold capitalize transition-all duration-300 ${
                       form.activeMode === mode
                         ? "bg-gradient-to-br from-[#d4963e] to-[#b86e2a] text-white shadow-md shadow-[#c8833a]/20"
-                        : "bg-[#faf7f2] dark:bg-white/[0.04] border border-[#e8dfd0] dark:border-white/10 text-[#9c8a78] hover:border-[#c8933a]/40"
+                        : "bg-[#f6f7f9] dark:bg-white/[0.04] border border-[#e6e8ec] dark:border-white/10 text-[#6b7280] hover:border-[#c8933a]/40"
                     } ${!isEditing ? "cursor-default" : "cursor-pointer"}`}
                   >
                     {mode === "worker" ? "👷 Worker" : "🏢 Hirer"}
@@ -505,7 +505,7 @@ const Profile = () => {
                       </select>
                       <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
                         <svg
-                          className="w-4 h-4 text-[#b8a898]"
+                          className="w-4 h-4 text-[#94a3b8]"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -555,9 +555,9 @@ const Profile = () => {
           {/* Bio */}
           <motion.div
             {...stagger(4)}
-            className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-7 shadow-sm mb-6"
+            className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8 p-7 shadow-sm mb-6"
           >
-            <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-5">
+            <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-5">
               About You
             </h2>
             <Field label="Bio / Description">
@@ -576,7 +576,7 @@ const Profile = () => {
                   placeholder="Tell hirers or workers about yourself…"
                 />
                 {isEditing && (
-                  <p className="text-[10px] text-[#b8a898] dark:text-gray-600 text-right mt-1">
+                  <p className="text-[10px] text-[#94a3b8] dark:text-gray-600 text-right mt-1">
                     {form.bio.length}/300
                   </p>
                 )}

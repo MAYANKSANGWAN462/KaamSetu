@@ -9,12 +9,12 @@ import axios from 'axios'
 const RatingStars = ({ rating = 0 }) => (
   <div className="flex gap-0.5 items-center">
     {[1,2,3,4,5].map(i => (
-      <svg key={i} className={`w-3.5 h-3.5 ${i <= Math.round(rating) ? 'text-[#c8933a]' : 'text-[#e8dfd0] dark:text-white/10'}`}
+      <svg key={i} className={`w-3.5 h-3.5 ${i <= Math.round(rating) ? 'text-[#c8933a]' : 'text-[#e6e8ec] dark:text-white/10'}`}
         fill="currentColor" viewBox="0 0 20 20">
         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
       </svg>
     ))}
-    <span className="text-[10px] text-[#9c8a78] ml-1">{rating > 0 ? rating.toFixed(1) : '—'}</span>
+    <span className="text-[10px] text-[#6b7280] ml-1">{rating > 0 ? rating.toFixed(1) : '—'}</span>
   </div>
 )
 
@@ -77,14 +77,14 @@ const WorkerCard = ({ worker, compact = false }) => {
     return (
       <motion.div
         whileHover={{ y: -2 }}
-        className="bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e8dfd0] dark:border-white/8 p-4 flex items-center gap-3"
+        className="bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8 p-4 flex items-center gap-3"
       >
         <div className="relative flex-shrink-0">
           {photo
-            ? <img src={photo} alt={name} className="w-11 h-11 rounded-xl object-cover border border-[#e8dfd0] dark:border-white/10" />
+            ? <img src={photo} alt={name} className="w-11 h-11 rounded-xl object-cover border border-[#e6e8ec] dark:border-white/10" />
             : <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] flex items-center justify-center text-white font-bold text-base">{initial}</div>
           }
-          <span className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dark:border-[#0e0d0b] ${isAvailable ? 'bg-emerald-500' : 'bg-gray-400'}`} />
+          <span className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dark:border-[#0b0e14] ${isAvailable ? 'bg-emerald-500' : 'bg-gray-400'}`} />
         </div>
         <div className="flex-1 min-w-0">
           <p className="font-bold text-sm text-gray-900 dark:text-white truncate">{name}</p>
@@ -103,7 +103,7 @@ const WorkerCard = ({ worker, compact = false }) => {
     <motion.div
       whileHover={{ y: -4, boxShadow: '0 16px 48px rgba(0,0,0,0.10)' }}
       transition={{ duration: 0.22, ease: 'easeOut' }}
-      className="group bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e8dfd0] dark:border-white/8 overflow-hidden shadow-sm transition-shadow duration-300 flex flex-col"
+      className="group bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8 overflow-hidden shadow-sm transition-shadow duration-300 flex flex-col"
     >
       {/* Hero banner */}
       <div className="relative h-24 bg-gradient-to-br from-[#d4963e] via-[#c8833a] to-[#b86e2a] overflow-hidden flex-shrink-0">
@@ -144,7 +144,7 @@ const WorkerCard = ({ worker, compact = false }) => {
 
       {/* Avatar overlapping banner */}
       <div className="px-4 -mt-5 flex items-end justify-between">
-        <div className="w-12 h-12 rounded-2xl bg-white dark:bg-[#0e0d0b] p-0.5 shadow-lg ring-2 ring-white dark:ring-[#0e0d0b]">
+        <div className="w-12 h-12 rounded-2xl bg-white dark:bg-[#0b0e14] p-0.5 shadow-lg ring-2 ring-white dark:ring-[#0b0e14]">
           {photo
             ? <img src={photo} alt={name} className="w-full h-full rounded-xl object-cover" />
             : <div className="w-full h-full rounded-xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] flex items-center justify-center text-white font-black text-lg">{initial}</div>
@@ -170,13 +170,13 @@ const WorkerCard = ({ worker, compact = false }) => {
           <div className="flex items-center gap-2 mt-1">
             <RatingStars rating={ratingAvg} />
             {ratingCount > 0 && (
-              <span className="text-[10px] text-[#9c8a78]">({ratingCount} reviews)</span>
+              <span className="text-[10px] text-[#6b7280]">({ratingCount} reviews)</span>
             )}
           </div>
         </div>
 
         {/* Experience + location row */}
-        <div className="flex flex-wrap items-center gap-2 text-[11px] text-[#9c8a78]">
+        <div className="flex flex-wrap items-center gap-2 text-[11px] text-[#6b7280]">
           {experience > 0 && (
             <span className="flex items-center gap-1">
               <svg className="w-3 h-3 text-[#c8933a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -198,7 +198,7 @@ const WorkerCard = ({ worker, compact = false }) => {
 
         {/* Bio */}
         {bio && (
-          <p className="text-[11px] text-[#9c8a78] leading-relaxed line-clamp-2">{bio}</p>
+          <p className="text-[11px] text-[#6b7280] leading-relaxed line-clamp-2">{bio}</p>
         )}
 
         {/* Skills */}
@@ -211,7 +211,7 @@ const WorkerCard = ({ worker, compact = false }) => {
               </span>
             ))}
             {skills.length > 3 && (
-              <span className="px-2 py-0.5 text-[10px] font-semibold rounded-lg bg-[#faf7f2] dark:bg-white/[0.06] text-[#9c8a78] border border-[#e8dfd0] dark:border-white/10">
+              <span className="px-2 py-0.5 text-[10px] font-semibold rounded-lg bg-[#f6f7f9] dark:bg-white/[0.06] text-[#6b7280] border border-[#e6e8ec] dark:border-white/10">
                 +{skills.length - 3}
               </span>
             )}
@@ -223,7 +223,7 @@ const WorkerCard = ({ worker, compact = false }) => {
           <div className="flex flex-wrap gap-1">
             {availDays.map(day => (
               <span key={day}
-                className="px-1.5 py-0.5 text-[9px] font-bold rounded bg-[#faf7f2] dark:bg-white/[0.04] text-[#9c8a78] border border-[#e8dfd0] dark:border-white/8 uppercase tracking-wide">
+                className="px-1.5 py-0.5 text-[9px] font-bold rounded bg-[#f6f7f9] dark:bg-white/[0.04] text-[#6b7280] border border-[#e6e8ec] dark:border-white/8 uppercase tracking-wide">
                 {day.slice(0,3)}
               </span>
             ))}
@@ -231,10 +231,10 @@ const WorkerCard = ({ worker, compact = false }) => {
         )}
 
         {/* Actions — pushed to bottom */}
-        <div className="mt-auto pt-3 border-t border-[#e8dfd0] dark:border-white/8 flex gap-2">
+        <div className="mt-auto pt-3 border-t border-[#e6e8ec] dark:border-white/8 flex gap-2">
           <Link
             to={`/worker/${userId}`}
-            className="flex-1 text-center py-2.5 text-xs font-bold rounded-xl border border-[#e8dfd0] dark:border-white/10 text-[#9c8a78] hover:border-[#c8933a]/50 hover:text-[#c8933a] hover:bg-amber-50 dark:hover:bg-amber-500/5 transition-all duration-200"
+            className="flex-1 text-center py-2.5 text-xs font-bold rounded-xl border border-[#e6e8ec] dark:border-white/10 text-[#6b7280] hover:border-[#c8933a]/50 hover:text-[#c8933a] hover:bg-amber-50 dark:hover:bg-amber-500/5 transition-all duration-200"
           >
             View Profile
           </Link>

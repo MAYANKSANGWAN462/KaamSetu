@@ -8,7 +8,7 @@ import HirerDashboard from './HirerDashboard'
 import { motion } from 'framer-motion'
 
 const PageLoader = () => (
-  <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] flex items-center justify-center">
+  <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] flex items-center justify-center">
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}

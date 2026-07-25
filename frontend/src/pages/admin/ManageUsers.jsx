@@ -82,10 +82,10 @@ const ManageUsers = () => {
   }[mode] || 'bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-400')
 
   return (
-    <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] pt-24 pb-12">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pt-24 pb-12">
       <div className="max-w-5xl mx-auto px-4">
         <motion.div {...stagger(0)} className="mb-7">
-          <Link to="/admin" className="flex items-center gap-1.5 text-xs font-semibold text-[#9c8a78] hover:text-[#c8933a] transition-colors duration-200 mb-4">
+          <Link to="/admin" className="flex items-center gap-1.5 text-xs font-semibold text-[#6b7280] hover:text-[#c8933a] transition-colors duration-200 mb-4">
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
             </svg>
@@ -98,13 +98,13 @@ const ManageUsers = () => {
         <motion.div {...stagger(1)} className="flex flex-wrap gap-3 mb-5">
           <div className="relative flex-1 min-w-48">
             <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
-              <svg className="w-4 h-4 text-[#b8a898]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-[#94a3b8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
             <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by name or email…"
-              className="w-full rounded-2xl bg-white dark:bg-white/[0.04] border border-[#e8dfd0] dark:border-white/10 pl-11 pr-4 py-3 text-sm text-gray-800 dark:text-gray-200 placeholder:text-[#b8a898] outline-none focus:border-[#c8933a]/60 transition-all duration-300" />
+              className="w-full rounded-2xl bg-white dark:bg-white/[0.04] border border-[#e6e8ec] dark:border-white/10 pl-11 pr-4 py-3 text-sm text-gray-800 dark:text-gray-200 placeholder:text-[#94a3b8] outline-none focus:border-[#c8933a]/60 transition-all duration-300" />
           </div>
           <div className="flex gap-1.5 flex-wrap">
             {FILTERS.map((f) => (
@@ -112,7 +112,7 @@ const ManageUsers = () => {
                 className={`px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 ${
                   filter === f.value
                     ? 'bg-gradient-to-br from-[#d4963e] to-[#b86e2a] text-white shadow-sm'
-                    : 'bg-white dark:bg-white/[0.04] border border-[#e8dfd0] dark:border-white/10 text-[#9c8a78] hover:border-[#c8933a]/50 hover:text-[#c8933a]'
+                    : 'bg-white dark:bg-white/[0.04] border border-[#e6e8ec] dark:border-white/10 text-[#6b7280] hover:border-[#c8933a]/50 hover:text-[#c8933a]'
                 }`}>{f.label}</button>
             ))}
           </div>
@@ -129,20 +129,20 @@ const ManageUsers = () => {
 
         {loading ? (
           <div className="space-y-2">{[...Array(5)].map((_, i) => (
-            <div key={i} className="flex items-center gap-4 bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e8dfd0] dark:border-white/8 px-5 py-4 animate-pulse">
-              <div className="w-10 h-10 rounded-full bg-[#e8dfd0] dark:bg-white/10" />
+            <div key={i} className="flex items-center gap-4 bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8 px-5 py-4 animate-pulse">
+              <div className="w-10 h-10 rounded-full bg-[#e6e8ec] dark:bg-white/10" />
               <div className="flex-1 space-y-2">
-                <div className="h-4 w-1/3 bg-[#e8dfd0] dark:bg-white/10 rounded-lg" />
-                <div className="h-3 w-1/2 bg-[#e8dfd0] dark:bg-white/10 rounded-lg" />
+                <div className="h-4 w-1/3 bg-[#e6e8ec] dark:bg-white/10 rounded-lg" />
+                <div className="h-3 w-1/2 bg-[#e6e8ec] dark:bg-white/10 rounded-lg" />
               </div>
-              <div className="h-8 w-20 bg-[#e8dfd0] dark:bg-white/10 rounded-xl" />
+              <div className="h-8 w-20 bg-[#e6e8ec] dark:bg-white/10 rounded-xl" />
             </div>
           ))}</div>
         ) : users.length === 0 ? (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            className="text-center py-16 bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8">
+            className="text-center py-16 bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8">
             <span className="text-4xl block mb-2">👥</span>
-            <p className="font-bold text-[#9c8a78]">No users found</p>
+            <p className="font-bold text-[#6b7280]">No users found</p>
           </motion.div>
         ) : (
           <div className="space-y-2">
@@ -154,7 +154,7 @@ const ManageUsers = () => {
                   transition={{ delay: Math.min(i * 0.03, 0.25), duration: 0.4 }}
                   className={`flex flex-wrap items-center gap-4 rounded-2xl border px-5 py-4 shadow-sm transition-all duration-200 ${
                     u.isActive
-                      ? 'bg-white dark:bg-white/[0.04] border-[#e8dfd0] dark:border-white/8'
+                      ? 'bg-white dark:bg-white/[0.04] border-[#e6e8ec] dark:border-white/8'
                       : 'bg-red-50/50 dark:bg-red-500/[0.05] border-red-200/50 dark:border-red-500/15'
                   }`}
                 >
@@ -176,7 +176,7 @@ const ManageUsers = () => {
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 dark:bg-red-500/15 text-red-700 dark:text-red-400">Suspended</span>
                       )}
                     </div>
-                    <p className="text-xs text-[#9c8a78] truncate">{u.email}</p>
+                    <p className="text-xs text-[#6b7280] truncate">{u.email}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
@@ -193,7 +193,7 @@ const ManageUsers = () => {
                     <button
                       onClick={() => handleDelete(u)}
                       disabled={busyId === u._id}
-                      className="px-3 py-2 rounded-xl text-xs font-bold border border-[#e8dfd0] dark:border-white/10 text-[#9c8a78] hover:text-red-500 hover:border-red-300 transition-all disabled:opacity-50"
+                      className="px-3 py-2 rounded-xl text-xs font-bold border border-[#e6e8ec] dark:border-white/10 text-[#6b7280] hover:text-red-500 hover:border-red-300 transition-all disabled:opacity-50"
                     >
                       Delete
                     </button>

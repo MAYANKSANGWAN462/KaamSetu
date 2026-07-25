@@ -30,12 +30,12 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] flex items-center justify-center px-4">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full max-w-sm bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-8 shadow-sm"
+        className="w-full max-w-sm bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8 p-8 shadow-sm"
       >
         <div className="flex items-center gap-3 mb-6">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] flex items-center justify-center">
@@ -57,25 +57,25 @@ const AdminLogin = () => {
 
         <form onSubmit={handleSubmit} className="space-y-3">
           <div>
-            <label className="block text-xs font-bold text-[#9c8a78] mb-1.5">Email</label>
+            <label className="block text-xs font-bold text-[#6b7280] mb-1.5">Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="username"
-              className="w-full rounded-2xl bg-[#faf7f2] dark:bg-white/[0.06] border border-[#e8dfd0] dark:border-white/10 px-4 py-3 text-sm text-gray-800 dark:text-gray-200 outline-none focus:border-[#c8933a]/60 transition-all"
+              className="w-full rounded-2xl bg-[#f6f7f9] dark:bg-white/[0.06] border border-[#e6e8ec] dark:border-white/10 px-4 py-3 text-sm text-gray-800 dark:text-gray-200 outline-none focus:border-[#c8933a]/60 transition-all"
             />
           </div>
           <div>
-            <label className="block text-xs font-bold text-[#9c8a78] mb-1.5">Password</label>
+            <label className="block text-xs font-bold text-[#6b7280] mb-1.5">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete="current-password"
-              className="w-full rounded-2xl bg-[#faf7f2] dark:bg-white/[0.06] border border-[#e8dfd0] dark:border-white/10 px-4 py-3 text-sm text-gray-800 dark:text-gray-200 outline-none focus:border-[#c8933a]/60 transition-all"
+              className="w-full rounded-2xl bg-[#f6f7f9] dark:bg-white/[0.06] border border-[#e6e8ec] dark:border-white/10 px-4 py-3 text-sm text-gray-800 dark:text-gray-200 outline-none focus:border-[#c8933a]/60 transition-all"
             />
           </div>
           <motion.button
@@ -88,7 +88,7 @@ const AdminLogin = () => {
           </motion.button>
         </form>
 
-        <p className="text-center text-[11px] text-[#b8a898] mt-5">
+        <p className="text-center text-[11px] text-[#94a3b8] mt-5">
           Restricted area — administrator accounts only.
         </p>
       </motion.div>

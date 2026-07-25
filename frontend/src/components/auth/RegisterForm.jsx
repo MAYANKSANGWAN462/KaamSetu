@@ -1,6 +1,7 @@
 // Purpose: Collects and validates registration details before account creation.
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { validateName, validateEmail, validatePassword } from '../../utils/validators'
 
 // const LANGUAGES = [
 //   { value: 'en', label: 'English', flag: '🇬🇧' },
@@ -72,16 +73,15 @@ const RegisterForm = ({ onSubmit }) => {
   }
 
   const validateForm = () => {
-    if (formData.name.trim().length < 2) {
+    if (!validateName(formData.name)) {
       setError('Name must be at least 2 characters')
       return false
     }
-    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-    if (!emailRegex.test(formData.email)) {
+    if (!validateEmail(formData.email)) {
       setError('Please enter a valid email address')
       return false
     }
-    if (formData.password.length < 8) {
+    if (!validatePassword(formData.password)) {
       setError('Password must be at least 8 characters')
       return false
     }
@@ -130,14 +130,6 @@ const RegisterForm = ({ onSubmit }) => {
       {children}
     </span>
   )
-
-  const fields = [
-    { key: 'name', delay: 0.05 },
-    { key: 'email', delay: 0.1 },
-    { key: 'language', delay: 0.15 },
-    { key: 'password', delay: 0.2 },
-    { key: 'confirmPassword', delay: 0.25 },
-  ]
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">

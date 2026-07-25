@@ -18,7 +18,6 @@ const reviewRoutes = require('./routes/reviewRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
 const adminRoutes = require('./routes/adminRoutes');
-// const translationRoutes = require('./routes/translationRoutes');
 const errorMiddleware = require('./middleware/errorMiddleware');
 const { initSocket, handleSocketConnection } = require('./config/socket');
 const connectDB = require('./config/database');
@@ -112,7 +111,6 @@ app.use('/api/applications', applicationRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/admin', adminRoutes);
-// app.use('/api/translate', translationRoutes);
 
 /* ===================== ERROR HANDLING ===================== */
 

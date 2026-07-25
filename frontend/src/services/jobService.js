@@ -152,16 +152,6 @@ class JobService {
     }
   }
 
-  // Get job applications
-  async getJobApplications(jobId) {
-    try {
-      const response = await api.get(`/jobs/${jobId}/applications`);
-      return response.data;
-    } catch (error) {
-      throw this.handleError(error);
-    }
-  }
-
   // Get applications submitted by current user
   async getMyApplications() {
     try {
@@ -198,7 +188,7 @@ class JobService {
   // Error handler
   handleError(error) {
     if (error.response) {
-      return error.response.data.message || "An error occurred";
+      return error.response.data?.message || "An error occurred";
     }
     return error.message || "Network error";
   }

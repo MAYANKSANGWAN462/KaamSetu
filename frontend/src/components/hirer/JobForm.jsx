@@ -21,7 +21,7 @@ const InputWrapper = ({ label, hint, children, icon }) => (
   </div>
 );
 
-const baseInput = `w-full px-4 py-3 rounded-xl border border-[#e8dfd0] dark:border-white/10 bg-[#faf7f2] dark:bg-white/[0.06] text-gray-800 dark:text-gray-100 text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#c8933a]/30 focus:border-[#c8933a] transition-all duration-200`;
+const baseInput = `w-full px-4 py-3 rounded-xl border border-[#e6e8ec] dark:border-white/10 bg-[#f6f7f9] dark:bg-white/[0.06] text-gray-800 dark:text-gray-100 text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#c8933a]/30 focus:border-[#c8933a] transition-all duration-200`;
 
 const JobForm = ({ onSubmit, loading, initialData }) => {
   const [formData, setFormData] = useState({
@@ -242,7 +242,7 @@ const JobForm = ({ onSubmit, loading, initialData }) => {
                       className={`px-3.5 py-1.5 rounded-lg text-sm font-semibold border transition-all duration-150 ${
                         Number(formData.salaryFixed) === price
                           ? "bg-gradient-to-br from-[#d4963e] to-[#b86e2a] text-white border-transparent shadow-sm"
-                          : "bg-white dark:bg-white/[0.04] border-[#e8dfd0] dark:border-white/10 text-gray-700 dark:text-gray-300 hover:border-[#c8933a]/50"
+                          : "bg-white dark:bg-white/[0.04] border-[#e6e8ec] dark:border-white/10 text-gray-700 dark:text-gray-300 hover:border-[#c8933a]/50"
                       }`}
                     >
                       ₹{price}
@@ -436,7 +436,7 @@ const JobForm = ({ onSubmit, loading, initialData }) => {
             control: (base, state) => ({
               ...base,
               borderRadius: "0.75rem",
-              borderColor: state.isFocused ? "#c8933a" : "#e8dfd0",
+              borderColor: state.isFocused ? "#c8933a" : "#e6e8ec",
               boxShadow: state.isFocused
                 ? "0 0 0 3px rgba(200,147,58,0.15)"
                 : "none",
@@ -469,7 +469,7 @@ const JobForm = ({ onSubmit, loading, initialData }) => {
             menu: (base) => ({
               ...base,
               borderRadius: "0.75rem",
-              border: "1px solid #e8dfd0",
+              border: "1px solid #e6e8ec",
               boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
               overflow: "hidden",
             }),
@@ -485,7 +485,7 @@ const JobForm = ({ onSubmit, loading, initialData }) => {
             }),
             placeholder: (base) => ({
               ...base,
-              color: "#9c8a78",
+              color: "#6b7280",
               fontSize: "0.875rem",
             }),
             input: (base) => ({ ...base, fontSize: "0.875rem" }),

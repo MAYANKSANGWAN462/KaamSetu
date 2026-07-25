@@ -16,23 +16,23 @@ const RatingStars = ({ rating = 0, size = 'sm' }) => {
   return (
     <div className="flex gap-0.5 items-center">
       {[1, 2, 3, 4, 5].map(i => (
-        <svg key={i} className={`${sz} ${i <= Math.round(rating) ? 'text-[#c8933a]' : 'text-[#e8dfd0] dark:text-white/10'}`}
+        <svg key={i} className={`${sz} ${i <= Math.round(rating) ? 'text-[#c8933a]' : 'text-[#e6e8ec] dark:text-white/10'}`}
           fill="currentColor" viewBox="0 0 20 20">
           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
         </svg>
       ))}
-      <span className="text-xs text-[#9c8a78] ml-1">{Number(rating).toFixed(1)}</span>
+      <span className="text-xs text-[#6b7280] ml-1">{Number(rating).toFixed(1)}</span>
     </div>
   )
 }
 
 const InfoRow = ({ icon, label, value }) => (
   <div className="flex items-start gap-3">
-    <div className="w-8 h-8 rounded-xl bg-[#faf7f2] dark:bg-white/[0.06] border border-[#e8dfd0] dark:border-white/10 flex items-center justify-center flex-shrink-0 mt-0.5 text-[#c8933a]">
+    <div className="w-8 h-8 rounded-xl bg-[#f6f7f9] dark:bg-white/[0.06] border border-[#e6e8ec] dark:border-white/10 flex items-center justify-center flex-shrink-0 mt-0.5 text-[#c8933a]">
       {icon}
     </div>
     <div>
-      <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#9c8a78] mb-0.5">{label}</p>
+      <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#6b7280] mb-0.5">{label}</p>
       <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{value || '—'}</p>
     </div>
   </div>
@@ -95,7 +95,7 @@ const WorkerProfile = () => {
   const photo = worker?.userId?.profilePhoto || worker?.profilePhoto
 
   if (loading) return (
-    <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] pt-24 flex items-center justify-center">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pt-24 flex items-center justify-center">
       <div className="flex flex-col items-center gap-4">
         <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] flex items-center justify-center animate-pulse">
           <span className="text-white font-black text-xl">K</span>
@@ -110,7 +110,7 @@ const WorkerProfile = () => {
   )
 
   if (!worker) return (
-    <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] pt-24 flex items-center justify-center">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pt-24 flex items-center justify-center">
       <div className="text-center">
         <span className="text-4xl block mb-3">🔍</span>
         <p className="font-bold text-gray-700 dark:text-gray-300">Worker not found</p>
@@ -119,11 +119,11 @@ const WorkerProfile = () => {
   )
 
   return (
-    <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] pt-24 pb-12">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pt-24 pb-12">
       <div className="max-w-4xl mx-auto px-4">
         <motion.div {...stagger(0)}>
           <button onClick={() => navigate(-1)}
-            className="flex items-center gap-1.5 text-xs font-semibold text-[#9c8a78] hover:text-[#c8933a] transition-colors duration-200 mb-6">
+            className="flex items-center gap-1.5 text-xs font-semibold text-[#6b7280] hover:text-[#c8933a] transition-colors duration-200 mb-6">
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
             </svg>
@@ -133,7 +133,7 @@ const WorkerProfile = () => {
 
         {/* ── HERO CARD ── */}
         <motion.div {...stagger(1)}
-          className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-7 shadow-sm mb-5"
+          className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8 p-7 shadow-sm mb-5"
         >
           <div className="flex flex-wrap items-start justify-between gap-5">
             <div className="flex items-start gap-5">
@@ -150,25 +150,25 @@ const WorkerProfile = () => {
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-[#9c8a78] mb-2">{worker.category}</p>
+                <p className="text-sm text-[#6b7280] mb-2">{worker.category}</p>
                 <RatingStars rating={worker.rating?.avg || 0} size="lg" />
-                <p className="text-xs text-[#b8a898] mt-0.5">({worker.rating?.count || 0} reviews)</p>
+                <p className="text-xs text-[#94a3b8] mt-0.5">({worker.rating?.count || 0} reviews)</p>
               </div>
             </div>
 
             {/* Wage */}
-            <div className="bg-gradient-to-br from-[#faf7f2] to-[#f0e8da] dark:from-white/[0.06] dark:to-white/[0.03] rounded-2xl border border-[#e8dfd0] dark:border-white/10 px-6 py-4 text-right">
-              <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#9c8a78] mb-1">Wage</p>
+            <div className="bg-gradient-to-br from-[#f6f7f9] to-[#eef0f3] dark:from-white/[0.06] dark:to-white/[0.03] rounded-2xl border border-[#e6e8ec] dark:border-white/10 px-6 py-4 text-right">
+              <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#6b7280] mb-1">Wage</p>
               <p className="text-2xl font-black text-[#c8933a]">
                 ₹{worker.wage?.amount || worker.dailyRate || worker.hourlyRate || 0}
               </p>
-              <p className="text-xs text-[#9c8a78] capitalize">{worker.wage?.unit || 'per day'}</p>
+              <p className="text-xs text-[#6b7280] capitalize">{worker.wage?.unit || 'per day'}</p>
             </div>
           </div>
 
           {/* Action buttons — hirers only, never on your own profile */}
           {user?.activeMode === 'hirer' && !isOwn && (
-            <div className="flex flex-wrap gap-3 pt-5 mt-5 border-t border-[#e8dfd0] dark:border-white/8">
+            <div className="flex flex-wrap gap-3 pt-5 mt-5 border-t border-[#e6e8ec] dark:border-white/8">
               {!hasInteraction ? (
                 <motion.button
                   whileHover={{ scale: 1.02, y: -1 }} whileTap={{ scale: 0.97 }}
@@ -205,7 +205,7 @@ const WorkerProfile = () => {
           )}
 
           {!user && (
-            <div className="pt-5 mt-5 border-t border-[#e8dfd0] dark:border-white/8">
+            <div className="pt-5 mt-5 border-t border-[#e6e8ec] dark:border-white/8">
               <motion.button
                 whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                 onClick={() => navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`)}
@@ -222,20 +222,20 @@ const WorkerProfile = () => {
           <motion.div {...stagger(2)} className="lg:col-span-2 space-y-5">
             {/* About */}
             {worker.bio && (
-              <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-7 shadow-sm">
-                <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-3">About</h2>
+              <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8 p-7 shadow-sm">
+                <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-3">About</h2>
                 <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{worker.bio || worker.description}</p>
               </div>
             )}
 
             {/* Skills */}
             {(worker.skills || []).length > 0 && (
-              <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-7 shadow-sm">
-                <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-4">Skills</h2>
+              <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8 p-7 shadow-sm">
+                <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-4">Skills</h2>
                 <div className="flex flex-wrap gap-2">
                   {worker.skills.map(skill => (
                     <span key={skill}
-                      className="px-3 py-1.5 rounded-xl bg-[#faf7f2] dark:bg-white/[0.06] border border-[#e8dfd0] dark:border-white/10 text-xs font-semibold text-gray-700 dark:text-gray-300">
+                      className="px-3 py-1.5 rounded-xl bg-[#f6f7f9] dark:bg-white/[0.06] border border-[#e6e8ec] dark:border-white/10 text-xs font-semibold text-gray-700 dark:text-gray-300">
                       {skill}
                     </span>
                   ))}
@@ -244,27 +244,27 @@ const WorkerProfile = () => {
             )}
 
             {/* Reviews */}
-            <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-7 shadow-sm">
-              <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-4">
+            <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8 p-7 shadow-sm">
+              <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-4">
                 Reviews ({reviews.length})
               </h2>
               {reviews.length === 0 ? (
                 <div className="text-center py-8">
                   <span className="text-3xl block mb-2">⭐</span>
-                  <p className="text-sm text-[#9c8a78]">No reviews yet</p>
+                  <p className="text-sm text-[#6b7280]">No reviews yet</p>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {reviews.map(r => (
-                    <div key={r._id} className="pb-4 border-b border-[#e8dfd0] dark:border-white/8 last:border-0 last:pb-0">
+                    <div key={r._id} className="pb-4 border-b border-[#e6e8ec] dark:border-white/8 last:border-0 last:pb-0">
                       <div className="flex items-center justify-between mb-1.5">
                         <RatingStars rating={r.rating} />
-                        <span className="text-xs text-[#b8a898]">
+                        <span className="text-xs text-[#94a3b8]">
                           {new Date(r.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </span>
                       </div>
                       <p className="text-sm text-gray-700 dark:text-gray-300">{r.comment}</p>
-                      <p className="text-xs text-[#9c8a78] mt-1">— {r.hirerName || 'Anonymous'}</p>
+                      <p className="text-xs text-[#6b7280] mt-1">— {r.hirerName || 'Anonymous'}</p>
                     </div>
                   ))}
                 </div>
@@ -274,8 +274,8 @@ const WorkerProfile = () => {
 
           {/* Sidebar info */}
           <motion.div {...stagger(3)} className="space-y-4">
-            <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-6 shadow-sm space-y-5">
-              <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78]">Details</h2>
+            <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8 p-6 shadow-sm space-y-5">
+              <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280]">Details</h2>
               <InfoRow icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>}
                 label="Category" value={worker.category} />
               <InfoRow icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}

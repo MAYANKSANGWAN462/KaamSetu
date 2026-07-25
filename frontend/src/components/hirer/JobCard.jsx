@@ -133,7 +133,7 @@ const JobCard = ({ job, onApply, onView }) => {
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -5, boxShadow: "0 20px 48px rgba(0,0,0,0.12)" }}
       transition={{ duration: 0.28, ease: "easeOut" }}
-      className="relative bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e8dfd0] dark:border-white/8 shadow-sm overflow-hidden flex flex-col group h-full"
+      className="relative bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8 shadow-sm overflow-hidden flex flex-col group h-full"
     >
       {/* Gradient accent bar */}
       <div
@@ -146,7 +146,7 @@ const JobCard = ({ job, onApply, onView }) => {
         <div className="flex items-start justify-between gap-3 mb-3">
           {/* Category icon + title */}
           <div className="flex items-start gap-3 min-w-0">
-            <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#faf7f2] dark:bg-white/[0.06] border border-[#e8dfd0] dark:border-white/10 flex items-center justify-center text-xl">
+            <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#f6f7f9] dark:bg-white/[0.06] border border-[#e6e8ec] dark:border-white/10 flex items-center justify-center text-xl">
               {categoryIcon}
             </div>
             <div className="min-w-0">
@@ -154,7 +154,7 @@ const JobCard = ({ job, onApply, onView }) => {
                 {title}
               </h3>
               {category && (
-                <span className="text-xs text-[#9c8a78] capitalize mt-0.5 block truncate">
+                <span className="text-xs text-[#6b7280] capitalize mt-0.5 block truncate">
                   {category}
                 </span>
               )}
@@ -171,7 +171,7 @@ const JobCard = ({ job, onApply, onView }) => {
         </div>
 
         {/* Description */}
-        <p className="text-sm text-[#9c8a78] dark:text-gray-400 leading-relaxed line-clamp-2 mb-4 min-h-[2.5rem]">
+        <p className="text-sm text-[#6b7280] dark:text-gray-400 leading-relaxed line-clamp-2 mb-4 min-h-[2.5rem]">
           {description}
         </p>
 
@@ -191,10 +191,10 @@ const JobCard = ({ job, onApply, onView }) => {
           </div>
 
           {/* Location */}
-          <div className="flex items-center gap-2 bg-[#faf7f2] dark:bg-white/[0.04] rounded-xl px-3 py-2 min-w-0">
+          <div className="flex items-center gap-2 bg-[#f6f7f9] dark:bg-white/[0.04] rounded-xl px-3 py-2 min-w-0">
             <span className="text-base flex-shrink-0">📍</span>
             <div className="min-w-0">
-              <p className="text-xs text-[#9c8a78] font-medium leading-none mb-0.5">
+              <p className="text-xs text-[#6b7280] font-medium leading-none mb-0.5">
                 Location
               </p>
               <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 leading-none truncate">
@@ -204,10 +204,10 @@ const JobCard = ({ job, onApply, onView }) => {
           </div>
 
           {/* Workers */}
-          <div className="flex items-center gap-2 bg-[#faf7f2] dark:bg-white/[0.04] rounded-xl px-3 py-2 min-w-0">
+          <div className="flex items-center gap-2 bg-[#f6f7f9] dark:bg-white/[0.04] rounded-xl px-3 py-2 min-w-0">
             <span className="text-base flex-shrink-0">👥</span>
             <div className="min-w-0">
-              <p className="text-xs text-[#9c8a78] font-medium leading-none mb-0.5">
+              <p className="text-xs text-[#6b7280] font-medium leading-none mb-0.5">
                 Workers needed
               </p>
               <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 leading-none">
@@ -218,10 +218,10 @@ const JobCard = ({ job, onApply, onView }) => {
 
           {/* Posted */}
           {postedLabel && (
-            <div className="flex items-center gap-2 bg-[#faf7f2] dark:bg-white/[0.04] rounded-xl px-3 py-2 min-w-0">
+            <div className="flex items-center gap-2 bg-[#f6f7f9] dark:bg-white/[0.04] rounded-xl px-3 py-2 min-w-0">
               <span className="text-base flex-shrink-0">🕐</span>
               <div className="min-w-0">
-                <p className="text-xs text-[#9c8a78] font-medium leading-none mb-0.5">
+                <p className="text-xs text-[#6b7280] font-medium leading-none mb-0.5">
                   Posted
                 </p>
                 <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 leading-none truncate">
@@ -244,7 +244,7 @@ const JobCard = ({ job, onApply, onView }) => {
               onView?.(_id);
               navigate(`/jobs/${_id}`);
             }}
-            className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-[#e8dfd0] dark:border-white/10 text-[#9c8a78] hover:text-[#c8933a] hover:border-[#c8933a]/50 hover:bg-amber-50 dark:hover:bg-amber-500/5 text-sm font-semibold transition-all duration-200"
+            className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-[#e6e8ec] dark:border-white/10 text-[#6b7280] hover:text-[#c8933a] hover:border-[#c8933a]/50 hover:bg-amber-50 dark:hover:bg-amber-500/5 text-sm font-semibold transition-all duration-200"
           >
             <svg
               className="w-4 h-4"

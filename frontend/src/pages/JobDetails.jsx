@@ -22,11 +22,11 @@ const StatusBadge = ({ status }) => {
 
 const InfoRow = ({ icon, label, value }) => (
   <div className="flex items-start gap-3">
-    <div className="w-8 h-8 rounded-xl bg-[#faf7f2] dark:bg-white/[0.06] border border-[#e8dfd0] dark:border-white/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+    <div className="w-8 h-8 rounded-xl bg-[#f6f7f9] dark:bg-white/[0.06] border border-[#e6e8ec] dark:border-white/10 flex items-center justify-center flex-shrink-0 mt-0.5">
       {icon}
     </div>
     <div>
-      <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#9c8a78] dark:text-gray-600 mb-0.5">{label}</p>
+      <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#6b7280] dark:text-gray-600 mb-0.5">{label}</p>
       <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{value || '—'}</p>
     </div>
   </div>
@@ -34,12 +34,12 @@ const InfoRow = ({ icon, label, value }) => (
 
 const SkeletonBlock = () => (
   <div className="animate-pulse space-y-4">
-    <div className="h-8 w-2/3 bg-[#e8dfd0] dark:bg-white/10 rounded-xl" />
-    <div className="h-4 w-1/3 bg-[#e8dfd0] dark:bg-white/10 rounded-lg" />
-    <div className="h-px bg-[#e8dfd0] dark:bg-white/10 my-6" />
+    <div className="h-8 w-2/3 bg-[#e6e8ec] dark:bg-white/10 rounded-xl" />
+    <div className="h-4 w-1/3 bg-[#e6e8ec] dark:bg-white/10 rounded-lg" />
+    <div className="h-px bg-[#e6e8ec] dark:bg-white/10 my-6" />
     <div className="space-y-3">
       {[...Array(4)].map((_, i) => (
-        <div key={i} className="h-4 bg-[#e8dfd0] dark:bg-white/10 rounded-lg" style={{ width: `${75 + (i * 6)}%` }} />
+        <div key={i} className="h-4 bg-[#e6e8ec] dark:bg-white/10 rounded-lg" style={{ width: `${75 + (i * 6)}%` }} />
       ))}
     </div>
   </div>
@@ -144,11 +144,11 @@ const JobDetails = () => {
     : null
 
   return (
-    <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] pt-24 pb-12">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pt-24 pb-12">
       <div className="max-w-5xl mx-auto px-4">
 
         {loading ? (
-          <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-8 shadow-sm">
+          <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8 p-8 shadow-sm">
             <SkeletonBlock />
           </div>
         ) : !job ? null : (
@@ -158,12 +158,12 @@ const JobDetails = () => {
             transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
           >
             {/* ── HEADER CARD ── */}
-            <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-7 shadow-sm mb-5">
+            <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8 p-7 shadow-sm mb-5">
               <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
                 <div className="flex-1 min-w-0">
                   <button
                     onClick={() => navigate(-1)}
-                    className="flex items-center gap-1.5 text-xs font-semibold text-[#9c8a78] hover:text-[#c8933a] transition-colors duration-200 mb-3"
+                    className="flex items-center gap-1.5 text-xs font-semibold text-[#6b7280] hover:text-[#c8933a] transition-colors duration-200 mb-3"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
@@ -173,7 +173,7 @@ const JobDetails = () => {
                   <div className="flex items-center gap-3 mb-2">
                     <StatusBadge status={job.status} />
                     {job.category && (
-                      <span className="px-3 py-1 rounded-full bg-[#faf7f2] dark:bg-white/[0.06] border border-[#e8dfd0] dark:border-white/10 text-xs font-semibold text-[#9c8a78]">
+                      <span className="px-3 py-1 rounded-full bg-[#f6f7f9] dark:bg-white/[0.06] border border-[#e6e8ec] dark:border-white/10 text-xs font-semibold text-[#6b7280]">
                         {job.category}
                       </span>
                     )}
@@ -181,7 +181,7 @@ const JobDetails = () => {
                   <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-tight">
                     {job.title}
                   </h1>
-                  <p className="flex items-center gap-1.5 mt-2 text-sm text-[#9c8a78]">
+                  <p className="flex items-center gap-1.5 mt-2 text-sm text-[#6b7280]">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75}
                         d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -193,18 +193,18 @@ const JobDetails = () => {
                 </div>
 
                 {/* Wage */}
-                <div className="bg-gradient-to-br from-[#faf7f2] to-[#f0e8da] dark:from-white/[0.06] dark:to-white/[0.03] rounded-2xl border border-[#e8dfd0] dark:border-white/10 px-6 py-4 text-right">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#9c8a78] mb-1">Wage</p>
+                <div className="bg-gradient-to-br from-[#f6f7f9] to-[#eef0f3] dark:from-white/[0.06] dark:to-white/[0.03] rounded-2xl border border-[#e6e8ec] dark:border-white/10 px-6 py-4 text-right">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#6b7280] mb-1">Wage</p>
                   <p className="text-2xl font-black text-[#c8933a]">
                     ₹{job.wage?.amount || 0}
                   </p>
-                  <p className="text-xs text-[#9c8a78] capitalize">{job.wage?.unit || 'per day'}</p>
+                  <p className="text-xs text-[#6b7280] capitalize">{job.wage?.unit || 'per day'}</p>
                 </div>
               </div>
 
               {/* Action buttons — workers only, not owner */}
               {!isOwner && user?.activeMode === 'worker' && (
-                <div className="flex flex-wrap gap-3 pt-5 border-t border-[#e8dfd0] dark:border-white/8">
+                <div className="flex flex-wrap gap-3 pt-5 border-t border-[#e6e8ec] dark:border-white/8">
                   {isOpen && !hasInteraction && (
                     <motion.button
                       whileHover={{ scale: 1.02, y: -1 }}
@@ -258,7 +258,7 @@ const JobDetails = () => {
 
               {/* Hirer owns this job — show edit button */}
               {isOwner && (
-                <div className="flex gap-3 pt-5 border-t border-[#e8dfd0] dark:border-white/8">
+                <div className="flex gap-3 pt-5 border-t border-[#e6e8ec] dark:border-white/8">
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.97 }}
@@ -279,8 +279,8 @@ const JobDetails = () => {
 
               {/* Description */}
               <div className="lg:col-span-2 space-y-5">
-                <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-7 shadow-sm">
-                  <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-3">Description</h2>
+                <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8 p-7 shadow-sm">
+                  <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-3">Description</h2>
                   <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
                     {job.description || 'No description provided.'}
                   </p>
@@ -288,12 +288,12 @@ const JobDetails = () => {
 
                 {/* Skills */}
                 {(job.requiredSkills || []).length > 0 && (
-                  <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-7 shadow-sm">
-                    <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-4">Required Skills</h2>
+                  <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8 p-7 shadow-sm">
+                    <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-4">Required Skills</h2>
                     <div className="flex flex-wrap gap-2">
                       {job.requiredSkills.map(skill => (
                         <span key={skill}
-                          className="px-3 py-1.5 rounded-xl bg-[#faf7f2] dark:bg-white/[0.06] border border-[#e8dfd0] dark:border-white/10 text-xs font-semibold text-gray-700 dark:text-gray-300">
+                          className="px-3 py-1.5 rounded-xl bg-[#f6f7f9] dark:bg-white/[0.06] border border-[#e6e8ec] dark:border-white/10 text-xs font-semibold text-gray-700 dark:text-gray-300">
                           {skill}
                         </span>
                       ))}
@@ -303,12 +303,12 @@ const JobDetails = () => {
 
                 {/* Applicants — owner only */}
                 {isOwner && (
-                  <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-7 shadow-sm">
-                    <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-4">
+                  <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8 p-7 shadow-sm">
+                    <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-4">
                       Applicants ({job.applicationCount || 0})
                     </h2>
                     {(job.applications || []).length === 0 ? (
-                      <div className="text-center py-8 text-[#9c8a78]">
+                      <div className="text-center py-8 text-[#6b7280]">
                         <span className="text-3xl block mb-2">📭</span>
                         <p className="text-sm font-medium">No applications yet</p>
                         <p className="text-xs mt-1 opacity-70">Applications will appear here once workers apply</p>
@@ -326,7 +326,7 @@ const JobDetails = () => {
                               key={app._id}
                               initial={{ opacity: 0, y: 8 }}
                               animate={{ opacity: 1, y: 0 }}
-                              className="flex flex-wrap items-center justify-between gap-3 bg-[#faf7f2] dark:bg-white/[0.03] rounded-2xl border border-[#e8dfd0] dark:border-white/8 p-4"
+                              className="flex flex-wrap items-center justify-between gap-3 bg-[#f6f7f9] dark:bg-white/[0.03] rounded-2xl border border-[#e6e8ec] dark:border-white/8 p-4"
                             >
                               <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
@@ -375,8 +375,8 @@ const JobDetails = () => {
 
               {/* Sidebar */}
               <div className="space-y-5">
-                <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-6 shadow-sm space-y-5">
-                  <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78]">Job Details</h2>
+                <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8 p-6 shadow-sm space-y-5">
+                  <h2 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280]">Job Details</h2>
 
                   <InfoRow
                     icon={<svg className="w-4 h-4 text-[#c8933a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>}
@@ -415,8 +415,8 @@ const JobDetails = () => {
                 </div>
 
                 {job.createdAt && (
-                  <div className="bg-[#faf7f2] dark:bg-white/[0.03] rounded-2xl border border-[#e8dfd0] dark:border-white/8 px-5 py-4">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#9c8a78] mb-1">Posted</p>
+                  <div className="bg-[#f6f7f9] dark:bg-white/[0.03] rounded-2xl border border-[#e6e8ec] dark:border-white/8 px-5 py-4">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#6b7280] mb-1">Posted</p>
                     <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                       {new Date(job.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </p>

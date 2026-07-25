@@ -55,7 +55,7 @@ class UserService {
   // Error handler
   handleError(error) {
     if (error.response) {
-      return error.response.data.message || 'An error occurred';
+      return error.response.data?.message || 'An error occurred';
     }
     return error.message || 'Network error';
   }

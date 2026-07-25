@@ -38,7 +38,7 @@ const ICONS = {
   hirerContact:         { emoji: '👋', color: 'bg-amber-100 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400' },
   newMessage:           { emoji: '💬', color: 'bg-purple-100 dark:bg-purple-500/15 text-purple-600 dark:text-purple-400' },
   jobCancelled:         { emoji: '🚫', color: 'bg-red-100 dark:bg-red-500/15 text-red-600 dark:text-red-400' },
-  applicationStatus:    { emoji: '🔔', color: 'bg-[#faf7f2] dark:bg-white/[0.06] text-[#c8933a]' },
+  applicationStatus:    { emoji: '🔔', color: 'bg-[#f6f7f9] dark:bg-white/[0.06] text-[#c8933a]' },
 }
 
 const NotificationBell = () => {
@@ -82,7 +82,7 @@ const NotificationBell = () => {
       }
       addNotif(notif)
       toast(notif.body, { icon: '📋', duration: 4000,
-        style: { background: '#fffbf5', border: '1px solid #e8dfd0', color: '#333' } })
+        style: { background: '#fffbf5', border: '1px solid #e6e8ec', color: '#333' } })
     }
 
     // Hirer contacts worker
@@ -96,7 +96,7 @@ const NotificationBell = () => {
       }
       addNotif(notif)
       toast(notif.body, { icon: '👋', duration: 4000,
-        style: { background: '#fffbf5', border: '1px solid #e8dfd0', color: '#333' } })
+        style: { background: '#fffbf5', border: '1px solid #e6e8ec', color: '#333' } })
     }
 
     // Application status update (worker)
@@ -148,7 +148,7 @@ const NotificationBell = () => {
       }
       addNotif(notif)
       toast(notif.body, { icon: '💬', duration: 4000,
-        style: { background: '#fffbf5', border: '1px solid #e8dfd0', color: '#333' } })
+        style: { background: '#fffbf5', border: '1px solid #e6e8ec', color: '#333' } })
     }
 
     socket.on('newApplication', onNewApplication)
@@ -205,7 +205,7 @@ const NotificationBell = () => {
       {/* Bell button */}
       <button
         onClick={() => { setOpen(p => !p); if (!open && unread > 0) {} }}
-        className="relative w-9 h-9 rounded-xl border border-[#e8dfd0] dark:border-white/10 bg-white dark:bg-white/[0.04] flex items-center justify-center text-[#9c8a78] hover:text-[#c8933a] hover:border-[#c8933a]/40 transition-all duration-200"
+        className="relative w-9 h-9 rounded-xl border border-[#e6e8ec] dark:border-white/10 bg-white dark:bg-white/[0.04] flex items-center justify-center text-[#6b7280] hover:text-[#c8933a] hover:border-[#c8933a]/40 transition-all duration-200"
         aria-label="Notifications"
       >
         <svg className="w-4.5 h-4.5 w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -234,10 +234,10 @@ const NotificationBell = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.96 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute right-0 top-11 w-80 sm:w-96 bg-white dark:bg-[#1a1814] border border-[#e8dfd0] dark:border-white/10 rounded-2xl shadow-2xl shadow-black/10 dark:shadow-black/40 z-50 overflow-hidden"
+            className="absolute right-0 top-11 w-80 sm:w-96 bg-white dark:bg-[#141824] border border-[#e6e8ec] dark:border-white/10 rounded-2xl shadow-2xl shadow-black/10 dark:shadow-black/40 z-50 overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3.5 border-b border-[#e8dfd0] dark:border-white/8">
+            <div className="flex items-center justify-between px-4 py-3.5 border-b border-[#e6e8ec] dark:border-white/8">
               <div className="flex items-center gap-2">
                 <h3 className="font-black text-sm text-gray-900 dark:text-white">Notifications</h3>
                 {unread > 0 && (
@@ -255,7 +255,7 @@ const NotificationBell = () => {
                 )}
                 {notifs.length > 0 && (
                   <button onClick={clearAll}
-                    className="text-[10px] font-bold text-[#9c8a78] hover:text-red-500 transition-colors">
+                    className="text-[10px] font-bold text-[#6b7280] hover:text-red-500 transition-colors">
                     Clear
                   </button>
                 )}
@@ -263,12 +263,12 @@ const NotificationBell = () => {
             </div>
 
             {/* List */}
-            <div className="max-h-[380px] overflow-y-auto divide-y divide-[#e8dfd0] dark:divide-white/8">
+            <div className="max-h-[380px] overflow-y-auto divide-y divide-[#e6e8ec] dark:divide-white/8">
               {notifs.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center px-6">
                   <span className="text-3xl mb-2">🔔</span>
                   <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">All caught up!</p>
-                  <p className="text-xs text-[#9c8a78]">Notifications will appear here when someone applies or messages you.</p>
+                  <p className="text-xs text-[#6b7280]">Notifications will appear here when someone applies or messages you.</p>
                 </div>
               ) : (
                 notifs.map(notif => {
@@ -277,7 +277,7 @@ const NotificationBell = () => {
                     <button
                       key={notif.id}
                       onClick={() => handleNotifClick(notif)}
-                      className={`w-full flex items-start gap-3 px-4 py-3.5 text-left hover:bg-[#faf7f2] dark:hover:bg-white/[0.03] transition-colors duration-150 ${
+                      className={`w-full flex items-start gap-3 px-4 py-3.5 text-left hover:bg-[#f6f7f9] dark:hover:bg-white/[0.03] transition-colors duration-150 ${
                         !notif.read ? 'bg-amber-50/50 dark:bg-amber-500/[0.04]' : ''
                       }`}
                     >
@@ -288,10 +288,10 @@ const NotificationBell = () => {
                         <p className={`text-xs font-bold truncate ${!notif.read ? 'text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}>
                           {notif.title}
                         </p>
-                        <p className="text-[11px] text-[#9c8a78] mt-0.5 leading-relaxed line-clamp-2">
+                        <p className="text-[11px] text-[#6b7280] mt-0.5 leading-relaxed line-clamp-2">
                           {notif.body}
                         </p>
-                        <p className="text-[10px] text-[#b8a898] mt-1">{formatTime(notif.createdAt)}</p>
+                        <p className="text-[10px] text-[#94a3b8] mt-1">{formatTime(notif.createdAt)}</p>
                       </div>
                       {!notif.read && (
                         <div className="w-2 h-2 rounded-full bg-[#c8933a] flex-shrink-0 mt-1.5" />

@@ -53,20 +53,10 @@ class ReviewService {
     }
   }
 
-  // Get review statistics
-  async getReviewStats(workerId) {
-    try {
-      const response = await api.get(`/reviews/worker/${workerId}/stats`);
-      return response.data;
-    } catch (error) {
-      throw this.handleError(error);
-    }
-  }
-
   // Error handler
   handleError(error) {
     if (error.response) {
-      return error.response.data.message || 'An error occurred';
+      return error.response.data?.message || 'An error occurred';
     }
     return error.message || 'Network error';
   }

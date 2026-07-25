@@ -28,17 +28,17 @@ const CATEGORY_ICONS = {
 }
 
 const SkeletonCard = () => (
-  <div className="rounded-2xl bg-white/60 dark:bg-white/5 border border-[#e8dfd0] dark:border-white/8 p-5 animate-pulse">
+  <div className="rounded-2xl bg-white/60 dark:bg-white/5 border border-[#e6e8ec] dark:border-white/8 p-5 animate-pulse">
     <div className="flex items-center gap-3 mb-4">
-      <div className="w-12 h-12 rounded-full bg-[#e8dfd0] dark:bg-white/10" />
+      <div className="w-12 h-12 rounded-full bg-[#e6e8ec] dark:bg-white/10" />
       <div className="flex-1 space-y-2">
-        <div className="h-4 bg-[#e8dfd0] dark:bg-white/10 rounded-lg w-3/4" />
-        <div className="h-3 bg-[#e8dfd0] dark:bg-white/10 rounded-lg w-1/2" />
+        <div className="h-4 bg-[#e6e8ec] dark:bg-white/10 rounded-lg w-3/4" />
+        <div className="h-3 bg-[#e6e8ec] dark:bg-white/10 rounded-lg w-1/2" />
       </div>
     </div>
     <div className="space-y-2">
-      <div className="h-3 bg-[#e8dfd0] dark:bg-white/10 rounded-lg" />
-      <div className="h-3 bg-[#e8dfd0] dark:bg-white/10 rounded-lg w-4/5" />
+      <div className="h-3 bg-[#e6e8ec] dark:bg-white/10 rounded-lg" />
+      <div className="h-3 bg-[#e6e8ec] dark:bg-white/10 rounded-lg w-4/5" />
     </div>
   </div>
 )
@@ -91,34 +91,32 @@ const Home = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b]">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14]">
 
       {/* ── HERO ── */}
-      <section className="relative overflow-hidden">
-        {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1a1208] via-[#2d1f0a] to-[#1a1208]" />
-        {/* Grain texture */}
-        <div className="absolute inset-0 opacity-[0.03]"
-          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")` }} />
-        {/* Warm glow orbs */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-[#c8833a]/20 blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full bg-[#d4963e]/15 blur-[100px] pointer-events-none" />
+      <section className="relative overflow-hidden bg-[#f6f7f9] dark:bg-[#0b0e14]">
+        {/* Soft amber glow accents */}
+        <div className="absolute -top-24 left-1/4 w-96 h-96 rounded-full bg-amber-400/15 dark:bg-amber-500/10 blur-[120px] pointer-events-none" />
+        <div className="absolute top-10 right-1/4 w-80 h-80 rounded-full bg-orange-400/10 dark:bg-orange-500/[0.07] blur-[100px] pointer-events-none" />
+        {/* Subtle dotted grid */}
+        <div className="absolute inset-0 opacity-[0.05] pointer-events-none text-slate-400"
+          style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '28px 28px' }} />
 
-        <div className="relative max-w-6xl mx-auto px-4 pt-28 pb-20 md:pt-36 md:pb-28">
+        <div className="relative max-w-6xl mx-auto px-4 pt-16 pb-16 md:pt-24 md:pb-20">
           <motion.div {...stagger(0)} className="text-center mb-12">
             {/* Badge */}
-            <motion.div {...stagger(0)} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#c8933a]/30 bg-[#c8933a]/10 mb-6">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#c8933a] animate-pulse" />
-              <span className="text-[11px] font-bold tracking-[0.15em] uppercase text-[#d4a055]">Hyperlocal Job Marketplace</span>
+            <motion.div {...stagger(0)} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-300/60 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 mb-6">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+              <span className="text-[11px] font-bold tracking-[0.15em] uppercase text-amber-600 dark:text-amber-400">Hyperlocal Job Marketplace</span>
             </motion.div>
 
-            <motion.h1 {...stagger(1)} className="text-5xl md:text-7xl font-black text-white mb-5 leading-[1.05] tracking-tight">
-              Kaam<span className="text-[#c8933a]">Setu</span>
+            <motion.h1 {...stagger(1)} className="text-5xl md:text-7xl font-black text-gray-900 dark:text-white mb-5 leading-[1.05] tracking-tight">
+              Kaam<span className="text-amber-500">Setu</span>
             </motion.h1>
-            <motion.p {...stagger(2)} className="text-xl md:text-2xl text-[#a89070] font-medium mb-2">
+            <motion.p {...stagger(2)} className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-medium mb-2">
               Find Work. Hire Fast. Connect Locally.
             </motion.p>
-            <motion.p {...stagger(3)} className="text-sm text-[#6e5c48] max-w-lg mx-auto">
+            <motion.p {...stagger(3)} className="text-sm text-gray-500 dark:text-gray-400 max-w-lg mx-auto">
               India's trusted platform for daily-wage workers and hirers — connecting people nearby, instantly.
             </motion.p>
           </motion.div>
@@ -130,13 +128,13 @@ const Home = () => {
             transition={{ delay: 0.35, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
             <form onSubmit={handleSearch}
-              className="mx-auto max-w-3xl rounded-3xl bg-white/[0.07] backdrop-blur-xl border border-white/10 p-2 shadow-2xl"
+              className="mx-auto max-w-3xl rounded-3xl bg-white dark:bg-white/[0.04] border border-gray-200 dark:border-white/10 p-2 shadow-xl shadow-gray-200/60 dark:shadow-black/30"
             >
               <div className="flex flex-col md:flex-row gap-2">
                 {/* Category */}
                 <div className="relative flex-1">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <svg className={`w-4 h-4 transition-colors duration-300 ${categoryFocused ? 'text-[#c8933a]' : 'text-[#6e5c48]'}`}
+                    <svg className={`w-4 h-4 transition-colors duration-300 ${categoryFocused ? 'text-amber-500' : 'text-gray-400'}`}
                       fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75}
                         d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -147,11 +145,11 @@ const Home = () => {
                     onChange={e => setSearchInput(p => ({ ...p, category: e.target.value }))}
                     onFocus={() => setCategoryFocused(true)}
                     onBlur={() => setCategoryFocused(false)}
-                    className="w-full rounded-2xl bg-white/10 border border-white/10 pl-11 pr-4 py-4 text-sm font-medium text-white placeholder:text-[#6e5c48] appearance-none outline-none focus:border-[#c8933a]/50 focus:bg-white/15 transition-all duration-300"
+                    className="w-full rounded-2xl bg-gray-50 dark:bg-white/[0.06] border border-gray-200 dark:border-white/10 pl-11 pr-4 py-4 text-sm font-medium text-gray-900 dark:text-white appearance-none outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/30 transition-all duration-300"
                   >
-                    <option value="" className="bg-[#1a1208] text-white">All Categories</option>
+                    <option value="" className="bg-white text-gray-900 dark:bg-[#141824] dark:text-white">All Categories</option>
                     {categories.map(cat => (
-                      <option key={cat.value} value={cat.value} className="bg-[#1a1208] text-white">
+                      <option key={cat.value} value={cat.value} className="bg-white text-gray-900 dark:bg-[#141824] dark:text-white">
                         {CATEGORY_ICONS[cat.label] || '💼'} {cat.label}
                       </option>
                     ))}
@@ -161,7 +159,7 @@ const Home = () => {
                 {/* Location */}
                 <div className="relative flex-1">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <svg className={`w-4 h-4 transition-colors duration-300 ${locationFocused ? 'text-[#c8933a]' : 'text-[#6e5c48]'}`}
+                    <svg className={`w-4 h-4 transition-colors duration-300 ${locationFocused ? 'text-amber-500' : 'text-gray-400'}`}
                       fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75}
                         d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -173,7 +171,7 @@ const Home = () => {
                     onChange={val => setSearchInput(p => ({ ...p, location: val }))}
                     placeholder="City or area…"
                     icon={false}
-                    inputClassName="w-full rounded-2xl bg-white/10 border border-white/10 pl-11 pr-4 py-4 text-sm font-medium text-white placeholder:text-[#6e5c48] outline-none focus:border-[#c8933a]/50 focus:bg-white/15 transition-all duration-300"
+                    inputClassName="w-full rounded-2xl bg-gray-50 dark:bg-white/[0.06] border border-gray-200 dark:border-white/10 pl-11 pr-4 py-4 text-sm font-medium text-gray-900 dark:text-white placeholder:text-gray-400 outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/30 transition-all duration-300"
                   />
                 </div>
 
@@ -202,7 +200,7 @@ const Home = () => {
                 </Link>
                 <Link to="/login">
                   <motion.span whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                    className="inline-block border border-white/20 text-[#a89070] hover:text-white hover:border-white/40 px-8 py-3.5 rounded-2xl font-semibold text-sm transition-all duration-300">
+                    className="inline-block border border-gray-300 dark:border-white/15 text-gray-700 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-400 dark:hover:border-amber-500/40 px-8 py-3.5 rounded-2xl font-semibold text-sm transition-all duration-300">
                     Sign In
                   </motion.span>
                 </Link>
@@ -222,8 +220,8 @@ const Home = () => {
             className="flex flex-wrap justify-center gap-8 mt-12 text-center">
             {[['10k+', 'Workers'], ['5k+', 'Jobs Posted'], ['50+', 'Cities']].map(([n, l]) => (
               <div key={l}>
-                <p className="text-2xl font-black text-[#c8933a]">{n}</p>
-                <p className="text-xs text-[#6e5c48] font-semibold tracking-widest uppercase mt-0.5">{l}</p>
+                <p className="text-2xl font-black text-amber-500">{n}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold tracking-widest uppercase mt-0.5">{l}</p>
               </div>
             ))}
           </motion.div>
@@ -237,13 +235,13 @@ const Home = () => {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="py-16 bg-white dark:bg-[#0e0d0b] border-y border-[#e8dfd0] dark:border-white/8"
+          className="py-16 bg-white dark:bg-[#0b0e14] border-y border-[#e6e8ec] dark:border-white/8"
         >
           <div className="max-w-3xl mx-auto px-4 text-center">
             <h2 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white mb-2">
               One account. Two ways to use it.
             </h2>
-            <p className="text-sm text-[#9c8a78] dark:text-gray-500 mb-8 max-w-lg mx-auto">
+            <p className="text-sm text-[#6b7280] dark:text-gray-500 mb-8 max-w-lg mx-auto">
               Sign in once, then switch between Worker and Hirer mode anytime from the header. No separate accounts needed.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
@@ -258,13 +256,13 @@ const Home = () => {
                     className={`flex items-center gap-4 px-8 py-5 rounded-2xl border transition-all duration-300 text-left ${
                       filled
                         ? 'bg-gradient-to-br from-[#d4963e] to-[#b86e2a] border-transparent text-white shadow-lg shadow-[#c8833a]/25'
-                        : 'border-[#e8dfd0] dark:border-white/10 hover:border-[#c8933a]/50 dark:hover:border-[#c8933a]/30 text-gray-800 dark:text-white'
+                        : 'border-[#e6e8ec] dark:border-white/10 hover:border-[#c8933a]/50 dark:hover:border-[#c8933a]/30 text-gray-800 dark:text-white'
                     }`}
                   >
                     <span className="text-2xl">{icon}</span>
                     <div>
                       <p className="font-bold text-sm">{label}</p>
-                      <p className={`text-xs mt-0.5 ${filled ? 'text-white/70' : 'text-[#9c8a78]'}`}>{sub}</p>
+                      <p className={`text-xs mt-0.5 ${filled ? 'text-white/70' : 'text-[#6b7280]'}`}>{sub}</p>
                     </div>
                   </motion.div>
                 </Link>
@@ -298,7 +296,7 @@ const Home = () => {
             >
               <Link
                 to={`/search?category=${cat.value}`}
-                className="group flex flex-col items-center gap-2 p-4 rounded-2xl bg-white dark:bg-white/[0.04] border border-[#e8dfd0] dark:border-white/8 hover:border-[#c8933a]/50 dark:hover:border-[#c8933a]/30 hover:shadow-md hover:shadow-[#c8933a]/10 transition-all duration-300 text-center"
+                className="group flex flex-col items-center gap-2 p-4 rounded-2xl bg-white dark:bg-white/[0.04] border border-[#e6e8ec] dark:border-white/8 hover:border-[#c8933a]/50 dark:hover:border-[#c8933a]/30 hover:shadow-md hover:shadow-[#c8933a]/10 transition-all duration-300 text-center"
               >
                 <span className="text-2xl group-hover:scale-110 transition-transform duration-300">
                   {CATEGORY_ICONS[cat.label] || '💼'}
@@ -311,7 +309,7 @@ const Home = () => {
       </section>
 
       {/* ── FEATURED WORKERS ── */}
-      <section className="py-16 bg-white dark:bg-[#0e0d0b]">
+      <section className="py-16 bg-white dark:bg-[#0b0e14]">
         <div className="max-w-6xl mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -355,11 +353,11 @@ const Home = () => {
           ) : featuredWorkers.length === 0 ? (
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-              className="text-center py-16 rounded-2xl bg-[#faf7f2] dark:bg-white/[0.03] border border-[#e8dfd0] dark:border-white/8"
+              className="text-center py-16 rounded-2xl bg-[#f6f7f9] dark:bg-white/[0.03] border border-[#e6e8ec] dark:border-white/8"
             >
               <span className="text-4xl mb-3 block">👷</span>
               <p className="text-gray-600 dark:text-gray-400 font-semibold">No workers yet</p>
-              <p className="text-sm text-[#9c8a78] mt-1">Check back soon — workers are joining daily.</p>
+              <p className="text-sm text-[#6b7280] mt-1">Check back soon — workers are joining daily.</p>
             </motion.div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -412,7 +410,7 @@ const Home = () => {
             >
               {/* Step indicator */}
               <div className="relative inline-flex">
-                <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-[#faf7f2] to-[#f0e8da] dark:from-white/[0.06] dark:to-white/[0.03] border border-[#e8dfd0] dark:border-white/10 flex items-center justify-center text-3xl mb-5 shadow-sm group-hover:shadow-md group-hover:border-[#c8933a]/30 transition-all duration-300">
+                <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-[#f6f7f9] to-[#eef0f3] dark:from-white/[0.06] dark:to-white/[0.03] border border-[#e6e8ec] dark:border-white/10 flex items-center justify-center text-3xl mb-5 shadow-sm group-hover:shadow-md group-hover:border-[#c8933a]/30 transition-all duration-300">
                   {icon}
                 </div>
                 <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#c8933a] text-white text-[10px] font-black flex items-center justify-center">
@@ -420,7 +418,7 @@ const Home = () => {
                 </span>
               </div>
               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{title}</h3>
-              <p className="text-sm text-[#9c8a78] leading-relaxed max-w-xs mx-auto">{desc}</p>
+              <p className="text-sm text-[#6b7280] leading-relaxed max-w-xs mx-auto">{desc}</p>
             </motion.div>
           ))}
         </div>
@@ -433,22 +431,23 @@ const Home = () => {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="py-20 bg-gradient-to-br from-[#1a1208] via-[#2d1f0a] to-[#1a1208] relative overflow-hidden"
+          className="py-16 px-4"
         >
-          <div className="absolute inset-0 opacity-[0.03]"
-            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")` }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-[#c8833a]/15 blur-[100px]" />
-          <div className="relative text-center max-w-2xl mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-black text-white mb-4">Ready to get started?</h2>
-            <p className="text-[#a89070] mb-8">Join thousands of workers and hirers already on KaamSetu.</p>
-            <Link to="/register">
-              <motion.span
-                whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-                className="inline-block bg-gradient-to-br from-[#d4963e] to-[#b86e2a] text-white px-10 py-4 rounded-2xl font-bold text-sm shadow-xl shadow-[#c8833a]/30 hover:shadow-[#c8833a]/50 transition-all duration-300"
-              >
-                Create Free Account
-              </motion.span>
-            </Link>
+          <div className="relative max-w-5xl mx-auto overflow-hidden rounded-3xl bg-gradient-to-br from-amber-500 to-orange-500 px-6 py-14 text-center shadow-xl shadow-amber-500/20">
+            {/* Soft light orb */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-white/10 blur-[90px] pointer-events-none" />
+            <div className="relative">
+              <h2 className="text-3xl md:text-4xl font-black text-white mb-4">Ready to get started?</h2>
+              <p className="text-white/85 mb-8">Join thousands of workers and hirers already on KaamSetu.</p>
+              <Link to="/register">
+                <motion.span
+                  whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
+                  className="inline-block bg-white text-amber-600 px-10 py-4 rounded-2xl font-bold text-sm shadow-lg shadow-black/10 hover:shadow-black/20 transition-all duration-300"
+                >
+                  Create Free Account
+                </motion.span>
+              </Link>
+            </div>
           </div>
         </motion.section>
       )}

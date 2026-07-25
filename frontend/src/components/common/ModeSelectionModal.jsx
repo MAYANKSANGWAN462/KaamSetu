@@ -22,7 +22,7 @@ const ModeSelectionModal = () => {
       aria-modal="true"
       aria-labelledby="mode-modal-title"
     >
-      <div className="w-full max-w-lg rounded-2xl border border-[#c8933a]/40 bg-white dark:bg-[#16161f] p-8 shadow-2xl shadow-[#c8933a]/10">
+      <div className="w-full max-w-lg rounded-2xl border border-[#c8933a]/40 bg-white dark:bg-[#141824] p-8 shadow-2xl shadow-[#c8933a]/10">
         <h1
           id="mode-modal-title"
           className="text-center text-2xl font-semibold text-white"

@@ -1,13 +1,14 @@
+/* Purpose: Core theme tokens — modern neutral surfaces with an amber accent. */
 :root {
-  --bg-primary: #faf7f2;
-  --bg-secondary: #f4efe6;
-  --text-primary: #1a140c;
-  --text-secondary: #9c8a78;
+  --bg-primary: #f6f7f9;
+  --bg-secondary: #eef0f3;
+  --text-primary: #0f172a;
+  --text-secondary: #6b7280;
 }
 
 .dark {
-  --bg-primary: #0e0d0b;
-  --bg-secondary: #17140f;
-  --text-primary: #f5f0e8;
-  --text-secondary: #9c8a78;
+  --bg-primary: #0b0e14;
+  --bg-secondary: #141824;
+  --text-primary: #f1f3f6;
+  --text-secondary: #94a3b8;
 }

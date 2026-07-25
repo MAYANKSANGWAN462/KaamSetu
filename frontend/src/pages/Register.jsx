@@ -24,11 +24,11 @@ const Register = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] flex">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] flex">
 
       {/* ── LEFT PANEL ── */}
       <div className="hidden lg:flex lg:w-5/12 relative overflow-hidden flex-col justify-between p-12">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1a1208] via-[#2d1f0a] to-[#1a1208]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
         <div className="absolute inset-0 opacity-[0.035]"
           style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")` }} />
         <div className="absolute top-1/3 -right-20 w-72 h-72 rounded-full bg-[#c8833a]/20 blur-[80px]" />
@@ -56,7 +56,7 @@ const Register = () => {
               <span className="text-[#c8933a]">hyperlocal</span><br />
               work platform
             </h2>
-            <p className="text-[#a89070] text-sm leading-relaxed">
+            <p className="text-slate-300 text-sm leading-relaxed">
               One account for both sides. Switch between looking for work and hiring workers anytime you want.
             </p>
           </motion.div>
@@ -71,16 +71,16 @@ const Register = () => {
               initial={{ opacity: 0, x: -14 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 + i * 0.08, duration: 0.45 }}
-              className="flex items-center gap-3 bg-white/[0.05] rounded-2xl border border-white/8 px-4 py-3.5"
+              className="flex items-center gap-3 bg-white/[0.05] rounded-2xl border border-white/10 px-4 py-3.5"
             >
               <span className="text-xl flex-shrink-0">{icon}</span>
-              <p className="text-[#a89070] text-xs leading-snug">{text}</p>
+              <p className="text-slate-300 text-xs leading-snug">{text}</p>
             </motion.div>
           ))}
         </div>
 
         <div className="relative">
-          <p className="text-[#4a3c2e] text-xs">© 2025 KaamSetu. All rights reserved.</p>
+          <p className="text-slate-500 text-xs">© 2025 KaamSetu. All rights reserved.</p>
         </div>
       </div>
 
@@ -106,7 +106,7 @@ const Register = () => {
 
           <div className="mb-7">
             <h1 className="text-2xl font-black text-gray-900 dark:text-white mb-1.5">Create account</h1>
-            <p className="text-sm text-[#9c8a78] dark:text-gray-500">
+            <p className="text-sm text-[#6b7280] dark:text-gray-500">
               Already registered?{' '}
               <Link to="/login" className="text-[#c8933a] font-semibold hover:text-[#a8732a] transition-colors duration-200">
                 Sign in
@@ -130,11 +130,11 @@ const Register = () => {
             )}
           </AnimatePresence>
 
-          <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/[0.08] p-7 shadow-sm">
+          <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/[0.08] p-7 shadow-sm">
             <RegisterForm onSubmit={handleSubmit} />
           </div>
 
-          <p className="text-center mt-5 text-xs text-[#b8a898] dark:text-gray-600">
+          <p className="text-center mt-5 text-xs text-[#94a3b8] dark:text-gray-600">
             By signing up you agree to our{' '}
             <span className="text-[#c8933a] cursor-pointer hover:underline">Terms</span>
             {' '}and{' '}

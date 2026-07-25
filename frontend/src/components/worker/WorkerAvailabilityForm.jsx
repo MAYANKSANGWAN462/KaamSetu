@@ -17,8 +17,8 @@ const SKILL_OPTIONS = [
   'Tiling','Plastering','AC Repair','Gardening','Data Entry',
 ].map(s => ({ value: s.toLowerCase(), label: s }))
 
-const baseInput = `w-full px-4 py-3 rounded-xl border border-[#e8dfd0] dark:border-white/10
-  bg-[#faf7f2] dark:bg-white/[0.06] text-gray-800 dark:text-gray-100 text-sm
+const baseInput = `w-full px-4 py-3 rounded-xl border border-[#e6e8ec] dark:border-white/10
+  bg-[#f6f7f9] dark:bg-white/[0.06] text-gray-800 dark:text-gray-100 text-sm
   placeholder-gray-400 dark:placeholder-gray-600
   focus:outline-none focus:ring-2 focus:ring-[#c8933a]/30 focus:border-[#c8933a]
   transition-all duration-200`
@@ -97,16 +97,16 @@ const WorkerAvailabilityForm = ({ existingProfile, onSuccess, onCancel }) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 8 }}
       transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-      className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 shadow-sm overflow-hidden"
+      className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8 shadow-sm overflow-hidden"
     >
       {/* Header */}
-      <div className="px-6 py-5 border-b border-[#e8dfd0] dark:border-white/8 flex items-center justify-between">
+      <div className="px-6 py-5 border-b border-[#e6e8ec] dark:border-white/8 flex items-center justify-between">
         <div>
           <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#c8933a]">Worker Post</p>
           <h2 className="text-lg font-black text-gray-900 dark:text-white mt-0.5">Post Your Availability</h2>
         </div>
         <button onClick={onCancel}
-          className="w-8 h-8 rounded-xl border border-[#e8dfd0] dark:border-white/10 flex items-center justify-center text-[#9c8a78] hover:text-[#c8933a] hover:border-[#c8933a]/40 transition-all duration-200">
+          className="w-8 h-8 rounded-xl border border-[#e6e8ec] dark:border-white/10 flex items-center justify-center text-[#6b7280] hover:text-[#c8933a] hover:border-[#c8933a]/40 transition-all duration-200">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
           </svg>
@@ -151,7 +151,7 @@ const WorkerAvailabilityForm = ({ existingProfile, onSuccess, onCancel }) => {
               styles={{
                 control: (base, state) => ({
                   ...base, borderRadius: '0.75rem',
-                  borderColor: state.isFocused ? '#c8933a' : '#e8dfd0',
+                  borderColor: state.isFocused ? '#c8933a' : '#e6e8ec',
                   boxShadow: state.isFocused ? '0 0 0 3px rgba(200,147,58,0.15)' : 'none',
                   backgroundColor: 'transparent', padding: '2px 4px', fontSize: '0.875rem',
                   '&:hover': { borderColor: '#c8933a' },
@@ -159,9 +159,9 @@ const WorkerAvailabilityForm = ({ existingProfile, onSuccess, onCancel }) => {
                 multiValue: base => ({ ...base, backgroundColor: 'rgba(200,147,58,0.12)', borderRadius: '0.5rem', border: '1px solid rgba(200,147,58,0.3)' }),
                 multiValueLabel: base => ({ ...base, color: '#c8933a', fontWeight: '600', fontSize: '0.75rem' }),
                 multiValueRemove: base => ({ ...base, color: '#c8933a', borderRadius: '0 0.5rem 0.5rem 0', '&:hover': { backgroundColor: 'rgba(200,147,58,0.2)', color: '#b86e2a' } }),
-                menu: base => ({ ...base, borderRadius: '0.75rem', border: '1px solid #e8dfd0', boxShadow: '0 8px 24px rgba(0,0,0,0.08)', overflow: 'hidden' }),
+                menu: base => ({ ...base, borderRadius: '0.75rem', border: '1px solid #e6e8ec', boxShadow: '0 8px 24px rgba(0,0,0,0.08)', overflow: 'hidden' }),
                 option: (base, state) => ({ ...base, fontSize: '0.875rem', backgroundColor: state.isSelected ? 'rgba(200,147,58,0.15)' : state.isFocused ? 'rgba(200,147,58,0.07)' : 'transparent', color: state.isSelected ? '#b86e2a' : 'inherit' }),
-                placeholder: base => ({ ...base, color: '#9c8a78', fontSize: '0.875rem' }),
+                placeholder: base => ({ ...base, color: '#6b7280', fontSize: '0.875rem' }),
                 input: base => ({ ...base, fontSize: '0.875rem' }),
               }}
             />
@@ -178,9 +178,9 @@ const WorkerAvailabilityForm = ({ existingProfile, onSuccess, onCancel }) => {
                 className="flex-1 h-2 rounded-full accent-amber-600 cursor-pointer"
               />
               <div className="w-16 flex-shrink-0">
-                <div className="px-3 py-2 rounded-xl border border-[#e8dfd0] dark:border-white/10 bg-[#faf7f2] dark:bg-white/[0.06] text-center">
+                <div className="px-3 py-2 rounded-xl border border-[#e6e8ec] dark:border-white/10 bg-[#f6f7f9] dark:bg-white/[0.06] text-center">
                   <span className="text-sm font-black text-[#c8933a]">{form.yearsOfExperience}</span>
-                  <span className="text-[10px] text-[#9c8a78] block">yrs</span>
+                  <span className="text-[10px] text-[#6b7280] block">yrs</span>
                 </div>
               </div>
             </div>
@@ -244,10 +244,10 @@ const WorkerAvailabilityForm = ({ existingProfile, onSuccess, onCancel }) => {
           <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-4">📅 Availability</p>
 
           {/* Available toggle */}
-          <div className="flex items-center justify-between mb-4 p-3 rounded-xl bg-white dark:bg-white/[0.04] border border-[#e8dfd0] dark:border-white/8">
+          <div className="flex items-center justify-between mb-4 p-3 rounded-xl bg-white dark:bg-white/[0.04] border border-[#e6e8ec] dark:border-white/8">
             <div>
               <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">Currently Available</p>
-              <p className="text-xs text-[#9c8a78]">Hirers can see and contact you</p>
+              <p className="text-xs text-[#6b7280]">Hirers can see and contact you</p>
             </div>
             <button
               type="button"
@@ -274,7 +274,7 @@ const WorkerAvailabilityForm = ({ existingProfile, onSuccess, onCancel }) => {
                   className={`px-3.5 py-1.5 rounded-xl text-xs font-bold border transition-all duration-150 ${
                     form.availabilityDays.includes(day)
                       ? 'bg-gradient-to-br from-[#d4963e] to-[#b86e2a] text-white border-transparent shadow-sm'
-                      : 'bg-white dark:bg-white/[0.04] border-[#e8dfd0] dark:border-white/10 text-gray-600 dark:text-gray-400 hover:border-[#c8933a]/50'
+                      : 'bg-white dark:bg-white/[0.04] border-[#e6e8ec] dark:border-white/10 text-gray-600 dark:text-gray-400 hover:border-[#c8933a]/50'
                   }`}
                 >
                   {day.slice(0, 3)}
@@ -316,7 +316,7 @@ const WorkerAvailabilityForm = ({ existingProfile, onSuccess, onCancel }) => {
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 py-3 rounded-2xl border border-[#e8dfd0] dark:border-white/10 text-sm font-bold text-[#9c8a78] hover:border-[#c8933a]/40 hover:text-[#c8933a] transition-all duration-200"
+            className="flex-1 py-3 rounded-2xl border border-[#e6e8ec] dark:border-white/10 text-sm font-bold text-[#6b7280] hover:border-[#c8933a]/40 hover:text-[#c8933a] transition-all duration-200"
           >
             Cancel
           </button>

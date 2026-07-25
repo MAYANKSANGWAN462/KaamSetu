@@ -52,7 +52,7 @@ const SuggestionChips = ({
               className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold border transition-all duration-200 ${
                 active
                   ? 'bg-gradient-to-br from-[#d4963e] to-[#b86e2a] border-transparent text-white shadow-sm'
-                  : 'bg-[#faf7f2] dark:bg-white/[0.04] border-[#e8dfd0] dark:border-white/10 text-[#9c8a78] hover:border-[#c8933a]/50 hover:text-[#c8933a]'
+                  : 'bg-[#f6f7f9] dark:bg-white/[0.04] border-[#e6e8ec] dark:border-white/10 text-[#6b7280] hover:border-[#c8933a]/50 hover:text-[#c8933a]'
               }`}
             >
               {label}
@@ -76,7 +76,7 @@ const SuggestionChips = ({
               value={isCustomValue ? value : ''}
               onChange={(e) => onChange(e.target.value)}
               placeholder={customPlaceholder}
-              className="w-full rounded-xl px-4 py-3 text-sm font-medium bg-[#faf7f2] dark:bg-white/[0.06] border border-[#e8dfd0] dark:border-white/10 text-gray-800 dark:text-gray-100 placeholder:text-[#b8a898] dark:placeholder:text-gray-600 outline-none focus:border-[#c8933a] focus:shadow-[0_0_0_3px_rgba(200,147,58,0.15)] transition-all duration-200"
+              className="w-full rounded-xl px-4 py-3 text-sm font-medium bg-[#f6f7f9] dark:bg-white/[0.06] border border-[#e6e8ec] dark:border-white/10 text-gray-800 dark:text-gray-100 placeholder:text-[#94a3b8] dark:placeholder:text-gray-600 outline-none focus:border-[#c8933a] focus:shadow-[0_0_0_3px_rgba(200,147,58,0.15)] transition-all duration-200"
             />
           </motion.div>
         )}

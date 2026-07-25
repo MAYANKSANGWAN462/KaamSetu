@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import axios from 'axios'
+import { validatePassword } from '../utils/validators'
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams()
@@ -18,7 +19,7 @@ const ResetPassword = () => {
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] flex items-center justify-center px-4">
         <div className="text-center space-y-4">
           <p className="text-gray-600 dark:text-gray-400">Invalid or missing reset link.</p>
           <Link to="/forgot-password" className="text-[#c8933a] font-semibold hover:underline">
@@ -32,6 +33,11 @@ const ResetPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+
+    if (!validatePassword(password)) {
+      setError('Password must be at least 8 characters')
+      return
+    }
 
     if (password !== confirmPassword) {
       setError('Passwords do not match')
@@ -50,7 +56,7 @@ const ResetPassword = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] flex items-center justify-center px-4 py-12">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -69,7 +75,7 @@ const ResetPassword = () => {
           </Link>
         </div>
 
-        <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/[0.08] p-8 shadow-sm">
+        <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/[0.08] p-8 shadow-sm">
           {done ? (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -98,7 +104,7 @@ const ResetPassword = () => {
             <>
               <div className="mb-6">
                 <h1 className="text-2xl font-black text-gray-900 dark:text-white mb-1.5">Set new password</h1>
-                <p className="text-sm text-[#9c8a78] dark:text-gray-500">
+                <p className="text-sm text-[#6b7280] dark:text-gray-500">
                   Choose a strong password for your account.
                 </p>
               </div>
@@ -224,7 +230,7 @@ const ResetPassword = () => {
           )}
         </div>
 
-        <p className="text-center mt-6 text-sm text-[#9c8a78] dark:text-gray-500">
+        <p className="text-center mt-6 text-sm text-[#6b7280] dark:text-gray-500">
           Back to{' '}
           <Link to="/login" className="text-[#c8933a] font-semibold hover:text-[#a8732a] transition-colors duration-200">
             Sign in

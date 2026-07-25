@@ -21,6 +21,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import AdminProtectedRoute from "./routes/AdminProtectedRoute";
 import Header from "./components/common/Header";
 import Footer from "./components/common/Footer";
+import MobileTabBar from "./components/common/MobileTabBar";
 import Loader from "./components/common/Loader";
 
 // Lazy load pages for better performance
@@ -48,12 +49,22 @@ const Layout = ({ children }) => {
   const location = useLocation();
   const isMessenger = location.pathname.startsWith('/messages');
   return (
-    <div className="w-full min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] transition-colors duration-300">
+    <div className="w-full min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] transition-colors duration-300">
       <Header />
-      <Suspense fallback={<Loader />}>
-        <AnimatedRoutes />
-      </Suspense>
-      {!isMessenger && <Footer />}
+      {/* Bottom padding on mobile so content clears the fixed tab bar (hidden on messenger). */}
+      <main className={!isMessenger ? "pb-20 md:pb-0" : undefined}>
+        <Suspense fallback={<Loader />}>
+          <AnimatedRoutes />
+        </Suspense>
+      </main>
+      {/* Footer is desktop-only — on mobile the bottom tab bar replaces it. Never on messenger. */}
+      {!isMessenger && (
+        <div className="hidden md:block">
+          <Footer />
+        </div>
+      )}
+      {/* Native-app-style bottom navigation — mobile only, hidden on messenger. */}
+      {!isMessenger && <MobileTabBar />}
       <Toaster
         position="top-right"
         toastOptions={{
@@ -105,7 +116,7 @@ const AnimatedRoutes = () => {
             <Route
               path="/worker-dashboard"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['worker']}>
                   <WorkerSetup />
                 </ProtectedRoute>
               }
@@ -113,7 +124,7 @@ const AnimatedRoutes = () => {
             <Route
               path="/worker/dashboard"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['worker']}>
                   <WorkerSetup />
                 </ProtectedRoute>
               }
@@ -121,7 +132,7 @@ const AnimatedRoutes = () => {
             <Route
               path="/worker-profile"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['worker']}>
                   <WorkerSetup />
                 </ProtectedRoute>
               }
@@ -145,7 +156,7 @@ const AnimatedRoutes = () => {
             <Route
               path="/post-job"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['hirer']}>
                   <PostJob />
                 </ProtectedRoute>
               }
@@ -153,7 +164,7 @@ const AnimatedRoutes = () => {
             <Route
               path="/hirer/post-job"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['hirer']}>
                   <PostJob />
                 </ProtectedRoute>
               }
@@ -161,7 +172,7 @@ const AnimatedRoutes = () => {
             <Route
               path="/jobs/:id/edit"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['hirer']}>
                   <PostJob />
                 </ProtectedRoute>
               }
@@ -169,7 +180,7 @@ const AnimatedRoutes = () => {
             <Route
               path="/worker/setup"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['worker']}>
                   <WorkerSetup />
                 </ProtectedRoute>
               }
@@ -177,7 +188,7 @@ const AnimatedRoutes = () => {
             <Route
               path="/my-jobs"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['hirer']}>
                   <MyJobs />
                 </ProtectedRoute>
               }
@@ -185,7 +196,7 @@ const AnimatedRoutes = () => {
             <Route
               path="/my-applications"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['worker']}>
                   <MyApplications />
                 </ProtectedRoute>
               }

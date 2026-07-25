@@ -21,17 +21,17 @@
 // const RATING_OPTIONS = [1, 2, 3, 4, 5];
 
 // const SkeletonCard = () => (
-//   <div className="bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e8dfd0] dark:border-white/8 p-5 animate-pulse">
+//   <div className="bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8 p-5 animate-pulse">
 //     <div className="flex gap-3 mb-4">
-//       <div className="w-12 h-12 rounded-2xl bg-[#e8dfd0] dark:bg-white/10 flex-shrink-0" />
+//       <div className="w-12 h-12 rounded-2xl bg-[#e6e8ec] dark:bg-white/10 flex-shrink-0" />
 //       <div className="flex-1 space-y-2">
-//         <div className="h-4 bg-[#e8dfd0] dark:bg-white/10 rounded-lg w-3/4" />
-//         <div className="h-3 bg-[#e8dfd0] dark:bg-white/10 rounded-lg w-1/2" />
+//         <div className="h-4 bg-[#e6e8ec] dark:bg-white/10 rounded-lg w-3/4" />
+//         <div className="h-3 bg-[#e6e8ec] dark:bg-white/10 rounded-lg w-1/2" />
 //       </div>
 //     </div>
 //     <div className="space-y-2">
-//       <div className="h-3 bg-[#e8dfd0] dark:bg-white/10 rounded-lg" />
-//       <div className="h-3 bg-[#e8dfd0] dark:bg-white/10 rounded-lg w-4/5" />
+//       <div className="h-3 bg-[#e6e8ec] dark:bg-white/10 rounded-lg" />
+//       <div className="h-3 bg-[#e6e8ec] dark:bg-white/10 rounded-lg w-4/5" />
 //     </div>
 //   </div>
 // );
@@ -56,7 +56,7 @@
 //           className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all duration-200 ${
 //             active
 //               ? "bg-gradient-to-br from-[#d4963e] to-[#b86e2a] border-transparent text-white shadow-sm"
-//               : "bg-[#faf7f2] dark:bg-white/[0.04] border-[#e8dfd0] dark:border-white/10 text-[#9c8a78] hover:border-[#c8933a]/50 hover:text-[#c8933a]"
+//               : "bg-[#f6f7f9] dark:bg-white/[0.04] border-[#e6e8ec] dark:border-white/10 text-[#6b7280] hover:border-[#c8933a]/50 hover:text-[#c8933a]"
 //           }`}
 //         >
 //           {lbl}
@@ -69,7 +69,7 @@
 // const RangeSlider = ({ min, max, value, onChange, prefix = "₹", label }) => (
 //   <div>
 //     <div className="flex justify-between items-center mb-2">
-//       <span className="text-xs font-semibold text-[#9c8a78]">
+//       <span className="text-xs font-semibold text-[#6b7280]">
 //         {prefix}
 //         {min.toLocaleString()}
 //       </span>
@@ -77,7 +77,7 @@
 //         {prefix}
 //         {value.toLocaleString()}
 //       </span>
-//       <span className="text-xs font-semibold text-[#9c8a78]">
+//       <span className="text-xs font-semibold text-[#6b7280]">
 //         {prefix}
 //         {max.toLocaleString()}
 //       </span>
@@ -90,7 +90,7 @@
 //       onChange={(e) => onChange(Number(e.target.value))}
 //       className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
 //       style={{
-//         background: `linear-gradient(to right, #c8933a ${(value / max) * 100}%, #e8dfd0 ${(value / max) * 100}%)`,
+//         background: `linear-gradient(to right, #c8933a ${(value / max) * 100}%, #e6e8ec ${(value / max) * 100}%)`,
 //       }}
 //     />
 //   </div>
@@ -106,7 +106,7 @@
 //         className="transition-all duration-200 hover:scale-110"
 //       >
 //         <svg
-//           className={`w-6 h-6 ${star <= value ? "text-[#c8933a]" : "text-[#e8dfd0] dark:text-white/10"}`}
+//           className={`w-6 h-6 ${star <= value ? "text-[#c8933a]" : "text-[#e6e8ec] dark:text-white/10"}`}
 //           fill="currentColor"
 //           viewBox="0 0 20 20"
 //         >
@@ -115,7 +115,7 @@
 //       </button>
 //     ))}
 //     {value > 0 && (
-//       <span className="text-xs font-semibold text-[#9c8a78] self-center ml-1">
+//       <span className="text-xs font-semibold text-[#6b7280] self-center ml-1">
 //         {value}★ & above
 //       </span>
 //     )}
@@ -324,10 +324,10 @@
 
 //   // ── SIDEBAR ──
 //   const Sidebar = () => (
-//     <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-6 shadow-sm space-y-6">
+//     <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8 p-6 shadow-sm space-y-6">
 //       {/* Sort */}
 //       <div>
-//         <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-3">
+//         <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-3">
 //           Sort By
 //         </p>
 //         <ChipGroup
@@ -342,11 +342,11 @@
 //         />
 //       </div>
 
-//       <div className="h-px bg-[#e8dfd0] dark:bg-white/8" />
+//       <div className="h-px bg-[#e6e8ec] dark:bg-white/8" />
 
 //       {/* Category */}
 //       <div>
-//         <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-3">
+//         <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-3">
 //           Category
 //         </p>
 //         <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto">
@@ -356,7 +356,7 @@
 //             className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all duration-200 ${
 //               filters.categories.length === 0
 //                 ? "bg-gradient-to-br from-[#d4963e] to-[#b86e2a] border-transparent text-white"
-//                 : "bg-[#faf7f2] dark:bg-white/[0.04] border-[#e8dfd0] dark:border-white/10 text-[#9c8a78] hover:border-[#c8933a]/50"
+//                 : "bg-[#f6f7f9] dark:bg-white/[0.04] border-[#e6e8ec] dark:border-white/10 text-[#6b7280] hover:border-[#c8933a]/50"
 //             }`}
 //           >
 //             All
@@ -373,7 +373,7 @@
 //                 className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all duration-200 ${
 //                   active
 //                     ? "bg-gradient-to-br from-[#d4963e] to-[#b86e2a] border-transparent text-white shadow-sm"
-//                     : "bg-[#faf7f2] dark:bg-white/[0.04] border-[#e8dfd0] dark:border-white/10 text-[#9c8a78] hover:border-[#c8933a]/50 hover:text-[#c8933a]"
+//                     : "bg-[#f6f7f9] dark:bg-white/[0.04] border-[#e6e8ec] dark:border-white/10 text-[#6b7280] hover:border-[#c8933a]/50 hover:text-[#c8933a]"
 //                 }`}
 //               >
 //                 {lbl}
@@ -383,11 +383,11 @@
 //         </div>
 //       </div>
 
-//       <div className="h-px bg-[#e8dfd0] dark:bg-white/8" />
+//       <div className="h-px bg-[#e6e8ec] dark:bg-white/8" />
 
 //       {/* Distance */}
 //       <div>
-//         <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-3">
+//         <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-3">
 //           Distance
 //         </p>
 //         <div className="flex gap-2 flex-wrap">
@@ -399,7 +399,7 @@
 //               className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all duration-200 ${
 //                 filters.distance === d
 //                   ? "bg-gradient-to-br from-[#d4963e] to-[#b86e2a] border-transparent text-white"
-//                   : "bg-[#faf7f2] dark:bg-white/[0.04] border-[#e8dfd0] dark:border-white/10 text-[#9c8a78] hover:border-[#c8933a]/50"
+//                   : "bg-[#f6f7f9] dark:bg-white/[0.04] border-[#e6e8ec] dark:border-white/10 text-[#6b7280] hover:border-[#c8933a]/50"
 //               }`}
 //             >
 //               {d} km
@@ -408,11 +408,11 @@
 //         </div>
 //       </div>
 
-//       <div className="h-px bg-[#e8dfd0] dark:bg-white/8" />
+//       <div className="h-px bg-[#e6e8ec] dark:bg-white/8" />
 
 //       {/* Max Wage */}
 //       <div>
-//         <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-3">
+//         <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-3">
 //           Max Wage / Day
 //         </p>
 //         <RangeSlider
@@ -426,9 +426,9 @@
 //       {/* Skills (workers search only) */}
 //       {activeType === "workers" && (
 //         <>
-//           <div className="h-px bg-[#e8dfd0] dark:bg-white/8" />
+//           <div className="h-px bg-[#e6e8ec] dark:bg-white/8" />
 //           <div>
-//             <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-3">
+//             <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-3">
 //               Skills{" "}
 //               {filters.skills.length > 0 && (
 //                 <span className="text-[#c8933a]">
@@ -479,7 +479,7 @@
 //                     className={`px-2.5 py-1 rounded-xl text-xs font-semibold border transition-all duration-200 ${
 //                       selected
 //                         ? "bg-gradient-to-br from-[#d4963e] to-[#b86e2a] border-transparent text-white shadow-sm"
-//                         : "bg-[#faf7f2] dark:bg-white/[0.04] border-[#e8dfd0] dark:border-white/10 text-[#9c8a78] hover:border-[#c8933a]/50 hover:text-[#c8933a]"
+//                         : "bg-[#f6f7f9] dark:bg-white/[0.04] border-[#e6e8ec] dark:border-white/10 text-[#6b7280] hover:border-[#c8933a]/50 hover:text-[#c8933a]"
 //                     }`}
 //                   >
 //                     {skill}
@@ -489,11 +489,11 @@
 //             </div>
 //           </div>
 
-//           <div className="h-px bg-[#e8dfd0] dark:bg-white/8" />
+//           <div className="h-px bg-[#e6e8ec] dark:bg-white/8" />
 
 //           {/* Rating */}
 //           <div>
-//             <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-3">
+//             <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-3">
 //               Minimum Rating
 //             </p>
 //             <StarRating
@@ -502,11 +502,11 @@
 //             />
 //           </div>
 
-//           <div className="h-px bg-[#e8dfd0] dark:bg-white/8" />
+//           <div className="h-px bg-[#e6e8ec] dark:bg-white/8" />
 
 //           {/* Availability */}
 //           <div>
-//             <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-3">
+//             <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-3">
 //               Availability
 //             </p>
 //             <ChipGroup
@@ -525,7 +525,7 @@
 //         <button
 //           type="button"
 //           onClick={clearFilters}
-//           className="w-full py-2.5 rounded-2xl border border-[#e8dfd0] dark:border-white/10 text-xs font-bold text-[#9c8a78] hover:border-[#c8933a]/40 hover:text-[#c8933a] transition-all duration-200"
+//           className="w-full py-2.5 rounded-2xl border border-[#e6e8ec] dark:border-white/10 text-xs font-bold text-[#6b7280] hover:border-[#c8933a]/40 hover:text-[#c8933a] transition-all duration-200"
 //         >
 //           Reset Filters
 //           {activeFilterCount > 0 && (
@@ -539,7 +539,7 @@
 //   );
 
 //   return (
-//     <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] pt-20">
+//     <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pt-20">
 //       <div className="max-w-6xl mx-auto px-4 py-8">
 //         {/* ── HEADER ── */}
 //         <motion.div
@@ -558,7 +558,7 @@
 //               <h1 className="text-2xl font-black text-gray-900 dark:text-white">
 //                 {activeType === "jobs" ? "Find Jobs" : "Find Workers"}
 //               </h1>
-//               <p className="text-sm text-[#9c8a78] mt-0.5">
+//               <p className="text-sm text-[#6b7280] mt-0.5">
 //                 {loading
 //                   ? "Searching…"
 //                   : `${results.length} result${results.length !== 1 ? "s" : ""} found`}
@@ -567,7 +567,7 @@
 
 //             {/* Tab switcher — unauthenticated only */}
 //             {!user && (
-//               <div className="flex gap-1 p-1 bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e8dfd0] dark:border-white/10">
+//               <div className="flex gap-1 p-1 bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/10">
 //                 {[
 //                   { val: "jobs", label: "💼 Jobs" },
 //                   { val: "workers", label: "👷 Workers" },
@@ -578,7 +578,7 @@
 //                     className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 ${
 //                       tabType === val
 //                         ? "bg-gradient-to-br from-[#d4963e] to-[#b86e2a] text-white shadow-sm"
-//                         : "text-[#9c8a78] hover:text-[#c8933a]"
+//                         : "text-[#6b7280] hover:text-[#c8933a]"
 //                     }`}
 //                   >
 //                     {label}
@@ -590,7 +590,7 @@
 //             {/* Mobile filter toggle */}
 //             <button
 //               onClick={() => setSidebarOpen((p) => !p)}
-//               className="lg:hidden flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white dark:bg-white/[0.04] border border-[#e8dfd0] dark:border-white/10 text-sm font-semibold text-gray-700 dark:text-gray-300"
+//               className="lg:hidden flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white dark:bg-white/[0.04] border border-[#e6e8ec] dark:border-white/10 text-sm font-semibold text-gray-700 dark:text-gray-300"
 //             >
 //               <svg
 //                 className="w-4 h-4"
@@ -618,7 +618,7 @@
 //           <div className="relative max-w-xl">
 //             <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
 //               <svg
-//                 className="w-4 h-4 text-[#b8a898]"
+//                 className="w-4 h-4 text-[#94a3b8]"
 //                 fill="none"
 //                 stroke="currentColor"
 //                 viewBox="0 0 24 24"
@@ -640,12 +640,12 @@
 //                   ? "Search jobs by title or description…"
 //                   : "Search workers by name…"
 //               }
-//               className="w-full rounded-2xl bg-white dark:bg-white/[0.04] border border-[#e8dfd0] dark:border-white/10 pl-11 pr-4 py-3.5 text-sm text-gray-800 dark:text-gray-200 placeholder:text-[#b8a898] outline-none focus:border-[#c8933a]/60 focus:shadow-[0_0_0_3px_rgba(200,147,58,0.12)] transition-all duration-300"
+//               className="w-full rounded-2xl bg-white dark:bg-white/[0.04] border border-[#e6e8ec] dark:border-white/10 pl-11 pr-4 py-3.5 text-sm text-gray-800 dark:text-gray-200 placeholder:text-[#94a3b8] outline-none focus:border-[#c8933a]/60 focus:shadow-[0_0_0_3px_rgba(200,147,58,0.12)] transition-all duration-300"
 //             />
 //             {filters.keyword && (
 //               <button
 //                 onClick={() => set("keyword", "")}
-//                 className="absolute right-4 top-1/2 -translate-y-1/2 text-[#b8a898] hover:text-[#c8933a] transition-colors duration-200"
+//                 className="absolute right-4 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#c8933a] transition-colors duration-200"
 //               >
 //                 <svg
 //                   className="w-4 h-4"
@@ -687,7 +687,7 @@
 //                   animate={{ x: 0 }}
 //                   exit={{ x: "100%" }}
 //                   transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-//                   className="fixed right-0 top-0 bottom-0 w-80 bg-[#faf7f2] dark:bg-[#0e0d0b] z-50 overflow-y-auto p-5 lg:hidden"
+//                   className="fixed right-0 top-0 bottom-0 w-80 bg-[#f6f7f9] dark:bg-[#0b0e14] z-50 overflow-y-auto p-5 lg:hidden"
 //                 >
 //                   <div className="flex items-center justify-between mb-5">
 //                     <h3 className="font-black text-gray-900 dark:text-white">
@@ -695,7 +695,7 @@
 //                     </h3>
 //                     <button
 //                       onClick={() => setSidebarOpen(false)}
-//                       className="w-8 h-8 rounded-xl border border-[#e8dfd0] dark:border-white/10 flex items-center justify-center text-[#9c8a78]"
+//                       className="w-8 h-8 rounded-xl border border-[#e6e8ec] dark:border-white/10 flex items-center justify-center text-[#6b7280]"
 //                     >
 //                       <svg
 //                         className="w-4 h-4"
@@ -760,13 +760,13 @@
 //               <motion.div
 //                 initial={{ opacity: 0, y: 14 }}
 //                 animate={{ opacity: 1, y: 0 }}
-//                 className="text-center py-20 bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8"
+//                 className="text-center py-20 bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8"
 //               >
 //                 <span className="text-5xl block mb-3">🔍</span>
 //                 <p className="font-bold text-gray-700 dark:text-gray-300 text-lg mb-1">
 //                   No results found
 //                 </p>
-//                 <p className="text-sm text-[#9c8a78] mb-5">
+//                 <p className="text-sm text-[#6b7280] mb-5">
 //                   Try adjusting your filters or broadening your search.
 //                 </p>
 //                 <button
@@ -806,7 +806,7 @@
 //                       whileTap={{ scale: 0.97 }}
 //                       onClick={loadMore}
 //                       disabled={loading}
-//                       className="flex items-center gap-2 px-8 py-3.5 rounded-2xl border border-[#e8dfd0] dark:border-white/10 bg-white dark:bg-white/[0.04] text-sm font-bold text-gray-700 dark:text-gray-300 hover:border-[#c8933a]/50 hover:text-[#c8933a] transition-all duration-300 disabled:opacity-50"
+//                       className="flex items-center gap-2 px-8 py-3.5 rounded-2xl border border-[#e6e8ec] dark:border-white/10 bg-white dark:bg-white/[0.04] text-sm font-bold text-gray-700 dark:text-gray-300 hover:border-[#c8933a]/50 hover:text-[#c8933a] transition-all duration-300 disabled:opacity-50"
 //                     >
 //                       {loading ? (
 //                         <svg
@@ -879,17 +879,17 @@ const WAGE_MAX = 5000
 const RATING_OPTIONS = [1, 2, 3, 4, 5]
 
 const SkeletonCard = () => (
-  <div className="bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e8dfd0] dark:border-white/8 p-5 animate-pulse">
+  <div className="bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8 p-5 animate-pulse">
     <div className="flex gap-3 mb-4">
-      <div className="w-12 h-12 rounded-2xl bg-[#e8dfd0] dark:bg-white/10 flex-shrink-0" />
+      <div className="w-12 h-12 rounded-2xl bg-[#e6e8ec] dark:bg-white/10 flex-shrink-0" />
       <div className="flex-1 space-y-2">
-        <div className="h-4 bg-[#e8dfd0] dark:bg-white/10 rounded-lg w-3/4" />
-        <div className="h-3 bg-[#e8dfd0] dark:bg-white/10 rounded-lg w-1/2" />
+        <div className="h-4 bg-[#e6e8ec] dark:bg-white/10 rounded-lg w-3/4" />
+        <div className="h-3 bg-[#e6e8ec] dark:bg-white/10 rounded-lg w-1/2" />
       </div>
     </div>
     <div className="space-y-2">
-      <div className="h-3 bg-[#e8dfd0] dark:bg-white/10 rounded-lg" />
-      <div className="h-3 bg-[#e8dfd0] dark:bg-white/10 rounded-lg w-4/5" />
+      <div className="h-3 bg-[#e6e8ec] dark:bg-white/10 rounded-lg" />
+      <div className="h-3 bg-[#e6e8ec] dark:bg-white/10 rounded-lg w-4/5" />
     </div>
   </div>
 )
@@ -905,7 +905,7 @@ const ChipGroup = ({ options, selected, onToggle }) => (
           className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all duration-200 ${
             active
               ? 'bg-gradient-to-br from-[#d4963e] to-[#b86e2a] border-transparent text-white shadow-sm'
-              : 'bg-[#faf7f2] dark:bg-white/[0.04] border-[#e8dfd0] dark:border-white/10 text-[#9c8a78] hover:border-[#c8933a]/50 hover:text-[#c8933a]'
+              : 'bg-[#f6f7f9] dark:bg-white/[0.04] border-[#e6e8ec] dark:border-white/10 text-[#6b7280] hover:border-[#c8933a]/50 hover:text-[#c8933a]'
           }`}>
           {lbl}
         </button>
@@ -917,14 +917,14 @@ const ChipGroup = ({ options, selected, onToggle }) => (
 const RangeSlider = ({ min, max, value, onChange, prefix = '₹' }) => (
   <div>
     <div className="flex justify-between items-center mb-2">
-      <span className="text-xs font-semibold text-[#9c8a78]">{prefix}{min.toLocaleString()}</span>
+      <span className="text-xs font-semibold text-[#6b7280]">{prefix}{min.toLocaleString()}</span>
       <span className="text-xs font-bold text-[#c8933a]">{prefix}{value.toLocaleString()}</span>
-      <span className="text-xs font-semibold text-[#9c8a78]">{prefix}{max.toLocaleString()}</span>
+      <span className="text-xs font-semibold text-[#6b7280]">{prefix}{max.toLocaleString()}</span>
     </div>
     <input type="range" min={min} max={max} value={value}
       onChange={e => onChange(Number(e.target.value))}
       className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
-      style={{ background: `linear-gradient(to right, #c8933a ${(value/max)*100}%, #e8dfd0 ${(value/max)*100}%)` }} />
+      style={{ background: `linear-gradient(to right, #c8933a ${(value/max)*100}%, #e6e8ec ${(value/max)*100}%)` }} />
   </div>
 )
 
@@ -933,13 +933,13 @@ const StarRating = ({ value, onChange }) => (
     {RATING_OPTIONS.map(star => (
       <button key={star} type="button" onClick={() => onChange(star === value ? 0 : star)}
         className="transition-all duration-200 hover:scale-110">
-        <svg className={`w-6 h-6 ${star <= value ? 'text-[#c8933a]' : 'text-[#e8dfd0] dark:text-white/10'}`}
+        <svg className={`w-6 h-6 ${star <= value ? 'text-[#c8933a]' : 'text-[#e6e8ec] dark:text-white/10'}`}
           fill="currentColor" viewBox="0 0 20 20">
           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
         </svg>
       </button>
     ))}
-    {value > 0 && <span className="text-xs font-semibold text-[#9c8a78] self-center ml-1">{value}★ & above</span>}
+    {value > 0 && <span className="text-xs font-semibold text-[#6b7280] self-center ml-1">{value}★ & above</span>}
   </div>
 )
 
@@ -1088,24 +1088,24 @@ const Search = () => {
 
   // ── SIDEBAR ─────────────────────────────────────────────────────
   const SidebarContent = () => (
-    <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8 p-6 shadow-sm space-y-6">
+    <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8 p-6 shadow-sm space-y-6">
 
       {/* Sort */}
       <div>
-        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-3">Sort By</p>
+        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-3">Sort By</p>
         <ChipGroup options={SORT_OPTIONS} selected={filters.sort} onToggle={v => set('sort', v)} />
       </div>
-      <div className="h-px bg-[#e8dfd0] dark:bg-white/8" />
+      <div className="h-px bg-[#e6e8ec] dark:bg-white/8" />
 
       {/* Category */}
       <div>
-        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-3">Category</p>
+        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-3">Category</p>
         <div className="flex flex-wrap gap-2 max-h-44 overflow-y-auto">
           <button type="button" onClick={() => set('categories', [])}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all duration-200 ${
               filters.categories.length === 0
                 ? 'bg-gradient-to-br from-[#d4963e] to-[#b86e2a] border-transparent text-white'
-                : 'bg-[#faf7f2] dark:bg-white/[0.04] border-[#e8dfd0] dark:border-white/10 text-[#9c8a78] hover:border-[#c8933a]/50'
+                : 'bg-[#f6f7f9] dark:bg-white/[0.04] border-[#e6e8ec] dark:border-white/10 text-[#6b7280] hover:border-[#c8933a]/50'
             }`}>All</button>
           {(JOB_CATEGORIES || []).map(cat => {
             const val = typeof cat === 'string' ? cat : cat.value
@@ -1115,42 +1115,42 @@ const Search = () => {
                 className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all duration-200 ${
                   filters.categories.includes(val)
                     ? 'bg-gradient-to-br from-[#d4963e] to-[#b86e2a] border-transparent text-white shadow-sm'
-                    : 'bg-[#faf7f2] dark:bg-white/[0.04] border-[#e8dfd0] dark:border-white/10 text-[#9c8a78] hover:border-[#c8933a]/50 hover:text-[#c8933a]'
+                    : 'bg-[#f6f7f9] dark:bg-white/[0.04] border-[#e6e8ec] dark:border-white/10 text-[#6b7280] hover:border-[#c8933a]/50 hover:text-[#c8933a]'
                 }`}>{lbl}</button>
             )
           })}
         </div>
       </div>
-      <div className="h-px bg-[#e8dfd0] dark:bg-white/8" />
+      <div className="h-px bg-[#e6e8ec] dark:bg-white/8" />
 
       {/* Distance */}
       <div>
-        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-3">Distance</p>
+        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-3">Distance</p>
         <div className="flex gap-2 flex-wrap">
           {[5, 10, 25, 50, 100].map(d => (
             <button key={d} type="button" onClick={() => set('distance', d)}
               className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all duration-200 ${
                 filters.distance === d
                   ? 'bg-gradient-to-br from-[#d4963e] to-[#b86e2a] border-transparent text-white'
-                  : 'bg-[#faf7f2] dark:bg-white/[0.04] border-[#e8dfd0] dark:border-white/10 text-[#9c8a78] hover:border-[#c8933a]/50'
+                  : 'bg-[#f6f7f9] dark:bg-white/[0.04] border-[#e6e8ec] dark:border-white/10 text-[#6b7280] hover:border-[#c8933a]/50'
               }`}>{d} km</button>
           ))}
         </div>
       </div>
-      <div className="h-px bg-[#e8dfd0] dark:bg-white/8" />
+      <div className="h-px bg-[#e6e8ec] dark:bg-white/8" />
 
       {/* Max Wage */}
       <div>
-        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-3">Max Wage / Day</p>
+        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-3">Max Wage / Day</p>
         <RangeSlider min={0} max={WAGE_MAX} value={filters.maxWage} onChange={v => set('maxWage', v)} />
       </div>
 
       {/* Workers-only filters */}
       {searchType === 'workers' && (
         <>
-          <div className="h-px bg-[#e8dfd0] dark:bg-white/8" />
+          <div className="h-px bg-[#e6e8ec] dark:bg-white/8" />
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-3">
+            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-3">
               Skills {filters.skills.length > 0 && <span className="text-[#c8933a]">({filters.skills.length})</span>}
             </p>
             {filters.skills.length > 0 && (
@@ -1177,22 +1177,22 @@ const Search = () => {
                     className={`px-2.5 py-1 rounded-xl text-xs font-semibold border transition-all duration-200 ${
                       selected
                         ? 'bg-gradient-to-br from-[#d4963e] to-[#b86e2a] border-transparent text-white shadow-sm'
-                        : 'bg-[#faf7f2] dark:bg-white/[0.04] border-[#e8dfd0] dark:border-white/10 text-[#9c8a78] hover:border-[#c8933a]/50 hover:text-[#c8933a]'
+                        : 'bg-[#f6f7f9] dark:bg-white/[0.04] border-[#e6e8ec] dark:border-white/10 text-[#6b7280] hover:border-[#c8933a]/50 hover:text-[#c8933a]'
                     }`}>{skill}</button>
                 )
               })}
             </div>
           </div>
-          <div className="h-px bg-[#e8dfd0] dark:bg-white/8" />
+          <div className="h-px bg-[#e6e8ec] dark:bg-white/8" />
 
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-3">Minimum Rating</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-3">Minimum Rating</p>
             <StarRating value={filters.minRating} onChange={v => set('minRating', v)} />
           </div>
-          <div className="h-px bg-[#e8dfd0] dark:bg-white/8" />
+          <div className="h-px bg-[#e6e8ec] dark:bg-white/8" />
 
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9c8a78] mb-3">Availability</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6b7280] mb-3">Availability</p>
             <ChipGroup
               options={[{ value: 'all', label: 'All' }, { value: 'available', label: 'Available Now' }]}
               selected={filters.availability}
@@ -1204,7 +1204,7 @@ const Search = () => {
 
       {activeFilterCount > 0 && (
         <button type="button" onClick={clearFilters}
-          className="w-full py-2.5 rounded-2xl border border-[#e8dfd0] dark:border-white/10 text-xs font-bold text-[#9c8a78] hover:border-[#c8933a]/40 hover:text-[#c8933a] transition-all duration-200">
+          className="w-full py-2.5 rounded-2xl border border-[#e6e8ec] dark:border-white/10 text-xs font-bold text-[#6b7280] hover:border-[#c8933a]/40 hover:text-[#c8933a] transition-all duration-200">
           Reset Filters
           <span className="ml-2 px-2 py-0.5 rounded-full bg-[#c8933a]/15 text-[#c8933a] text-[10px]">
             {activeFilterCount}
@@ -1217,7 +1217,7 @@ const Search = () => {
   const modeLabel = !user ? null : user.activeMode === 'worker' ? 'Jobs near you' : 'Available workers'
 
   return (
-    <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0e0d0b] pt-20">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pt-20">
       <div className="max-w-6xl mx-auto px-4 py-8">
 
         {/* ── HEADER ── */}
@@ -1231,20 +1231,20 @@ const Search = () => {
               <h1 className="text-2xl font-black text-gray-900 dark:text-white">
                 {searchType === 'jobs' ? 'Find Jobs' : 'Find Workers'}
               </h1>
-              <p className="text-sm text-[#9c8a78] mt-0.5">
+              <p className="text-sm text-[#6b7280] mt-0.5">
                 {loading ? 'Searching…' : `${results.length} result${results.length !== 1 ? 's' : ''} found`}
               </p>
             </div>
 
             {/* Tab switcher — unauthenticated only */}
             {!user && (
-              <div className="flex gap-1 p-1 bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e8dfd0] dark:border-white/10">
+              <div className="flex gap-1 p-1 bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/10">
                 {[{ val: 'jobs', label: '💼 Jobs' }, { val: 'workers', label: '👷 Workers' }].map(({ val, label }) => (
                   <button key={val} onClick={() => setTabType(val)}
                     className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 ${
                       tabType === val
                         ? 'bg-gradient-to-br from-[#d4963e] to-[#b86e2a] text-white shadow-sm'
-                        : 'text-[#9c8a78] hover:text-[#c8933a]'
+                        : 'text-[#6b7280] hover:text-[#c8933a]'
                     }`}>{label}</button>
                 ))}
               </div>
@@ -1252,7 +1252,7 @@ const Search = () => {
 
             {/* Mobile filter toggle */}
             <button onClick={() => setSidebarOpen(p => !p)}
-              className="lg:hidden flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white dark:bg-white/[0.04] border border-[#e8dfd0] dark:border-white/10 text-sm font-semibold text-gray-700 dark:text-gray-300">
+              className="lg:hidden flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white dark:bg-white/[0.04] border border-[#e6e8ec] dark:border-white/10 text-sm font-semibold text-gray-700 dark:text-gray-300">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                   d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
@@ -1269,16 +1269,16 @@ const Search = () => {
           {/* Keyword search */}
           <div className="relative max-w-xl">
             <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
-              <svg className="w-4 h-4 text-[#b8a898]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-[#94a3b8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
             <input type="text" value={filters.keyword} onChange={e => set('keyword', e.target.value)}
               placeholder={searchType === 'jobs' ? 'Search jobs by title or description…' : 'Search workers by skill or category…'}
-              className="w-full rounded-2xl bg-white dark:bg-white/[0.04] border border-[#e8dfd0] dark:border-white/10 pl-11 pr-10 py-3.5 text-sm text-gray-800 dark:text-gray-200 placeholder:text-[#b8a898] outline-none focus:border-[#c8933a]/60 focus:shadow-[0_0_0_3px_rgba(200,147,58,0.12)] transition-all duration-300" />
+              className="w-full rounded-2xl bg-white dark:bg-white/[0.04] border border-[#e6e8ec] dark:border-white/10 pl-11 pr-10 py-3.5 text-sm text-gray-800 dark:text-gray-200 placeholder:text-[#94a3b8] outline-none focus:border-[#c8933a]/60 focus:shadow-[0_0_0_3px_rgba(200,147,58,0.12)] transition-all duration-300" />
             {filters.keyword && (
               <button onClick={() => set('keyword', '')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#b8a898] hover:text-[#c8933a] transition-colors duration-200">
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#c8933a] transition-colors duration-200">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -1303,11 +1303,11 @@ const Search = () => {
                 <motion.div
                   initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
                   transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                  className="fixed right-0 top-0 bottom-0 w-80 bg-[#faf7f2] dark:bg-[#0e0d0b] z-50 overflow-y-auto p-5 lg:hidden">
+                  className="fixed right-0 top-0 bottom-0 w-80 bg-[#f6f7f9] dark:bg-[#0b0e14] z-50 overflow-y-auto p-5 lg:hidden">
                   <div className="flex items-center justify-between mb-5">
                     <h3 className="font-black text-gray-900 dark:text-white">Filters</h3>
                     <button onClick={() => setSidebarOpen(false)}
-                      className="w-8 h-8 rounded-xl border border-[#e8dfd0] dark:border-white/10 flex items-center justify-center text-[#9c8a78]">
+                      className="w-8 h-8 rounded-xl border border-[#e6e8ec] dark:border-white/10 flex items-center justify-center text-[#6b7280]">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
                       </svg>
@@ -1340,10 +1340,10 @@ const Search = () => {
               </div>
             ) : results.length === 0 ? (
               <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
-                className="text-center py-20 bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e8dfd0] dark:border-white/8">
+                className="text-center py-20 bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/8">
                 <span className="text-5xl block mb-3">🔍</span>
                 <p className="font-bold text-gray-700 dark:text-gray-300 text-lg mb-1">No results found</p>
-                <p className="text-sm text-[#9c8a78] mb-5">Try adjusting your filters or broadening your search.</p>
+                <p className="text-sm text-[#6b7280] mb-5">Try adjusting your filters or broadening your search.</p>
                 <button onClick={clearFilters}
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] text-white text-sm font-bold shadow-sm hover:shadow-md transition-all duration-300">
                   Clear all filters
@@ -1367,7 +1367,7 @@ const Search = () => {
                   <div className="flex justify-center mt-8">
                     <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
                       onClick={loadMore} disabled={loading}
-                      className="flex items-center gap-2 px-8 py-3.5 rounded-2xl border border-[#e8dfd0] dark:border-white/10 bg-white dark:bg-white/[0.04] text-sm font-bold text-gray-700 dark:text-gray-300 hover:border-[#c8933a]/50 hover:text-[#c8933a] transition-all duration-300 disabled:opacity-50">
+                      className="flex items-center gap-2 px-8 py-3.5 rounded-2xl border border-[#e6e8ec] dark:border-white/10 bg-white dark:bg-white/[0.04] text-sm font-bold text-gray-700 dark:text-gray-300 hover:border-[#c8933a]/50 hover:text-[#c8933a] transition-all duration-300 disabled:opacity-50">
                       {loading
                         ? <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-30" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3"/><path className="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
                         : <>Load more <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/></svg></>

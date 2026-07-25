@@ -14,15 +14,6 @@ class MessageService {
     }
   }
 
-  async getMessagingEligibility(userId) {
-    try {
-      const response = await api.get(`/messages/eligibility/${userId}`);
-      return response.data;
-    } catch (error) {
-      throw this.handleError(error);
-    }
-  }
-
   // Get messages between users
   async getMessages(userId, page = 1, limit = 50) {
     try {
@@ -37,16 +28,6 @@ class MessageService {
   async sendMessage(receiverId, message) {
     try {
       const response = await api.post('/messages', { receiverId, content: message });
-      return response.data;
-    } catch (error) {
-      throw this.handleError(error);
-    }
-  }
-
-  // Mark messages as read
-  async markAsRead(messageId) {
-    try {
-      const response = await api.put(`/messages/${messageId}/read`);
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -76,7 +57,7 @@ class MessageService {
   // Error handler
   handleError(error) {
     if (error.response) {
-      return error.response.data.message || 'An error occurred';
+      return error.response.data?.message || 'An error occurred';
     }
     return error.message || 'Network error';
   }

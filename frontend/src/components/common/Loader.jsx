@@ -38,7 +38,7 @@ const Loader = ({ variant = 'default', text = '', size = 'md' }) => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="fixed inset-0 z-[999] flex flex-col items-center justify-center bg-white/90 dark:bg-[#0d0d14]/90 backdrop-blur-xl"
+        className="fixed inset-0 z-[999] flex flex-col items-center justify-center bg-white/90 dark:bg-[#0b0e14]/90 backdrop-blur-xl"
       >
         <div className="flex flex-col items-center gap-6">
           {/* Animated bridge logo */}
