@@ -1,5 +1,6 @@
 // Purpose: One-time full-screen mode choice for new users (activeMode null).
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 
 const ModeSelectionModal = () => {
@@ -11,7 +12,7 @@ const ModeSelectionModal = () => {
     const result = await switchActiveMode(mode);
     setPending(null);
     if (!result?.success) {
-      alert("Failed to set mode. Please try again.");
+      toast.error("Failed to set mode. Please try again.");
     }
   };
 
@@ -25,7 +26,7 @@ const ModeSelectionModal = () => {
       <div className="w-full max-w-lg rounded-2xl border border-[#c8933a]/40 bg-white dark:bg-[#141824] p-8 shadow-2xl shadow-[#c8933a]/10">
         <h1
           id="mode-modal-title"
-          className="text-center text-2xl font-semibold text-white"
+          className="text-center text-2xl font-semibold text-gray-900 dark:text-white"
         >
           How do you want to use the platform today?
         </h1>
