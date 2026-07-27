@@ -89,26 +89,11 @@ export const AuthProvider = ({ children }) => {
     if (!["worker", "hirer"].includes(mode)) {
       return { success: false, message: "Invalid mode" };
     }
-    const prevUser = user;
-    const prevStored = localStorage.getItem("user");
-    const optimistic = normalizeUser({ ...(prevUser || {}), activeMode: mode });
-    setUser(optimistic);
-    localStorage.setItem("user", JSON.stringify(optimistic));
     try {
       await authService.updateActiveMode(mode);
       await loadUser();
       return { success: true };
     } catch (error) {
-      if (prevUser) {
-        setUser(prevUser);
-      } else {
-        setUser(null);
-      }
-      if (prevStored !== null) {
-        localStorage.setItem("user", prevStored);
-      } else {
-        localStorage.removeItem("user");
-      }
       const message =
         error?.response?.data?.message ||
         (typeof error === "string" ? error : error?.message) ||

@@ -11,6 +11,7 @@ const {
 } = require("../utils/helpers");
 const { hasInteraction } = require("../utils/interaction");
 const { toPublicUser } = require("../utils/sanitizeUser");
+const { deleteFromCloudinary } = require("../config/cloudinary");
 
 /* ─── Helpers ─────────────────────────────────────────────── */
 
@@ -46,6 +47,30 @@ function parseWageFromBody(body) {
     amount: Math.max(0, Number.isFinite(amount) ? amount : 0),
     unit,
   };
+}
+
+/**
+ * Extract the Cloudinary public_id from a stored secure URL so the asset can be
+ * destroyed when it is removed from a portfolio. Handles optional transformation
+ * segments and the version prefix (v123456). Returns null for non-Cloudinary
+ * URLs (e.g. the "placeholder-..." strings used when Cloudinary is unconfigured).
+ */
+function cloudinaryPublicIdFromUrl(url) {
+  try {
+    const u = new URL(String(url));
+    if (!/(^|\.)res\.cloudinary\.com$/i.test(u.hostname)) return null;
+    const parts = u.pathname.split("/").filter(Boolean);
+    const uploadIdx = parts.indexOf("upload");
+    if (uploadIdx === -1) return null;
+    let rest = parts.slice(uploadIdx + 1);
+    // Drop everything up to and including the version segment (v1234567890).
+    const versionIdx = rest.findIndex((p) => /^v\d+$/.test(p));
+    if (versionIdx !== -1) rest = rest.slice(versionIdx + 1);
+    if (!rest.length) return null;
+    return rest.join("/").replace(/\.[^/.]+$/, "");
+  } catch {
+    return null;
+  }
 }
 
 /* ─── GET /api/workers ────────────────────────────────────── */
@@ -533,6 +558,21 @@ const deletePortfolioImage = async (req, res) => {
     }
 
     await profile.save();
+
+    // Best-effort: destroy the underlying Cloudinary asset so removed images
+    // don't linger and consume storage quota. Failure here is logged but must
+    // not fail the request — the DB reference is already gone.
+    const publicId = cloudinaryPublicIdFromUrl(url);
+    if (publicId) {
+      try {
+        await deleteFromCloudinary(publicId);
+      } catch (cloudErr) {
+        console.warn(
+          "[deletePortfolioImage] Cloudinary destroy failed:",
+          cloudErr.message,
+        );
+      }
+    }
 
     return res.json({
       success: true,

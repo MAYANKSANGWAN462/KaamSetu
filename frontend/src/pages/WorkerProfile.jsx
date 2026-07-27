@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../context/AuthContext'
+import toast from 'react-hot-toast'
 import api from '../services/api'
 
 const stagger = (i) => ({
@@ -58,7 +59,7 @@ const WorkerProfile = () => {
         const { applicationService } = await import('../services')
         const res = await applicationService.checkInteraction({ workerId: id })
         setHasInteraction(!!res?.hasInteraction)
-      } catch { /* silent */ }
+      } catch (err) { console.error('[WorkerProfile] interaction check failed:', err) }
     }
     check()
   }, [user?._id, id])
@@ -84,7 +85,11 @@ const WorkerProfile = () => {
       const { applicationService } = await import('../services')
       await applicationService.contactWorker({ workerId: id })
       setHasInteraction(true)
-    } catch { /* silent */ } finally { setContacting(false) }
+      toast.success('Request sent — you can now message this worker')
+    } catch (err) {
+      console.error('[WorkerProfile] contact failed:', err)
+      toast.error(err?.response?.data?.message || 'Could not contact this worker')
+    } finally { setContacting(false) }
   }
 
   const convId = user?._id && id ? [user._id, id].sort().join('_') : null

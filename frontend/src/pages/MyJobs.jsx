@@ -77,7 +77,10 @@ const JobRow = ({ job, onStatusChange }) => {
       const { applicationService } = await import('../services')
       const res = await applicationService.getJobApplications(job._id)
       setApplicants(res?.data || [])
-    } catch { /* silent */ }
+    } catch (err) {
+      console.error('[MyJobs] Failed to load applicants:', err)
+      toast.error('Could not load applicants. Please try again.')
+    }
     finally { setLoadingApps(false) }
   }
 

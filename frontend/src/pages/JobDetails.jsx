@@ -83,7 +83,7 @@ const JobDetails = () => {
         const { applicationService } = await import('../services')
         const res = await applicationService.checkInteraction({ jobId: id })
         setHasInteraction(res?.data?.hasInteraction || res?.hasInteraction || false)
-      } catch { /* silent */ }
+      } catch (err) { console.error('[JobDetails] interaction check failed:', err) }
     }
     checkInteraction()
   }, [user, id])

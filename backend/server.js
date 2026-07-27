@@ -32,10 +32,14 @@ app.set('trust proxy', 1);
 // defined here to avoid double-limiting the auth endpoints.
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 300,
   message: { success: false, message: 'Too many requests. Please slow down.' },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  // Never rate-limit health/uptime probes (Render, load balancers, etc.).
+  // Otherwise these frequent pings burn the per-IP budget and the health
+  // check itself starts returning 429, marking the instance unhealthy.
+  skip: (req) => req.path === '/' || req.path === '/health'
 });
 
 /* ===================== MIDDLEWARE ===================== */
