@@ -143,36 +143,38 @@ const WorkerCard = ({ worker, compact = false }) => {
       </div>
 
       {/* Avatar overlapping banner — relative z-10 ensures it stacks above the positioned banner */}
-      <div className="relative z-10 px-4 -mt-5 flex items-end justify-between">
+      <div className="relative z-10 px-4 -mt-5">
         <div className="w-12 h-12 rounded-2xl bg-white dark:bg-[#0b0e14] p-0.5 shadow-lg ring-4 ring-white dark:ring-[#0b0e14]">
           {photo
             ? <img src={photo} alt={name} className="w-full h-full rounded-xl object-cover" />
             : <div className="w-full h-full rounded-xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] flex items-center justify-center text-white font-black text-lg">{initial}</div>
           }
         </div>
-        {wageAmount > 0 && (
-          <div className="mb-1 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/25 flex-shrink-0">
-            <span className="text-xs font-black text-[#c8933a]">
-              ₹{wageAmount}
-              <span className="font-normal text-[#c8933a]/70 text-[10px]">
-                /{wageUnit === 'daily' ? 'day' : wageUnit === 'hourly' ? 'hr' : 'job'}
-              </span>
-            </span>
-          </div>
-        )}
       </div>
 
       {/* Body */}
       <div className="px-4 pt-2.5 pb-4 space-y-2.5 flex-1 flex flex-col">
-        {/* Name + rating */}
-        <div>
-          <h3 className="font-bold text-gray-900 dark:text-white text-sm leading-tight">{name}</h3>
-          <div className="flex items-center gap-2 mt-1">
-            <RatingStars rating={ratingAvg} />
-            {ratingCount > 0 && (
-              <span className="text-[10px] text-[#6b7280]">({ratingCount} reviews)</span>
-            )}
+        {/* Name + rating + wage */}
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <h3 className="font-bold text-gray-900 dark:text-white text-sm leading-tight">{name}</h3>
+            <div className="flex items-center gap-2 mt-1">
+              <RatingStars rating={ratingAvg} />
+              {ratingCount > 0 && (
+                <span className="text-[10px] text-[#6b7280]">({ratingCount} reviews)</span>
+              )}
+            </div>
           </div>
+          {wageAmount > 0 && (
+            <div className="flex-shrink-0 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/25">
+              <span className="text-xs font-black text-[#c8933a]">
+                ₹{wageAmount}
+                <span className="font-normal text-[#c8933a]/70 text-[10px]">
+                  /{wageUnit === 'daily' ? 'day' : wageUnit === 'hourly' ? 'hr' : 'job'}
+                </span>
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Experience + location row */}
