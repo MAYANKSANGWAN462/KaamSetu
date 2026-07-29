@@ -5,4 +5,11 @@ node_modules/
 backend/node_modules/
 frontend/node_modules/
 
+# Extracted UI kit — kept out of git for now (revisit later)
+packages/
+
 tempCodeRunnerFile.js
+
+# Personal / internal project report — keep local, do not publish
+KaamSetu_Project_Documentation.pdf
+KaamSetu_Project_Documentation.docx
