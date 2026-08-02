@@ -1,0 +1,24 @@
+{
+  "name": "KaamSetu",
+  "short_name": "KaamSetu",
+  "description": "Local Job Marketplace for India's workforce",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FBF6EF",
+  "theme_color": "#E9731A",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/ks-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/ks-icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

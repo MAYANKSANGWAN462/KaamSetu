@@ -2,6 +2,7 @@
 // Kept short on purpose — the old tall footer forced extra scroll on every page.
 import { Link } from 'react-router-dom'
 import { config } from '../../config'
+import KaamSetuWordmark from './KaamSetuWordmark'
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
@@ -20,24 +21,9 @@ const Footer = () => {
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-8">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
 
-          {/* Brand */}
-          <Link to="/" className="flex items-center gap-2.5 group w-fit">
-            <div className="relative w-8 h-8">
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 shadow-sm shadow-amber-500/30" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path strokeLinecap="round" d="M3 17 Q7 9 12 9 Q17 9 21 17" />
-                  <path strokeLinecap="round" d="M7 17 L7 12" />
-                  <path strokeLinecap="round" d="M12 17 L12 9" />
-                  <path strokeLinecap="round" d="M17 17 L17 12" />
-                  <path strokeLinecap="round" d="M3 17 L21 17" />
-                </svg>
-              </div>
-            </div>
-            <div className="flex flex-col leading-none">
-              <span className="text-sm font-bold tracking-tight text-gray-900 dark:text-white">{config.appName}</span>
-              <span className="text-[9px] font-semibold tracking-[0.15em] uppercase text-amber-500/90">काम सेतु</span>
-            </div>
+          {/* Brand (5a font + 5b bridge) */}
+          <Link to="/" className="w-fit">
+            <KaamSetuWordmark size="sm" />
           </Link>
 
           {/* Links — wrap on mobile, inline on desktop */}

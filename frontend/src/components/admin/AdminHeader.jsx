@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAdminAuth } from '../../context/AdminAuthContext';
 import ThemeToggle from '../common/ThemeToggle';
+import KaamSetuWordmark from '../common/KaamSetuWordmark';
 
 const NAV = [
   {
@@ -59,19 +60,12 @@ const AdminHeader = () => {
         <div className="max-w-screen-xl mx-auto px-4">
           <div className="flex items-center h-14 gap-3">
 
-            {/* Logo */}
-            <Link to="/admin" className="flex items-center gap-2.5 shrink-0">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#d4963e] to-[#b86e2a] flex items-center justify-center shadow-md shadow-[#c8933a]/30">
-                <svg className="w-[14px] h-[14px] text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-sm font-black text-gray-900 dark:text-white tracking-tight">KaamSetu</span>
-                <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#c8933a] bg-[#c8933a]/15 border border-[#c8933a]/25 px-1.5 py-0.5 rounded-full">
-                  Admin
-                </span>
-              </div>
+            {/* Logo (5a + 5b) */}
+            <Link to="/admin" className="flex items-center gap-2 shrink-0">
+              <KaamSetuWordmark size="xs" />
+              <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#c8933a] bg-[#c8933a]/15 border border-[#c8933a]/25 px-1.5 py-0.5 rounded-full">
+                Admin
+              </span>
             </Link>
 
             {/* Desktop nav */}

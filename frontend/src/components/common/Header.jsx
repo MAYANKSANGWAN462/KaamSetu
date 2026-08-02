@@ -3,8 +3,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { config } from '../../config';
 import ThemeToggle from './ThemeToggle';
+import KaamSetuWordmark from './KaamSetuWordmark';
 import HeaderModeToggle from './HeaderModeToggle';
 import NotificationBell from './NotificationBell';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -74,28 +74,9 @@ const Header = () => {
         <nav className="max-w-screen-xl mx-auto px-4 sm:px-6">
           <div className="relative flex items-center h-16 gap-2 sm:gap-4">
 
-            {/* ── Logo ── */}
-            <Link to="/" className="flex items-center gap-2 sm:gap-2.5 shrink-0 group no-select">
-              <div className="relative w-8 h-8 sm:w-9 sm:h-9">
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg shadow-amber-500/30 group-hover:shadow-amber-500/50 transition-shadow duration-300" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" d="M3 17 Q7 9 12 9 Q17 9 21 17" />
-                    <path strokeLinecap="round" d="M7 17 L7 12" />
-                    <path strokeLinecap="round" d="M12 17 L12 9" />
-                    <path strokeLinecap="round" d="M17 17 L17 12" />
-                    <path strokeLinecap="round" d="M3 17 L21 17" />
-                  </svg>
-                </div>
-              </div>
-              <div className="flex flex-col leading-none">
-                <span className="text-sm sm:text-base font-bold tracking-tight text-gray-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors duration-200">
-                  {config.appName}
-                </span>
-                <span className="text-[8px] sm:text-[9px] font-semibold tracking-[0.15em] uppercase text-amber-500 dark:text-amber-400 opacity-80">
-                  काम सेतु
-                </span>
-              </div>
+            {/* ── Logo (5a font + 5b bridge) ── */}
+            <Link to="/" className="shrink-0 no-select">
+              <KaamSetuWordmark size="sm" />
             </Link>
 
             {/* ── Desktop nav links (md+) ── */}

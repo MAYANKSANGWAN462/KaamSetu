@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Full-bleed orange background for maskable (safe zone = inner 80%) -->
+  <rect width="512" height="512" fill="#E9731A"/>
+  <text
+    x="256" y="360"
+    font-family="'Baloo 2', 'Arial Rounded MT Bold', system-ui, sans-serif"
+    font-weight="800"
+    font-size="280"
+    text-anchor="middle"
+    letter-spacing="-8"
+  ><tspan fill="#FBF6EF">K</tspan><tspan fill="#2B2119">S</tspan></text>
+</svg>

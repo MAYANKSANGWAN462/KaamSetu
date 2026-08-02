@@ -71,7 +71,7 @@ const RegisterForm = ({ onSubmit }) => {
   const googleSignUpRedirect = useGoogleLogin({
     flow: 'auth-code',
     ux_mode: 'redirect',
-    redirect_uri: window.location.origin + '/login',
+    redirect_uri: window.location.origin + '/register',
   })
 
   const handleChange = (e) => {

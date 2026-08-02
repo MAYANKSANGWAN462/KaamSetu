@@ -94,29 +94,158 @@ const Home = () => {
     <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14]">
 
       {/* ── HERO ── */}
-      <section className="relative overflow-hidden bg-[#f6f7f9] dark:bg-[#0b0e14]">
-        {/* Soft amber glow accents */}
-        <div className="absolute -top-24 left-1/4 w-96 h-96 rounded-full bg-amber-400/15 dark:bg-amber-500/10 blur-[120px] pointer-events-none" />
-        <div className="absolute top-10 right-1/4 w-80 h-80 rounded-full bg-orange-400/10 dark:bg-orange-500/[0.07] blur-[100px] pointer-events-none" />
-        {/* Subtle dotted grid */}
-        <div className="absolute inset-0 opacity-[0.05] pointer-events-none text-slate-400"
-          style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '28px 28px' }} />
+      <section className="relative overflow-hidden min-h-[calc(100vh-4rem)]">
 
-        <div className="relative max-w-6xl mx-auto px-4 pt-16 pb-16 md:pt-24 md:pb-20">
+        {/* ── Background: mobile warm gradient (< sm, light mode) ── */}
+        <div
+          className="sm:hidden dark:hidden absolute inset-0 pointer-events-none"
+          style={{ background: 'linear-gradient(to bottom, #FFE7C2 0%, #FDD39A 55%, #F9C078 100%)' }}
+        />
+
+        {/* ── Background: illustrated scene (sm+, light mode) ── */}
+        <svg
+          viewBox="0 0 1600 900"
+          preserveAspectRatio="xMidYMax slice"
+          className="hidden sm:block dark:hidden absolute inset-0 w-full h-full pointer-events-none"
+          aria-hidden="true"
+        >
+          <defs>
+            <linearGradient id="ks-hero-sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#FFE7C2" />
+              <stop offset="0.55" stopColor="#FDD39A" />
+              <stop offset="1" stopColor="#F9C078" />
+            </linearGradient>
+            <linearGradient id="ks-hero-ground" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#E8A54B" />
+              <stop offset="1" stopColor="#D98A2B" />
+            </linearGradient>
+          </defs>
+          {/* sky */}
+          <rect x="0" y="0" width="1600" height="900" fill="url(#ks-hero-sky)" />
+          {/* sun */}
+          <circle cx="800" cy="300" r="150" fill="#FFF1D8" opacity="0.85" />
+          <circle cx="800" cy="300" r="98" fill="#FFE1A8" />
+          {/* far skyline */}
+          <g fill="#EBB56B">
+            <rect x="120" y="470" width="120" height="200" />
+            <rect x="255" y="520" width="90" height="150" />
+            <rect x="1280" y="450" width="140" height="220" />
+            <rect x="1435" y="510" width="90" height="160" />
+          </g>
+          {/* mid buildings */}
+          <rect x="360" y="430" width="150" height="250" fill="#E29A47" />
+          <g fill="#D98A2B">
+            <rect x="382" y="460" width="26" height="26" /><rect x="424" y="460" width="26" height="26" /><rect x="466" y="460" width="26" height="26" />
+            <rect x="382" y="510" width="26" height="26" /><rect x="424" y="510" width="26" height="26" /><rect x="466" y="510" width="26" height="26" />
+            <rect x="382" y="560" width="26" height="26" /><rect x="424" y="560" width="26" height="26" /><rect x="466" y="560" width="26" height="26" />
+          </g>
+          <rect x="1090" y="410" width="160" height="270" fill="#E29A47" />
+          <g fill="#D98A2B">
+            <rect x="1114" y="440" width="28" height="28" /><rect x="1160" y="440" width="28" height="28" /><rect x="1206" y="440" width="28" height="28" />
+            <rect x="1114" y="494" width="28" height="28" /><rect x="1160" y="494" width="28" height="28" /><rect x="1206" y="494" width="28" height="28" />
+            <rect x="1114" y="548" width="28" height="28" /><rect x="1160" y="548" width="28" height="28" /><rect x="1206" y="548" width="28" height="28" />
+          </g>
+          {/* tower crane */}
+          <g stroke="#B4701E" strokeWidth="8" fill="none">
+            <path d="M 560 680 L 560 300" />
+            <path d="M 430 330 L 700 330" />
+            <path d="M 560 300 L 460 330 M 560 300 L 660 330" />
+          </g>
+          <path d="M 650 330 L 650 380" stroke="#B4701E" strokeWidth="6" />
+          <rect x="632" y="380" width="36" height="26" fill="#E9731A" />
+          {/* ground */}
+          <path d="M 0 680 Q 800 640 1600 680 L 1600 900 L 0 900 Z" fill="url(#ks-hero-ground)" />
+          <path d="M 0 690 Q 800 652 1600 690" fill="none" stroke="#C87C22" strokeWidth="4" opacity="0.5" />
+          {/* Worker (left) — hi-vis vest, hard hat */}
+          <ellipse cx="620" cy="812" rx="120" ry="20" fill="#C87C22" opacity="0.35" />
+          <rect x="572" y="720" width="34" height="90" rx="14" fill="#3E4A63" />
+          <rect x="620" y="720" width="34" height="90" rx="14" fill="#35405A" />
+          <rect x="566" y="796" width="48" height="24" rx="8" fill="#2B2119" />
+          <rect x="616" y="796" width="48" height="24" rx="8" fill="#2B2119" />
+          <path d="M 560 620 q 52 -34 108 0 l 6 110 q -60 26 -120 0 z" fill="#F4A63C" />
+          <rect x="588" y="618" width="12" height="118" fill="#FBF6EF" opacity="0.85" />
+          <rect x="628" y="618" width="12" height="118" fill="#FBF6EF" opacity="0.85" />
+          <rect x="566" y="690" width="106" height="12" fill="#FBF6EF" opacity="0.85" />
+          <rect x="560" y="726" width="112" height="16" rx="6" fill="#8A5A22" />
+          <rect x="654" y="726" width="18" height="34" rx="4" fill="#6E4718" />
+          <path d="M 566 648 q -34 20 -30 70" fill="none" stroke="#E4954F" strokeWidth="26" strokeLinecap="round" />
+          <rect x="602" y="596" width="24" height="24" fill="#E0A46A" />
+          <circle cx="614" cy="576" r="38" fill="#EBB57C" />
+          <path d="M 572 566 a 42 42 0 0 1 84 0 z" fill="#F2C230" />
+          <rect x="566" y="562" width="96" height="12" rx="6" fill="#E0A81C" />
+          <rect x="606" y="528" width="16" height="12" rx="4" fill="#E0A81C" />
+          <circle cx="602" cy="578" r="4" fill="#2B2119" />
+          <circle cx="628" cy="578" r="4" fill="#2B2119" />
+          <path d="M 602 592 q 12 9 24 0" fill="none" stroke="#2B2119" strokeWidth="4" strokeLinecap="round" />
+          {/* Hirer (right) — teal shirt, clipboard */}
+          <ellipse cx="980" cy="812" rx="118" ry="20" fill="#C87C22" opacity="0.35" />
+          <rect x="946" y="722" width="34" height="88" rx="14" fill="#5A4632" />
+          <rect x="994" y="722" width="34" height="88" rx="14" fill="#4E3D2B" />
+          <rect x="940" y="798" width="48" height="24" rx="8" fill="#2B2119" />
+          <rect x="990" y="798" width="48" height="24" rx="8" fill="#2B2119" />
+          <path d="M 930 626 q 52 -32 108 0 l 6 104 q -60 26 -120 0 z" fill="#2F7E74" />
+          <path d="M 978 620 l -14 20 l 14 16 l 14 -16 z" fill="#FBF6EF" />
+          <path d="M 1044 656 q 30 18 24 66" fill="none" stroke="#E0A46A" strokeWidth="24" strokeLinecap="round" />
+          <g transform="rotate(12 1066 726)">
+            <rect x="1044" y="702" width="48" height="60" rx="6" fill="#FBF6EF" stroke="#2B2119" strokeWidth="3" />
+            <rect x="1058" y="698" width="20" height="10" rx="3" fill="#E9731A" />
+            <rect x="1052" y="716" width="32" height="4" rx="2" fill="#C9BBA6" />
+            <rect x="1052" y="728" width="32" height="4" rx="2" fill="#C9BBA6" />
+            <rect x="1052" y="740" width="22" height="4" rx="2" fill="#C9BBA6" />
+          </g>
+          <rect x="972" y="600" width="24" height="24" fill="#C98A54" />
+          <circle cx="984" cy="580" r="38" fill="#D69B62" />
+          <path d="M 946 574 a 38 38 0 0 1 76 0 q -20 -14 -38 -14 q -18 0 -38 14 z" fill="#2B2119" />
+          <circle cx="972" cy="582" r="4" fill="#2B2119" />
+          <circle cx="998" cy="582" r="4" fill="#2B2119" />
+          <path d="M 972 596 q 12 9 24 0" fill="none" stroke="#2B2119" strokeWidth="4" strokeLinecap="round" />
+          {/* Handshake (centre) */}
+          <path d="M 660 660 q 60 22 118 40" fill="none" stroke="#E4954F" strokeWidth="28" strokeLinecap="round" />
+          <path d="M 936 668 q -58 20 -116 32" fill="none" stroke="#E0A46A" strokeWidth="28" strokeLinecap="round" />
+          <g transform="translate(792 706) rotate(6)">
+            <rect x="-34" y="-22" width="66" height="42" rx="18" fill="#F4A63C" />
+            <rect x="-30" y="-40" width="14" height="30" rx="7" fill="#E06A12" />
+            <rect x="-14" y="-44" width="14" height="34" rx="7" fill="#E06A12" />
+            <rect x="2" y="-42" width="14" height="32" rx="7" fill="#E06A12" />
+            <rect x="18" y="-38" width="14" height="28" rx="7" fill="#E06A12" />
+            <rect x="-46" y="-16" width="30" height="14" rx="7" fill="#F4A63C" transform="rotate(-26 -31 -9)" />
+          </g>
+          <g stroke="#E9731A" strokeWidth="5" strokeLinecap="round">
+            <path d="M 792 636 l 0 -22" />
+            <path d="M 750 650 l -14 -16" />
+            <path d="M 836 650 l 14 -16" />
+          </g>
+        </svg>
+
+        {/* ── Dark mode background ── */}
+        <div className="hidden dark:block absolute inset-0 bg-[#0b0e14] pointer-events-none">
+          <div className="absolute -top-24 left-1/4 w-96 h-96 rounded-full bg-amber-400/15 blur-[120px]" />
+          <div className="absolute top-10 right-1/4 w-80 h-80 rounded-full bg-orange-400/10 blur-[100px]" />
+          <div className="absolute inset-0 opacity-[0.05] text-slate-400"
+            style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '28px 28px' }} />
+        </div>
+
+        {/* ── Bottom gradient: fade into page background (light mode) ── */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none dark:hidden z-[1]"
+          style={{ background: 'linear-gradient(to bottom, transparent, #f6f7f9)' }}
+        />
+
+        <div className="relative z-10 max-w-6xl mx-auto px-4 pt-12 pb-10 md:pt-20 md:pb-16">
           <motion.div {...stagger(0)} className="text-center mb-12">
             {/* Badge */}
-            <motion.div {...stagger(0)} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-300/60 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 mb-6">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-              <span className="text-[11px] font-bold tracking-[0.15em] uppercase text-amber-600 dark:text-amber-400">Hyperlocal Job Marketplace</span>
+            <motion.div {...stagger(0)} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/60 dark:border-amber-500/30 bg-white/55 dark:bg-amber-500/10 backdrop-blur-sm mb-6">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#E9731A] dark:bg-amber-500 animate-pulse" />
+              <span className="text-[11px] font-bold tracking-[0.15em] uppercase text-[#7a3d0e] dark:text-amber-400">Hyperlocal Job Marketplace</span>
             </motion.div>
 
-            <motion.h1 {...stagger(1)} className="text-5xl md:text-7xl font-black text-gray-900 dark:text-white mb-5 leading-[1.05] tracking-tight">
-              Kaam<span className="text-amber-500">Setu</span>
+            <motion.h1 {...stagger(1)} className="text-5xl md:text-7xl font-black text-[#2B2119] dark:text-white mb-5 leading-[1.05] tracking-tight">
+              Kaam<span style={{ color: '#E9731A' }}>Setu</span>
             </motion.h1>
-            <motion.p {...stagger(2)} className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-medium mb-2">
+            <motion.p {...stagger(2)} className="text-xl md:text-2xl text-[#5b4a38] dark:text-gray-300 font-medium mb-2">
               Find Work. Hire Fast. Connect Locally.
             </motion.p>
-            <motion.p {...stagger(3)} className="text-sm text-gray-500 dark:text-gray-400 max-w-lg mx-auto">
+            <motion.p {...stagger(3)} className="text-sm text-[#6b5840] dark:text-gray-400 max-w-lg mx-auto">
               India's trusted platform for daily-wage workers and hirers — connecting people nearby, instantly.
             </motion.p>
           </motion.div>
@@ -128,7 +257,7 @@ const Home = () => {
             transition={{ delay: 0.35, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
             <form onSubmit={handleSearch}
-              className="mx-auto max-w-3xl rounded-3xl bg-white dark:bg-white/[0.04] border border-gray-200 dark:border-white/10 p-2 shadow-xl shadow-gray-200/60 dark:shadow-black/30"
+              className="mx-auto max-w-3xl rounded-3xl bg-white/95 dark:bg-white/[0.04] border border-white/80 dark:border-white/10 p-2 shadow-xl shadow-[#c8822a]/15 dark:shadow-black/30 backdrop-blur-sm"
             >
               <div className="flex flex-col md:flex-row gap-2">
                 {/* Category */}
@@ -223,7 +352,7 @@ const Home = () => {
               { icon: '📍', label: 'Hyperlocal' },
               { icon: '🔒', label: 'Verified Users' },
             ].map(({ icon, label }) => (
-              <div key={label} className="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-white/[0.05] border border-gray-200 dark:border-white/10 text-xs font-semibold text-gray-600 dark:text-gray-400 shadow-sm">
+              <div key={label} className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-white/[0.05] backdrop-blur-sm border border-white/60 dark:border-white/10 text-xs font-semibold text-[#5b4a38] dark:text-gray-400 shadow-sm">
                 <span>{icon}</span>
                 <span>{label}</span>
               </div>

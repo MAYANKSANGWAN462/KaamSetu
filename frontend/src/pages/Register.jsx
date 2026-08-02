@@ -1,14 +1,36 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../context/AuthContext'
 import RegisterForm from '../components/auth/RegisterForm'
+import KaamSetuWordmark from '../components/common/KaamSetuWordmark'
 
 const Register = () => {
-  const { register } = useAuth()
+  const { register, googleLogin } = useAuth()
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [error, setError] = useState('')
+  const [googleLoading, setGoogleLoading] = useState(false)
+
+  // Handle Google OAuth redirect callback — Google sends ?code= back to this page
+  useEffect(() => {
+    const code = searchParams.get('code')
+    if (!code) return
+
+    setSearchParams({}, { replace: true })
+    setGoogleLoading(true)
+
+    googleLogin(code, window.location.origin + '/register')
+      .then((result) => {
+        if (result?.success) {
+          navigate('/dashboard', { replace: true })
+        } else {
+          setError(result?.message || 'Google sign-up failed')
+        }
+      })
+      .catch(() => setError('Google sign-up failed. Please try again.'))
+      .finally(() => setGoogleLoading(false))
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSubmit = async (userData) => {
     const result = await register(userData)
@@ -34,16 +56,6 @@ const Register = () => {
         <div className="absolute top-1/3 -right-20 w-72 h-72 rounded-full bg-[#c8833a]/20 blur-[80px]" />
         <div className="absolute bottom-1/4 -left-10 w-56 h-56 rounded-full bg-[#d4963e]/15 blur-[60px]" />
 
-        <div className="relative">
-          <Link to="/" className="inline-flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] flex items-center justify-center">
-              <span className="text-white font-black text-sm">K</span>
-            </div>
-            <span className="text-white font-black text-xl tracking-tight">
-              Kaam<span className="text-[#c8933a]">Setu</span>
-            </span>
-          </Link>
-        </div>
 
         <div className="relative space-y-5">
           <motion.div
@@ -92,15 +104,10 @@ const Register = () => {
           transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
           className="w-full max-w-md"
         >
-          {/* Mobile logo */}
-          <div className="lg:hidden text-center mb-8">
-            <Link to="/" className="inline-flex items-center gap-2">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] flex items-center justify-center">
-                <span className="text-white font-black text-sm">K</span>
-              </div>
-              <span className="text-gray-900 dark:text-white font-black text-xl tracking-tight">
-                Kaam<span className="text-[#c8933a]">Setu</span>
-              </span>
+          {/* Logo above sign-up box (tablet / mobile) */}
+          <div className="lg:hidden flex justify-center mb-8">
+            <Link to="/">
+              <KaamSetuWordmark size="md" />
             </Link>
           </div>
 
@@ -131,7 +138,17 @@ const Register = () => {
           </AnimatePresence>
 
           <div className="bg-white dark:bg-white/[0.04] rounded-3xl border border-[#e6e8ec] dark:border-white/[0.08] p-7 shadow-sm">
-            <RegisterForm onSubmit={handleSubmit} />
+            {googleLoading ? (
+              <div className="flex flex-col items-center justify-center py-10 gap-3">
+                <svg className="animate-spin w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Creating your account with Google...</p>
+              </div>
+            ) : (
+              <RegisterForm onSubmit={handleSubmit} />
+            )}
           </div>
 
           <p className="text-center mt-5 text-xs text-[#94a3b8] dark:text-gray-600">

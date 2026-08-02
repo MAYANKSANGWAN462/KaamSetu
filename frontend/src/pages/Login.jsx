@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../context/AuthContext'
 import LoginForm from '../components/auth/LoginForm'
+import KaamSetuWordmark from '../components/common/KaamSetuWordmark'
 
 
 const Login = () => {
@@ -59,17 +60,6 @@ const Login = () => {
         <div className="absolute top-1/4 -right-20 w-72 h-72 rounded-full bg-[#c8833a]/20 blur-[80px]" />
         <div className="absolute bottom-1/4 -left-10 w-56 h-56 rounded-full bg-[#d4963e]/15 blur-[60px]" />
 
-        {/* Logo */}
-        <div className="relative">
-          <Link to="/" className="inline-flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] flex items-center justify-center">
-              <span className="text-white font-black text-sm">K</span>
-            </div>
-            <span className="text-white font-black text-xl tracking-tight">
-              Kaam<span className="text-[#c8933a]">Setu</span>
-            </span>
-          </Link>
-        </div>
 
         {/* Center content */}
         <div className="relative space-y-6">
@@ -121,15 +111,10 @@ const Login = () => {
           transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
           className="w-full max-w-md"
         >
-          {/* Mobile logo */}
-          <div className="lg:hidden text-center mb-8">
-            <Link to="/" className="inline-flex items-center gap-2">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] flex items-center justify-center">
-                <span className="text-white font-black text-sm">K</span>
-              </div>
-              <span className="text-gray-900 dark:text-white font-black text-xl tracking-tight">
-                Kaam<span className="text-[#c8933a]">Setu</span>
-              </span>
+          {/* Logo above sign-in box (tablet / mobile) */}
+          <div className="lg:hidden flex justify-center mb-8">
+            <Link to="/">
+              <KaamSetuWordmark size="md" />
             </Link>
           </div>
 
