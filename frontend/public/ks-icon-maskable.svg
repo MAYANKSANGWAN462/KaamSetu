@@ -1,12 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <!-- Full-bleed orange background for maskable (safe zone = inner 80%) -->
-  <rect width="512" height="512" fill="#E9731A"/>
-  <text
-    x="256" y="360"
-    font-family="'Baloo 2', 'Arial Rounded MT Bold', system-ui, sans-serif"
-    font-weight="800"
-    font-size="280"
-    text-anchor="middle"
-    letter-spacing="-8"
-  ><tspan fill="#FBF6EF">K</tspan><tspan fill="#2B2119">S</tspan></text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Full-bleed orange background (maskable — no rounded corners) -->
+  <rect width="100" height="100" fill="#E9731A"/>
+  <!-- Content kept in inner safe zone (10–90 on each axis) -->
+  <!-- K: vertical stem (cream) -->
+  <line x1="17" y1="18" x2="17" y2="82"
+        stroke="#FBF6EF" stroke-width="11" stroke-linecap="round"/>
+  <!-- K: V-arms -->
+  <path d="M 44 18 L 23 50 L 44 82"
+        fill="none" stroke="#FBF6EF" stroke-width="9"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- S: smooth bezier (dark brown) -->
+  <path d="M 84 30 C 84 18,57 18,57 33 C 57 48,84 52,84 67 C 84 82,57 82,57 70"
+        fill="none" stroke="#2B2119" stroke-width="10" stroke-linecap="round"/>
 </svg>

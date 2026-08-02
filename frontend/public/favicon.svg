@@ -1,11 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Orange rounded background -->
   <rect width="100" height="100" rx="22" fill="#E9731A"/>
-  <text
-    x="50" y="73"
-    font-family="'Baloo 2', 'Arial Rounded MT Bold', system-ui, sans-serif"
-    font-weight="800"
-    font-size="62"
-    text-anchor="middle"
-    letter-spacing="-2"
-  ><tspan fill="#FBF6EF">K</tspan><tspan fill="#2B2119">S</tspan></text>
+  <!-- K: vertical stem (cream) -->
+  <line x1="14" y1="15" x2="14" y2="85"
+        stroke="#FBF6EF" stroke-width="12" stroke-linecap="round"/>
+  <!-- K: V-arms as single path for smooth join at apex -->
+  <path d="M 46 15 L 20 50 L 46 85"
+        fill="none" stroke="#FBF6EF" stroke-width="10"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- S: smooth bezier (dark brown) -->
+  <path d="M 87 27 C 87 14,57 14,57 31 C 57 48,87 52,87 69 C 87 86,57 86,57 73"
+        fill="none" stroke="#2B2119" stroke-width="11" stroke-linecap="round"/>
 </svg>
