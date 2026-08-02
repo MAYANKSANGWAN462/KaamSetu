@@ -1,15 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <!-- Full-bleed orange background (maskable — no rounded corners) -->
-  <rect width="100" height="100" fill="#E9731A"/>
-  <!-- Content kept in inner safe zone (10–90 on each axis) -->
-  <!-- K: vertical stem (cream) -->
-  <line x1="17" y1="18" x2="17" y2="82"
-        stroke="#FBF6EF" stroke-width="11" stroke-linecap="round"/>
-  <!-- K: V-arms -->
-  <path d="M 44 18 L 23 50 L 44 82"
-        fill="none" stroke="#FBF6EF" stroke-width="9"
-        stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- S: smooth bezier (dark brown) -->
-  <path d="M 84 30 C 84 18,57 18,57 33 C 57 48,84 52,84 67 C 84 82,57 82,57 70"
-        fill="none" stroke="#2B2119" stroke-width="10" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&amp;display=swap');</style>
+  </defs>
+  <!-- Full-bleed cream background (no rounded corners — OS applies its own mask) -->
+  <rect width="512" height="512" fill="#FBF6EF"/>
+  <!-- Content in safe zone: 10–90% of 512 = x:52–460, y:52–460 -->
+  <!-- KaamSetu wordmark centred vertically in safe zone -->
+  <text x="52" y="306"
+        font-family="'Baloo 2','Arial Rounded MT Bold',system-ui,sans-serif"
+        font-weight="800" font-size="112"
+        textLength="408" lengthAdjust="spacingAndGlyphs">
+    <tspan fill="#2B2119">Kaam</tspan><tspan fill="#E9731A">Setu</tspan>
+  </text>
+  <!-- Bridge arch spanning the text width inside safe zone -->
+  <path d="M 52 364 C 168 328,344 328,460 364"
+        fill="none" stroke="#E9731A" stroke-width="16" stroke-linecap="round"/>
 </svg>
