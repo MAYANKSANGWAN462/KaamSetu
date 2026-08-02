@@ -124,7 +124,11 @@ const listUsers = async (req, res) => {
 
     const query = {};
     if (role && ['user', 'admin'].includes(role)) query.role = role;
-    if (mode && ['worker', 'hirer'].includes(mode)) query.activeMode = mode;
+    if (mode === 'none') {
+      query.activeMode = null;
+    } else if (mode && ['worker', 'hirer'].includes(mode)) {
+      query.activeMode = mode;
+    }
     if (status === 'active') query.isActive = true;
     if (status === 'suspended') query.isActive = false;
     if (q && String(q).trim()) {

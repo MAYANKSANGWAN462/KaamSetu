@@ -104,45 +104,6 @@ app.get('/api/test', (req, res) => {
   });
 });
 
-/* Temporary admin diagnostic — remove after debugging is done.
-   Hit: GET /api/admin-diag?email=admin@kaamsetu.com */
-app.get('/api/admin-diag', async (req, res) => {
-  try {
-    const mongoose = require('mongoose');
-    const User = require('./models/User');
-    const email = String(req.query.email || '').toLowerCase().trim();
-    const dbName = mongoose.connection.name;
-    const dbHost = mongoose.connection.host;
-
-    let userInfo = null;
-    if (email) {
-      const user = await User.findOne({ email }).select('+passwordHash');
-      if (user) {
-        userInfo = {
-          found: true,
-          role: user.role,
-          isActive: user.isActive,
-          isVerified: user.isVerified,
-          hasPasswordHash: Boolean(user.passwordHash),
-          passwordHashIsBcrypt: typeof user.passwordHash === 'string' && user.passwordHash.startsWith('$2'),
-        };
-      } else {
-        userInfo = { found: false };
-      }
-    }
-
-    res.json({
-      success: true,
-      database: { name: dbName, host: dbHost },
-      mongodbUriEnvKey: process.env.MONGODB_URI ? 'MONGODB_URI (set)' : (process.env.MONGO_URI ? 'MONGO_URI (fallback used)' : 'NEITHER SET'),
-      nodeEnv: process.env.NODE_ENV,
-      user: userInfo,
-    });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
-
 /* ===================== API ROUTES ===================== */
 
 // Auth-specific rate limits are applied per-route in authRoutes.js.

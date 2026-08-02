@@ -15,6 +15,7 @@ const FILTERS = [
   { value: 'all', label: 'All' },
   { value: 'worker', label: 'Workers', key: 'mode' },
   { value: 'hirer', label: 'Hirers', key: 'mode' },
+  { value: 'none', label: 'No Mode', key: 'mode' },
   { value: 'suspended', label: 'Suspended', key: 'status' },
   { value: 'admin', label: 'Admins', key: 'role' },
 ]
@@ -167,10 +168,16 @@ const ManageUsers = () => {
                       {u.role === 'admin' && (
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#c8933a]/15 text-[#c8933a]">Admin</span>
                       )}
+                      {u.googleId && (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 dark:bg-sky-500/15 text-sky-600 dark:text-sky-400">Google</span>
+                      )}
                       {u.activeMode && (
                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${modeColor(u.activeMode)}`}>
                           {u.activeMode}
                         </span>
+                      )}
+                      {!u.activeMode && !u.googleId && u.role !== 'admin' && (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 dark:bg-white/10 text-gray-500 dark:text-gray-400">No Mode</span>
                       )}
                       {!u.isActive && (
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 dark:bg-red-500/15 text-red-700 dark:text-red-400">Suspended</span>
