@@ -194,6 +194,17 @@
   .pb-safe { padding-bottom: var(--safe-bottom); }
   .h-safe-bottom { height: var(--safe-bottom); }
 
+  /* Messenger full-bleed container — fills viewport between header and mobile tab bar.
+     Accounts for the dynamic viewport unit (dvh) and iOS safe-area top inset. */
+  .messenger-container {
+    height: calc(100dvh - 4rem - var(--safe-top) - 5rem);
+  }
+  @media (min-width: 768px) {
+    .messenger-container {
+      height: calc(100dvh - 4rem - var(--safe-top));
+    }
+  }
+
   /* Prevent accidental text selection on tappable app chrome */
   .no-select { -webkit-user-select: none; user-select: none; }
 }

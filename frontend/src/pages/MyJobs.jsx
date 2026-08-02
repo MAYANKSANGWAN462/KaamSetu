@@ -39,12 +39,14 @@ const SkeletonRow = () => (
 )
 
 // Individual job row with inline controls
-const JobRow = ({ job, onStatusChange }) => {
+const JobRow = ({ job, onStatusChange, onDelete }) => {
   const navigate = useNavigate()
   const [toggling, setToggling] = useState(false)
   const [expanded, setExpanded] = useState(false)
   const [applicants, setApplicants] = useState([])
   const [loadingApps, setLoadingApps] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   const isOpen      = job.status === 'open'
   const isCancelled = job.status === 'cancelled'
@@ -102,6 +104,21 @@ const JobRow = ({ job, onStatusChange }) => {
     } catch { toast.error('Failed to reject') }
   }
 
+  const handleDelete = async () => {
+    setDeleting(true)
+    try {
+      await jobService.deleteJob(job._id)
+      toast.success('Job deleted.')
+      onDelete(job._id)
+    } catch (err) {
+      const msg = err?.response?.data?.message || (typeof err === 'string' ? err : 'Failed to delete job')
+      toast.error(msg)
+      setShowDeleteConfirm(false)
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   return (
     <div className="bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8 shadow-sm overflow-hidden">
       <div className="p-5">
@@ -156,83 +173,149 @@ const JobRow = ({ job, onStatusChange }) => {
         {/* Action bar */}
         <div className="flex flex-wrap items-center gap-2 mt-4 pt-3.5 border-t border-[#e6e8ec] dark:border-white/8">
 
-          {/* View applicants */}
-          <button onClick={loadApplicants}
-            className="flex items-center gap-1.5 text-xs font-semibold text-[#6b7280] hover:text-[#c8933a] transition-colors duration-200">
-            <svg className={`w-3.5 h-3.5 transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}
-              fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-            </svg>
-            Applicants {job.applicationCount > 0 ? `(${job.applicationCount})` : ''}
-          </button>
+          <AnimatePresence mode="wait" initial={false}>
+            {showDeleteConfirm ? (
+              /* ── Delete confirmation strip ── */
+              <motion.div
+                key="confirm"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className="flex flex-wrap items-center gap-2 w-full"
+              >
+                <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 flex-1 min-w-0">
+                  Permanently delete this job post?
+                </p>
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  disabled={deleting}
+                  className="px-3 py-1.5 rounded-xl text-xs font-bold text-[#6b7280] border border-[#e6e8ec] dark:border-white/10 hover:bg-[#f6f7f9] dark:hover:bg-white/5 transition-colors disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <motion.button
+                  whileTap={{ scale: 0.97 }}
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors disabled:opacity-50"
+                >
+                  {deleting ? (
+                    <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-30" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                      <path className="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                  ) : (
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  )}
+                  Delete
+                </motion.button>
+              </motion.div>
+            ) : (
+              /* ── Normal action bar ── */
+              <motion.div
+                key="actions"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className="flex flex-wrap items-center gap-2 w-full"
+              >
+                {/* View applicants */}
+                <button onClick={loadApplicants}
+                  className="flex items-center gap-1.5 text-xs font-semibold text-[#6b7280] hover:text-[#c8933a] transition-colors duration-200">
+                  <svg className={`w-3.5 h-3.5 transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                  </svg>
+                  Applicants {job.applicationCount > 0 ? `(${job.applicationCount})` : ''}
+                </button>
 
-          {/* Edit — only if open */}
-          {isOpen && (
-            <button onClick={() => navigate(`/jobs/${job._id}/edit`)}
-              className="flex items-center gap-1.5 text-xs font-semibold text-[#6b7280] hover:text-[#c8933a] transition-colors duration-200">
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-              Edit
-            </button>
-          )}
+                {/* Edit — only if open */}
+                {isOpen && (
+                  <button onClick={() => navigate(`/jobs/${job._id}/edit`)}
+                    className="flex items-center gap-1.5 text-xs font-semibold text-[#6b7280] hover:text-[#c8933a] transition-colors duration-200">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Edit
+                  </button>
+                )}
 
-          {/* Spacer */}
-          <div className="flex-1" />
-
-          {/* ── CLOSE / REOPEN TOGGLE ── */}
-          {!isFilled && (
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={handleToggleStatus}
-              disabled={toggling}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold border transition-all duration-200 disabled:opacity-50 ${
-                isOpen
-                  ? 'border-red-300 dark:border-red-500/30 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10'
-                  : isCancelled
-                  ? 'border-emerald-300 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10'
-                  : ''
-              }`}
-            >
-              {toggling ? (
-                <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-30" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
-                  <path className="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-              ) : isOpen ? (
-                <>
+                {/* Delete — always visible, guarded by confirmation + backend */}
+                <button
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="flex items-center gap-1.5 text-xs font-semibold text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors duration-200"
+                >
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
-                  Close Job
-                </>
-              ) : (
-                <>
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                  Reopen
-                </>
-              )}
-            </motion.button>
-          )}
+                  Delete
+                </button>
 
-          {/* View full details */}
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => navigate(`/jobs/${job._id}`)}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] text-white text-xs font-bold shadow-sm hover:shadow-md transition-all duration-200"
-          >
-            View
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-            </svg>
-          </motion.button>
+                {/* Spacer */}
+                <div className="flex-1" />
+
+                {/* ── CLOSE / REOPEN TOGGLE ── */}
+                {!isFilled && (
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={handleToggleStatus}
+                    disabled={toggling}
+                    className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold border transition-all duration-200 disabled:opacity-50 ${
+                      isOpen
+                        ? 'border-red-300 dark:border-red-500/30 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10'
+                        : isCancelled
+                        ? 'border-emerald-300 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10'
+                        : ''
+                    }`}
+                  >
+                    {toggling ? (
+                      <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-30" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                        <path className="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
+                    ) : isOpen ? (
+                      <>
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Close Job
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Reopen
+                      </>
+                    )}
+                  </motion.button>
+                )}
+
+                {/* View full details */}
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => navigate(`/jobs/${job._id}`)}
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] text-white text-xs font-bold shadow-sm hover:shadow-md transition-all duration-200"
+                >
+                  View
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                  </svg>
+                </motion.button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
@@ -340,6 +423,11 @@ const MyJobs = () => {
     setJobs(prev => prev.map(j => j._id === jobId ? { ...j, status: newStatus } : j))
   }
 
+  // Called by JobRow after successful delete — removes from list
+  const handleJobDelete = (jobId) => {
+    setJobs(prev => prev.filter(j => j._id !== jobId))
+  }
+
   const stats = {
     total:  jobs.length,
     open:   jobs.filter(j => j.status === 'open').length,
@@ -417,7 +505,7 @@ const MyJobs = () => {
           <div className="space-y-4">
             {jobs.map((job, i) => (
               <motion.div key={job._id} {...stagger(i + 2)}>
-                <JobRow job={job} onStatusChange={handleStatusChange} />
+                <JobRow job={job} onStatusChange={handleStatusChange} onDelete={handleJobDelete} />
               </motion.div>
             ))}
           </div>

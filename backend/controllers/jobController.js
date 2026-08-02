@@ -376,7 +376,7 @@ const updateJob = async (req, res) => {
   }
 };
 
-/* ─── DELETE /api/jobs/:id → sets status: cancelled ──────── */
+/* ─── DELETE /api/jobs/:id → permanent hard-delete ───────── */
 
 const deleteJob = async (req, res) => {
   try {
@@ -392,28 +392,27 @@ const deleteJob = async (req, res) => {
     ) {
       return res.status(403).json({
         success: false,
-        message: 'Not authorized to cancel this job'
+        message: 'Not authorized to delete this job'
       });
     }
 
-    if (job.status === 'cancelled') {
+    // Block deletion when a worker has already been committed (accepted application).
+    // The hirer should use "Close Job" to cancel instead.
+    const acceptedCount = await Application.countDocuments({
+      jobId: job._id,
+      status: 'accepted'
+    });
+    if (acceptedCount > 0) {
       return res.status(400).json({
         success: false,
-        message: 'Job is already cancelled'
+        message: 'Cannot delete a job that has accepted workers. Close the job instead.'
       });
     }
 
-    // Soft delete — set status to cancelled, never hard delete
-    job.status = 'cancelled';
-    await job.save();
-
-    // Notify the hirer AND every worker with a pending application so their
-    // NotificationBell + MyApplications reflect the cancellation.
+    // Notify pending applicants before removing the data.
     try {
       const io = getIo();
       const payload = { jobId: job._id.toString(), title: job.title };
-      io.to(job.hirerId.toString()).emit('jobCancelled', payload);
-
       const pending = await Application.find({ jobId: job._id, status: 'pending' })
         .select('workerId')
         .lean();
@@ -424,10 +423,13 @@ const deleteJob = async (req, res) => {
       console.warn('[deleteJob] Socket emit skipped:', socketErr.message);
     }
 
+    // Cascade-delete all applications, then remove the job itself.
+    await Application.deleteMany({ jobId: job._id });
+    await job.deleteOne();
+
     return res.json({
       success: true,
-      message: 'Job cancelled successfully',
-      data: { _id: job._id, status: job.status }
+      message: 'Job deleted successfully'
     });
   } catch (error) {
     console.error('[deleteJob]', error.message);

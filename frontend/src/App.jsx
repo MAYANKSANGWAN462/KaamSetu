@@ -51,8 +51,9 @@ const Layout = ({ children }) => {
   return (
     <div className="w-full min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] transition-colors duration-300">
       <Header />
-      {/* Bottom padding on mobile so content clears the fixed tab bar. */}
-      <main className="pb-20 md:pb-0">
+      {/* Bottom padding on mobile so content clears the fixed tab bar.
+          Messenger manages its own height — no extra padding needed there. */}
+      <main className={isMessenger ? '' : 'pb-20 md:pb-0'}>
         <Suspense fallback={<Loader />}>
           <AnimatedRoutes />
         </Suspense>

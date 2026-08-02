@@ -230,7 +230,7 @@ const Messenger = () => {
 
   /* ── render ── */
   return (
-    <div className="h-[calc(100dvh-9rem)] md:h-[calc(100dvh-4rem)] bg-[#f6f7f9] dark:bg-[#0b0e14] flex overflow-hidden">
+    <div className="messenger-container bg-[#f6f7f9] dark:bg-[#0b0e14] flex overflow-hidden">
 
       {/* ── LEFT: conversation list ── */}
       <aside className={`w-full md:w-80 lg:w-96 flex-shrink-0 border-r border-[#e6e8ec] dark:border-white/8 bg-white dark:bg-white/[0.02] flex flex-col ${conversationId ? 'hidden md:flex' : 'flex'}`}>
