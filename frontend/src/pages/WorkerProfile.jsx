@@ -71,7 +71,7 @@ const WorkerProfile = () => {
         api.get(`/reviews/worker/${id}`)
       ])
       setWorker(wRes?.data?.data || wRes?.data || null)
-      setReviews(rRes?.data?.data || rRes?.data || [])
+      setReviews(rRes?.data?.data?.reviews || [])
     } catch (err) { console.error(err) } finally { setLoading(false) }
   }
 
