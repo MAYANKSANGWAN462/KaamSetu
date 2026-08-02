@@ -1,6 +1,6 @@
 // AdminDashboard.jsx — platform overview, analytics, system health, management links.
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import adminService from '../../services/adminService'
 import { useAdminAuth } from '../../context/AdminAuthContext'
@@ -28,8 +28,7 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const { admin, logout } = useAdminAuth()
-  const navigate = useNavigate()
+  const { admin } = useAdminAuth()
 
   useEffect(() => {
     let active = true
@@ -46,11 +45,6 @@ const AdminDashboard = () => {
     return () => { active = false }
   }, [])
 
-  const handleLogout = () => {
-    logout()
-    navigate('/admin/login', { replace: true })
-  }
-
   const statItems = [
     { label: 'Total Users',   value: stats?.totalUsers,       icon: '👥', color: 'text-[#c8933a]' },
     { label: 'Workers',       value: stats?.totalWorkers,     icon: '👷', color: 'text-emerald-600 dark:text-emerald-400' },
@@ -63,28 +57,13 @@ const AdminDashboard = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pt-24 pb-12">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pt-8 pb-12">
       <div className="max-w-5xl mx-auto px-4">
 
-        <motion.div {...stagger(0)} className="mb-8 flex items-start justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-3 mb-1">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] flex items-center justify-center">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-              </div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#c8933a]">Admin Panel</p>
-            </div>
-            <h1 className="text-3xl font-black text-gray-900 dark:text-white">Dashboard</h1>
-            <p className="text-sm text-[#6b7280] mt-1">Signed in as {admin?.name || admin?.email}.</p>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 rounded-xl border border-[#e6e8ec] dark:border-white/10 text-xs font-bold text-[#6b7280] hover:text-red-500 hover:border-red-300 transition-colors"
-          >
-            Sign out
-          </button>
+        <motion.div {...stagger(0)} className="mb-8">
+          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#c8933a] mb-1">Overview</p>
+          <h1 className="text-3xl font-black text-gray-900 dark:text-white">Dashboard</h1>
+          <p className="text-sm text-[#6b7280] mt-1">Welcome back, {admin?.name || admin?.email}.</p>
         </motion.div>
 
         <AnimatePresence>

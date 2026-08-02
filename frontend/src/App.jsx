@@ -20,6 +20,7 @@ import { LanguageProvider } from "./context/LanguageContext";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AdminProtectedRoute from "./routes/AdminProtectedRoute";
 import Header from "./components/common/Header";
+import AdminHeader from "./components/admin/AdminHeader";
 import Footer from "./components/common/Footer";
 import MobileTabBar from "./components/common/MobileTabBar";
 import Loader from "./components/common/Loader";
@@ -48,6 +49,50 @@ const ManageJobs = lazy(() => import("./pages/admin/ManageJobs"));
 const Layout = ({ children }) => {
   const location = useLocation();
   const isMessenger = location.pathname.startsWith('/messages');
+  const isAdminPanel = location.pathname.startsWith('/admin') && location.pathname !== '/admin/login';
+  const isAdminLogin = location.pathname === '/admin/login';
+
+  const toaster = (
+    <Toaster
+      position="top-right"
+      toastOptions={{
+        duration: 4000,
+        style: {
+          background: "var(--toast-bg)",
+          color: "var(--toast-text)",
+        },
+      }}
+    />
+  );
+
+  // Admin panel — dedicated header, no marketplace nav/footer/tabbar
+  if (isAdminPanel) {
+    return (
+      <div className="w-full min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] transition-colors duration-300">
+        <AdminHeader />
+        <main>
+          <Suspense fallback={<Loader />}>
+            <AnimatedRoutes />
+          </Suspense>
+        </main>
+        {toaster}
+      </div>
+    );
+  }
+
+  // Admin login — standalone page, no shell at all
+  if (isAdminLogin) {
+    return (
+      <div className="w-full min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] transition-colors duration-300">
+        <Suspense fallback={<Loader />}>
+          <AnimatedRoutes />
+        </Suspense>
+        {toaster}
+      </div>
+    );
+  }
+
+  // Marketplace layout
   return (
     <div className="w-full min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] transition-colors duration-300">
       <Header />
@@ -66,16 +111,7 @@ const Layout = ({ children }) => {
       )}
       {/* Native-app-style bottom navigation — mobile only. */}
       <MobileTabBar />
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 4000,
-          style: {
-            background: "var(--toast-bg)",
-            color: "var(--toast-text)",
-          },
-        }}
-      />
+      {toaster}
     </div>
   );
 };
