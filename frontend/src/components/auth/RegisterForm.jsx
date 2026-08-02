@@ -55,7 +55,7 @@ const PasswordStrength = ({ password }) => {
   )
 }
 
-const RegisterForm = ({ onSubmit, redirectUri }) => {
+const RegisterForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
   name: '',
   email: '',
@@ -71,7 +71,7 @@ const RegisterForm = ({ onSubmit, redirectUri }) => {
   const googleSignUpRedirect = useGoogleLogin({
     flow: 'auth-code',
     ux_mode: 'redirect',
-    redirect_uri: redirectUri || (window.location.origin + '/register'),
+    redirect_uri: window.location.origin + '/login',
   })
 
   const handleChange = (e) => {
