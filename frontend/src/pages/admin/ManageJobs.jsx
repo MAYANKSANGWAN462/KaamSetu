@@ -62,15 +62,15 @@ const ManageJobs = () => {
   }[s] || 'bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400')
 
   return (
-    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pt-8 pb-12">
-      <div className="max-w-5xl mx-auto px-4">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pt-6 sm:pt-8 pb-12">
+      <div className="max-w-5xl mx-auto px-3 sm:px-4">
         <motion.div {...stagger(0)} className="mb-7">
           <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#c8933a] mb-1">Admin</p>
           <h1 className="text-3xl font-black text-gray-900 dark:text-white">Manage Jobs</h1>
         </motion.div>
 
-        <motion.div {...stagger(1)} className="flex flex-wrap gap-3 mb-5">
-          <div className="relative flex-1 min-w-48">
+        <motion.div {...stagger(1)} className="flex flex-col sm:flex-row flex-wrap gap-3 mb-5">
+          <div className="relative flex-1 min-w-0 sm:min-w-48">
             <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
               <svg className="w-4 h-4 text-[#94a3b8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -140,9 +140,9 @@ const ManageJobs = () => {
                     )}
                     <p className="text-xs text-[#94a3b8] mt-1 flex flex-wrap items-center gap-2">
                       {job.hirerId?.name && <span>by {job.hirerId.name}</span>}
-                      {job.wage?.amount != null && <><span className="text-[#e6e8ec] dark:text-white/20">·</span><span>₹{job.wage.amount} {job.wage.unit}</span></>}
-                      {job.location?.address && <><span className="text-[#e6e8ec] dark:text-white/20">·</span><span>{job.location.address}</span></>}
-                      {job.createdAt && <><span className="text-[#e6e8ec] dark:text-white/20">·</span><span>{new Date(job.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span></>}
+                      {job.wage?.amount != null && <><span className="text-gray-300 dark:text-white/20">·</span><span>₹{job.wage.amount} {job.wage.unit}</span></>}
+                      {job.location?.address && <><span className="text-gray-300 dark:text-white/20">·</span><span>{job.location.address}</span></>}
+                      {job.createdAt && <><span className="text-gray-300 dark:text-white/20">·</span><span>{new Date(job.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span></>}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">

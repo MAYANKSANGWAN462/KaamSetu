@@ -16,11 +16,11 @@ const StatCard = ({ label, value, icon, color, delay }) => (
     initial={{ opacity: 0, y: 16 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-    className="bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8 p-6 shadow-sm"
+    className="bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8 p-4 sm:p-6 shadow-sm"
   >
-    <p className="text-2xl mb-3">{icon}</p>
-    <p className={`text-3xl font-black ${color}`}>{value ?? '—'}</p>
-    <p className="text-xs font-bold uppercase tracking-wider text-[#6b7280] mt-1">{label}</p>
+    <p className="text-xl sm:text-2xl mb-2 sm:mb-3">{icon}</p>
+    <p className={`text-2xl sm:text-3xl font-black ${color}`}>{value ?? '—'}</p>
+    <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#6b7280] mt-1 leading-tight">{label}</p>
   </motion.div>
 )
 
@@ -57,8 +57,8 @@ const AdminDashboard = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pt-8 pb-12">
-      <div className="max-w-5xl mx-auto px-4">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pt-6 sm:pt-8 pb-12">
+      <div className="max-w-5xl mx-auto px-3 sm:px-4">
 
         <motion.div {...stagger(0)} className="mb-8">
           <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#c8933a] mb-1">Overview</p>
@@ -76,17 +76,17 @@ const AdminDashboard = () => {
         </AnimatePresence>
 
         {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 mb-8">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8 p-6 animate-pulse">
-                <div className="h-6 w-6 bg-[#e6e8ec] dark:bg-white/10 rounded-lg mb-3" />
-                <div className="h-8 w-16 bg-[#e6e8ec] dark:bg-white/10 rounded-lg mb-2" />
-                <div className="h-3 w-20 bg-[#e6e8ec] dark:bg-white/10 rounded-lg" />
+              <div key={i} className="bg-white dark:bg-white/[0.04] rounded-2xl border border-[#e6e8ec] dark:border-white/8 p-4 sm:p-6 animate-pulse">
+                <div className="h-5 w-5 sm:h-6 sm:w-6 bg-[#e6e8ec] dark:bg-white/10 rounded-lg mb-2 sm:mb-3" />
+                <div className="h-6 sm:h-8 w-12 sm:w-16 bg-[#e6e8ec] dark:bg-white/10 rounded-lg mb-2" />
+                <div className="h-2.5 sm:h-3 w-16 sm:w-20 bg-[#e6e8ec] dark:bg-white/10 rounded-lg" />
               </div>
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 mb-8">
             {statItems.map(({ label, value, icon, color }, i) => (
               <StatCard key={label} label={label} value={value} icon={icon} color={color} delay={i * 0.05} />
             ))}

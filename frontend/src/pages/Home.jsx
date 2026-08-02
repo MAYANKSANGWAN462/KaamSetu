@@ -215,13 +215,17 @@ const Home = () => {
             )}
           </motion.div>
 
-          {/* Stats row */}
+          {/* Platform badges */}
           <motion.div {...stagger(6, 0.3)}
-            className="flex flex-wrap justify-center gap-8 mt-12 text-center">
-            {[['10k+', 'Workers'], ['5k+', 'Jobs Posted'], ['50+', 'Cities']].map(([n, l]) => (
-              <div key={l}>
-                <p className="text-2xl font-black text-amber-500">{n}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold tracking-widest uppercase mt-0.5">{l}</p>
+            className="flex flex-wrap justify-center gap-3 mt-10">
+            {[
+              { icon: '🆓', label: 'Free to Join' },
+              { icon: '📍', label: 'Hyperlocal' },
+              { icon: '🔒', label: 'Verified Users' },
+            ].map(({ icon, label }) => (
+              <div key={label} className="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-white/[0.05] border border-gray-200 dark:border-white/10 text-xs font-semibold text-gray-600 dark:text-gray-400 shadow-sm">
+                <span>{icon}</span>
+                <span>{label}</span>
               </div>
             ))}
           </motion.div>

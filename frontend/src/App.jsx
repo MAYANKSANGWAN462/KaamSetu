@@ -51,6 +51,9 @@ const Layout = ({ children }) => {
   const isMessenger = location.pathname.startsWith('/messages');
   const isAdminPanel = location.pathname.startsWith('/admin') && location.pathname !== '/admin/login';
   const isAdminLogin = location.pathname === '/admin/login';
+  const isAuthPage = ['/login', '/register', '/forgot-password', '/reset-password'].some(
+    (p) => location.pathname === p || location.pathname.startsWith(p + '/')
+  );
 
   const toaster = (
     <Toaster
@@ -98,7 +101,7 @@ const Layout = ({ children }) => {
       <Header />
       {/* Bottom padding on mobile so content clears the fixed tab bar.
           Messenger manages its own height — no extra padding needed there. */}
-      <main className={isMessenger ? '' : 'pb-20 md:pb-0'}>
+      <main className={isMessenger || isAuthPage ? '' : 'pb-20 md:pb-0'}>
         <Suspense fallback={<Loader />}>
           <AnimatedRoutes />
         </Suspense>

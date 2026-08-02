@@ -29,7 +29,7 @@ const ForgotPassword = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] flex items-center justify-center px-4 py-8 overflow-hidden">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

@@ -48,7 +48,7 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] flex">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] flex overflow-hidden">
 
       {/* ── LEFT PANEL (decorative, desktop only) ── */}
       <div className="hidden lg:flex lg:w-5/12 relative overflow-hidden flex-col justify-between p-12">
@@ -88,23 +88,21 @@ const Login = () => {
             </p>
           </motion.div>
 
-          {/* Testimonial-style stat cards */}
+          {/* Feature highlights */}
           {[
-            { icon: '👷', stat: '10,000+', label: 'Workers registered' },
-            { icon: '💼', stat: '5,000+', label: 'Jobs filled' },
-          ].map(({ icon, stat, label }, i) => (
+            { icon: '🔒', text: 'Verified accounts — no fake profiles' },
+            { icon: '📍', text: 'Find work or hire workers near you' },
+            { icon: '💬', text: 'In-app messaging after a connection' },
+          ].map(({ icon, text }, i) => (
             <motion.div
-              key={label}
+              key={text}
               initial={{ opacity: 0, x: -16 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 + i * 0.1, duration: 0.5 }}
               className="flex items-center gap-4 bg-white/[0.06] rounded-2xl border border-white/10 px-5 py-4"
             >
-              <span className="text-2xl">{icon}</span>
-              <div>
-                <p className="text-[#c8933a] font-black text-lg leading-none">{stat}</p>
-                <p className="text-slate-400 text-xs mt-0.5">{label}</p>
-              </div>
+              <span className="text-xl flex-shrink-0">{icon}</span>
+              <p className="text-slate-300 text-xs leading-snug">{text}</p>
             </motion.div>
           ))}
         </div>
@@ -116,7 +114,7 @@ const Login = () => {
       </div>
 
       {/* ── RIGHT PANEL (form) ── */}
-      <div className="flex-1 flex items-center justify-center px-4 py-12">
+      <div className="flex-1 flex items-center justify-center px-4 py-8 overflow-y-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

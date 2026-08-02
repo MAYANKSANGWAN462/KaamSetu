@@ -209,6 +209,18 @@
   .no-select { -webkit-user-select: none; user-select: none; }
 }
 
+/* ===== THEME TRANSITION ===== */
+/* Smooth crossfade for all elements during theme switches */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+  transition-timing-function: ease;
+  transition-duration: 200ms;
+}
+/* Don't transition transform/opacity (breaks intentional animations) */
+.no-theme-transition, .no-theme-transition * {
+  transition: none !important;
+}
+
 /* ===== ANIMATIONS ===== */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp {

@@ -44,7 +44,7 @@ const LoginForm = ({ onSubmit }) => {
 
   const inputClass = (field) => `
     w-full rounded-xl px-4 py-3.5 text-sm font-medium
-    bg-white/60 dark:bg-white/5
+    bg-gray-50 dark:bg-white/5
     border-2 transition-all duration-300 outline-none
     text-gray-900 dark:text-gray-100
     placeholder:text-gray-400 dark:placeholder:text-gray-500
@@ -66,7 +66,7 @@ const LoginForm = ({ onSubmit }) => {
         <button
           type="button"
           onClick={() => googleLoginRedirect()}
-          className="w-full flex items-center justify-center gap-3 rounded-xl border-2 border-gray-200 dark:border-white/10 bg-white/60 dark:bg-white/5 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-200 hover:border-gray-300 dark:hover:border-white/20 hover:bg-white dark:hover:bg-white/10 transition-all duration-300"
+          className="w-full flex items-center justify-center gap-3 rounded-xl border-2 border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-200 hover:border-gray-300 dark:hover:border-white/20 hover:bg-gray-50 dark:hover:bg-white/10 transition-all duration-300"
         >
           <svg viewBox="0 0 24 24" className="w-5 h-5 flex-shrink-0">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
