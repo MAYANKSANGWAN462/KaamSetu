@@ -11,6 +11,7 @@
  */
 require('dotenv').config();
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 const connectDB = require('../config/database');
 const User = require('../models/User');
 
@@ -25,17 +26,26 @@ async function main() {
 
   await connectDB();
 
+  // Hash the password here explicitly — do NOT rely on the pre-save hook,
+  // which only fires on isModified() and behaves differently for new vs
+  // existing documents depending on Mongoose version.
+  let hashedPassword = null;
+  if (passwordArg) {
+    const salt = await bcrypt.genSalt(12);
+    hashedPassword = await bcrypt.hash(String(passwordArg), salt);
+  }
+
   let user = await User.findOne({ email }).select('+passwordHash');
 
   if (user) {
     user.role = 'admin';
     user.isActive = true;
     user.isVerified = true;
-    if (passwordArg) user.passwordHash = passwordArg; // pre-save hook hashes it
+    if (hashedPassword) user.passwordHash = hashedPassword;
     await user.save();
     console.log(`✅ ${email} is now an admin.`);
   } else {
-    if (!passwordArg) {
+    if (!hashedPassword) {
       console.error('❌ User not found. Provide a password to create a new admin account.');
       await mongoose.connection.close();
       process.exit(1);
@@ -43,7 +53,7 @@ async function main() {
     user = await User.create({
       name: nameArg || 'Administrator',
       email,
-      passwordHash: passwordArg, // pre-save hook hashes it
+      passwordHash: hashedPassword,
       role: 'admin',
       isActive: true,
       isVerified: true
