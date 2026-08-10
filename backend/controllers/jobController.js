@@ -438,20 +438,43 @@ const deleteJob = async (req, res) => {
 };
 
 /* ─── PATCH /api/jobs/:id/status ─────────────────────────── */
+
+// Allowed transitions: from → [to...]
+const ALLOWED_TRANSITIONS = {
+  open:        ['cancelled'],
+  filled:      ['in_progress', 'cancelled'],
+  in_progress: ['completed'],
+  completed:   [],
+  cancelled:   ['open'],
+};
+
 const updateJobStatus = async (req, res) => {
   try {
     const { status } = req.body;
-    if (!['open', 'cancelled'].includes(status)) {
-      return res.status(400).json({ success: false, message: 'Status must be open or cancelled' });
+    const validStatuses = ['open', 'filled', 'in_progress', 'completed', 'cancelled'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid status. Valid values: ${validStatuses.join(', ')}`
+      });
     }
     const job = await Job.findById(req.params.id);
     if (!job) return res.status(404).json({ success: false, message: 'Job not found' });
     if (job.hirerId.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
       return res.status(403).json({ success: false, message: 'Not authorized' });
     }
+
+    const allowed = ALLOWED_TRANSITIONS[job.status] || [];
+    if (!allowed.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: `Cannot move job from '${job.status}' to '${status}'`
+      });
+    }
+
     job.status = status;
     await job.save();
-    return res.json({ success: true, message: `Job ${status}`, data: { _id: job._id, status: job.status } });
+    return res.json({ success: true, message: `Job marked as ${status}`, data: { _id: job._id, status: job.status } });
   } catch (error) {
     console.error('[updateJobStatus]', error.message);
     return res.status(500).json({ success: false, message: 'Internal server error' });
