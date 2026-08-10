@@ -50,11 +50,38 @@ const Register = () => {
 
       {/* ── LEFT PANEL ── */}
       <div className="hidden lg:flex lg:w-5/12 relative overflow-hidden flex-col justify-between p-12">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
-        <div className="absolute inset-0 opacity-[0.035]"
-          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")` }} />
-        <div className="absolute top-1/3 -right-20 w-72 h-72 rounded-full bg-[#c8833a]/20 blur-[80px]" />
-        <div className="absolute bottom-1/4 -left-10 w-56 h-56 rounded-full bg-[#d4963e]/15 blur-[60px]" />
+        {/* BG — 6c Green Fields: farmer planting, fresh growth */}
+        <svg viewBox="0 0 1600 700" preserveAspectRatio="xMidYMid slice"
+          className="absolute inset-0 w-full h-full pointer-events-none" aria-hidden="true">
+          <defs>
+            <linearGradient id="rg-sky6c" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#FCEFD0" />
+              <stop offset="1" stopColor="#F6DCA6" />
+            </linearGradient>
+            <linearGradient id="rg-gr6c" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#6FA84A" />
+              <stop offset="1" stopColor="#4E8B3A" />
+            </linearGradient>
+          </defs>
+          <rect width="1600" height="700" fill="url(#rg-sky6c)" />
+          <circle cx="300" cy="170" r="86" fill="#FFF3D9" opacity="0.85" />
+          <path d="M 0 470 Q 400 400 800 460 T 1600 450 L 1600 700 L 0 700 Z" fill="#8CC060" />
+          <path d="M 0 540 Q 500 480 1050 540 T 1600 530 L 1600 700 L 0 700 Z" fill="url(#rg-gr6c)" />
+          <g stroke="#3F7530" strokeWidth="6" opacity="0.5" fill="none">
+            <path d="M 200 640 Q 800 600 1400 640" />
+            <path d="M 150 680 Q 800 636 1450 680" />
+          </g>
+          <g fill="#3F7530">
+            <path d="M 1120 596 q 0 -30 14 -30 q -6 16 0 30 z" />
+            <path d="M 1134 596 q 0 -34 -14 -34 q 6 18 0 34 z" />
+            <path d="M 1220 610 q 0 -28 12 -28 q -6 15 0 28 z" />
+            <path d="M 1232 610 q 0 -30 -12 -30 q 6 16 0 30 z" />
+          </g>
+          <ellipse cx="700" cy="600" rx="120" ry="18" fill="#3F7530" opacity="0.35" />
+          <path d="M 756 552 q 0 -22 12 -22 q -6 12 0 22 z" fill="#4E8B3A" />
+          <path d="M 768 552 q 0 -24 -12 -24 q 6 13 0 24 z" fill="#4E8B3A" />
+        </svg>
+        <div className="absolute inset-0 bg-gradient-to-br from-[#204A16]/80 via-[#204A16]/65 to-[#204A16]/40 pointer-events-none" />
 
 
         <div className="relative space-y-5">

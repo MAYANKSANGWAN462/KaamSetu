@@ -53,12 +53,44 @@ const Login = () => {
 
       {/* ── LEFT PANEL (decorative, desktop only) ── */}
       <div className="hidden lg:flex lg:w-5/12 relative overflow-hidden flex-col justify-between p-12">
-        {/* BG */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
-        <div className="absolute inset-0 opacity-[0.035]"
-          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")` }} />
-        <div className="absolute top-1/4 -right-20 w-72 h-72 rounded-full bg-[#c8833a]/20 blur-[80px]" />
-        <div className="absolute bottom-1/4 -left-10 w-56 h-56 rounded-full bg-[#d4963e]/15 blur-[60px]" />
+        {/* BG — 6b Indigo Sunset: city at dusk, delivery rider */}
+        <svg viewBox="0 0 1600 700" preserveAspectRatio="xMidYMid slice"
+          className="absolute inset-0 w-full h-full pointer-events-none" aria-hidden="true">
+          <defs>
+            <linearGradient id="lg-sky6b" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#4B3B8F" />
+              <stop offset="0.55" stopColor="#B85C8A" />
+              <stop offset="1" stopColor="#F2A65A" />
+            </linearGradient>
+            <linearGradient id="lg-gr6b" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#3A2E58" />
+              <stop offset="1" stopColor="#2A2340" />
+            </linearGradient>
+          </defs>
+          <rect width="1600" height="700" fill="url(#lg-sky6b)" />
+          <circle cx="820" cy="260" r="120" fill="#FFD8A0" opacity="0.55" />
+          <circle cx="820" cy="260" r="78" fill="#FFE8C4" opacity="0.8" />
+          <g fill="#3B2E5A">
+            <rect x="120" y="300" width="150" height="270" />
+            <rect x="290" y="360" width="110" height="210" />
+            <rect x="1180" y="280" width="160" height="290" />
+            <rect x="1360" y="350" width="120" height="220" />
+          </g>
+          <g fill="#F2A65A">
+            <rect x="150" y="330" width="18" height="18" />
+            <rect x="190" y="330" width="18" height="18" />
+            <rect x="150" y="380" width="18" height="18" />
+            <rect x="230" y="380" width="18" height="18" />
+            <rect x="1210" y="320" width="20" height="20" />
+            <rect x="1260" y="320" width="20" height="20" />
+            <rect x="1210" y="380" width="20" height="20" />
+            <rect x="1300" y="360" width="20" height="20" />
+          </g>
+          <path d="M 0 560 L 1600 560 L 1600 700 L 0 700 Z" fill="url(#lg-gr6b)" />
+          <path d="M 0 590 L 1600 590" stroke="#F2A65A" strokeWidth="4" strokeDasharray="40 34" opacity="0.6" />
+          <ellipse cx="820" cy="596" rx="150" ry="16" fill="#1E1830" opacity="0.5" />
+        </svg>
+        <div className="absolute inset-0 bg-[#2A1F50]/50 pointer-events-none" />
 
 
         {/* Center content */}

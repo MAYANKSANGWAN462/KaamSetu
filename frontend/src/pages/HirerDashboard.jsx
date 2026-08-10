@@ -361,20 +361,66 @@ const HirerDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pt-24 pb-12">
-      <div className="max-w-6xl mx-auto px-4 space-y-8">
-        {/* ── GREETING ── */}
-        <motion.div {...stagger(0)}>
-          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#c8933a] mb-1">
-            Hirer Mode
-          </p>
-          <h1 className="text-3xl font-black text-gray-900 dark:text-white">
-            Hello, {user?.name?.split(" ")[0]} 👋
-          </h1>
-          <p className="text-sm text-[#6b7280] mt-1">
-            Manage your job posts and find the right workers.
-          </p>
-        </motion.div>
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pb-12">
+
+      {/* ── HERO BANNER — 6b Indigo Sunset: city at dusk ── */}
+      <div className="relative overflow-hidden">
+        <svg viewBox="0 0 1600 700" preserveAspectRatio="xMidYMid slice"
+          className="absolute inset-0 w-full h-full pointer-events-none dark:opacity-50"
+          aria-hidden="true">
+          <defs>
+            <linearGradient id="hd-sky6b" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#4B3B8F" />
+              <stop offset="0.55" stopColor="#B85C8A" />
+              <stop offset="1" stopColor="#F2A65A" />
+            </linearGradient>
+            <linearGradient id="hd-gr6b" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#3A2E58" />
+              <stop offset="1" stopColor="#2A2340" />
+            </linearGradient>
+          </defs>
+          <rect width="1600" height="700" fill="url(#hd-sky6b)" />
+          <circle cx="820" cy="260" r="120" fill="#FFD8A0" opacity="0.55" />
+          <circle cx="820" cy="260" r="78" fill="#FFE8C4" opacity="0.8" />
+          <g fill="#3B2E5A">
+            <rect x="120" y="300" width="150" height="270" />
+            <rect x="290" y="360" width="110" height="210" />
+            <rect x="1180" y="280" width="160" height="290" />
+            <rect x="1360" y="350" width="120" height="220" />
+          </g>
+          <g fill="#F2A65A">
+            <rect x="150" y="330" width="18" height="18" />
+            <rect x="190" y="330" width="18" height="18" />
+            <rect x="150" y="380" width="18" height="18" />
+            <rect x="230" y="380" width="18" height="18" />
+            <rect x="1210" y="320" width="20" height="20" />
+            <rect x="1260" y="320" width="20" height="20" />
+            <rect x="1210" y="380" width="20" height="20" />
+            <rect x="1300" y="360" width="20" height="20" />
+          </g>
+          <path d="M 0 560 L 1600 560 L 1600 700 L 0 700 Z" fill="url(#hd-gr6b)" />
+          <path d="M 0 590 L 1600 590" stroke="#F2A65A" strokeWidth="4" strokeDasharray="40 34" opacity="0.6" />
+          <ellipse cx="820" cy="596" rx="150" ry="16" fill="#1E1830" opacity="0.5" />
+        </svg>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#2A1F50]/70 via-[#3B2E5A]/30 to-transparent pointer-events-none" />
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-[#f6f7f9] dark:to-[#0b0e14] pointer-events-none z-10" />
+
+        <div className="relative z-10 max-w-6xl mx-auto px-4 pt-28 pb-10">
+          <motion.div {...stagger(0)}>
+            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#F2A65A] mb-1">
+              Hirer Mode
+            </p>
+            <h1 className="text-3xl font-black text-white drop-shadow-sm">
+              Hello, {user?.name?.split(" ")[0]} 👋
+            </h1>
+            <p className="text-sm text-white/70 mt-1">
+              Manage your job posts and find the right workers.
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 space-y-8 mt-2">
 
         {/* ── STATS ── */}
         <motion.div {...stagger(1)} className="grid grid-cols-3 gap-4">

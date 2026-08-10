@@ -115,34 +115,94 @@ const WorkerDashboard = () => {
   const hasProfile = !!workerProfile
 
   return (
-    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pt-24 pb-12">
-      <div className="max-w-6xl mx-auto px-4 space-y-8">
+    <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pb-12">
 
-        {/* ── GREETING ── */}
-        <motion.div {...stagger(0)}>
-          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#c8933a] mb-1">Worker Mode</p>
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-black text-gray-900 dark:text-white">
-                Hello, {user?.name?.split(' ')[0]} 👷
-              </h1>
-              <p className="text-sm text-[#6b7280] mt-1">Find jobs near you and let hirers find you.</p>
+      {/* ── HERO BANNER — 6a Teal Morning: painter at work ── */}
+      <div className="relative overflow-hidden">
+        <svg viewBox="0 0 1600 700" preserveAspectRatio="xMidYMid slice"
+          className="absolute inset-0 w-full h-full pointer-events-none dark:opacity-40"
+          aria-hidden="true">
+          <defs>
+            <linearGradient id="wd-sky6a" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#D6F0EA" />
+              <stop offset="1" stopColor="#A6DED4" />
+            </linearGradient>
+            <linearGradient id="wd-gr6a" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#EBA94E" />
+              <stop offset="1" stopColor="#DB9030" />
+            </linearGradient>
+          </defs>
+          <rect width="1600" height="700" fill="url(#wd-sky6a)" />
+          <circle cx="1300" cy="150" r="90" fill="#FFF1D8" opacity="0.8" />
+          <g fill="#8FCFC3">
+            <rect x="120" y="250" width="120" height="300" />
+            <rect x="1360" y="230" width="130" height="320" />
+          </g>
+          <rect x="470" y="180" width="560" height="380" rx="8" fill="#EFE4D2" />
+          <rect x="470" y="180" width="330" height="380" fill="#E9731A" opacity="0.92" />
+          <rect x="792" y="180" width="18" height="380" fill="#CF6212" opacity="0.5" />
+          <path d="M 0 560 Q 800 528 1600 560 L 1600 700 L 0 700 Z" fill="url(#wd-gr6a)" />
+          <g stroke="#B4701E" strokeWidth="10" strokeLinecap="round" fill="none">
+            <path d="M 560 560 L 600 300" />
+            <path d="M 640 560 L 620 300" />
+            <path d="M 574 480 L 632 480" />
+            <path d="M 584 410 L 626 410" />
+            <path d="M 592 350 L 620 350" />
+          </g>
+          <g>
+            <ellipse cx="690" cy="566" rx="70" ry="14" fill="#C87C22" opacity="0.3" />
+            <rect x="662" y="470" width="26" height="92" rx="12" fill="#33475E" />
+            <rect x="694" y="470" width="26" height="92" rx="12" fill="#2B3C50" />
+            <rect x="656" y="550" width="38" height="20" rx="7" fill="#2B2119" />
+            <rect x="692" y="550" width="38" height="20" rx="7" fill="#2B2119" />
+            <path d="M 660 392 q 34 -22 72 0 l 4 84 q -40 18 -80 0 z" fill="#0E8C7E" />
+            <path d="M 726 410 q 40 -30 40 -84" fill="none" stroke="#E4954F" strokeWidth="22" strokeLinecap="round" />
+            <rect x="756" y="300" width="14" height="40" rx="6" fill="#8A5A22" />
+            <rect x="742" y="286" width="46" height="20" rx="6" fill="#0E8C7E" />
+            <circle cx="696" cy="368" r="30" fill="#EBB57C" />
+            <path d="M 668 360 a 30 30 0 0 1 58 0 z" fill="#F2C230" />
+            <rect x="663" y="356" width="68" height="9" rx="4" fill="#E0A81C" />
+            <circle cx="688" cy="370" r="3.4" fill="#2B2119" />
+            <circle cx="708" cy="370" r="3.4" fill="#2B2119" />
+            <path d="M 688 382 q 10 7 20 0" fill="none" stroke="#2B2119" strokeWidth="3.4" strokeLinecap="round" />
+          </g>
+          <g>
+            <rect x="470" y="520" width="52" height="42" rx="6" fill="#0E8C7E" />
+            <rect x="470" y="512" width="52" height="12" rx="4" fill="#0B7568" />
+          </g>
+        </svg>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0B5C54]/70 via-[#0E8C7E]/25 to-transparent pointer-events-none" />
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-[#f6f7f9] dark:to-[#0b0e14] pointer-events-none z-10" />
+
+        <div className="relative z-10 max-w-6xl mx-auto px-4 pt-28 pb-10">
+          <motion.div {...stagger(0)}>
+            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-teal-200 mb-1">Worker Mode</p>
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <h1 className="text-3xl font-black text-white drop-shadow-sm">
+                  Hello, {user?.name?.split(' ')[0]} 👷
+                </h1>
+                <p className="text-sm text-white/70 mt-1">Find jobs near you and let hirers find you.</p>
+              </div>
+              {/* POST AVAILABILITY BUTTON */}
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => setShowPostForm(v => !v)}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] text-white font-bold text-sm shadow-lg shadow-[#c8833a]/25 hover:shadow-[#c8833a]/40 transition-all duration-300"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5}
+                    d={showPostForm ? 'M6 18L18 6M6 6l12 12' : 'M12 4v16m8-8H4'} />
+                </svg>
+                {showPostForm ? 'Cancel' : hasProfile ? 'Update Availability' : 'Post Availability'}
+              </motion.button>
             </div>
-            {/* POST AVAILABILITY BUTTON */}
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={() => setShowPostForm(v => !v)}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] text-white font-bold text-sm shadow-lg shadow-[#c8833a]/25 hover:shadow-[#c8833a]/40 transition-all duration-300"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5}
-                  d={showPostForm ? 'M6 18L18 6M6 6l12 12' : 'M12 4v16m8-8H4'} />
-              </svg>
-              {showPostForm ? 'Cancel' : hasProfile ? 'Update Availability' : 'Post Availability'}
-            </motion.button>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 space-y-8 mt-2">
 
         {/* ── POST AVAILABILITY FORM (inline toggle) ── */}
         <AnimatePresence>
