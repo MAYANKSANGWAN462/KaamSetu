@@ -96,18 +96,13 @@ const Home = () => {
       {/* ── HERO ── */}
       <section className="relative overflow-hidden min-h-[calc(100vh-4rem)]">
 
-        {/* ── Background: mobile warm gradient (< sm, light mode) ── */}
-        <div
-          className="sm:hidden dark:hidden absolute inset-0 pointer-events-none"
-          style={{ background: 'linear-gradient(to bottom, #FFE7C2 0%, #FDD39A 55%, #F9C078 100%)' }}
-        />
-
-        {/* ── Background: illustrated scene (sm+, light mode) ── */}
+        {/* ── Background: illustrated scene (all sizes, light mode) ── */}
         <svg
           viewBox="0 0 1600 900"
           preserveAspectRatio="xMidYMax slice"
-          className="hidden sm:block dark:hidden absolute inset-0 w-full h-full pointer-events-none"
-          aria-hidden="true"
+          className="dark:hidden absolute inset-0 w-full h-full pointer-events-none"
+          aria-label="Two workers meeting on the KaamSetu platform"
+          role="img"
         >
           <defs>
             <linearGradient id="ks-hero-sky" x1="0" y1="0" x2="0" y2="1">
@@ -156,65 +151,6 @@ const Home = () => {
           {/* ground */}
           <path d="M 0 680 Q 800 640 1600 680 L 1600 900 L 0 900 Z" fill="url(#ks-hero-ground)" />
           <path d="M 0 690 Q 800 652 1600 690" fill="none" stroke="#C87C22" strokeWidth="4" opacity="0.5" />
-          {/* Worker (left) — hi-vis vest, hard hat */}
-          <ellipse cx="620" cy="812" rx="120" ry="20" fill="#C87C22" opacity="0.35" />
-          <rect x="572" y="720" width="34" height="90" rx="14" fill="#3E4A63" />
-          <rect x="620" y="720" width="34" height="90" rx="14" fill="#35405A" />
-          <rect x="566" y="796" width="48" height="24" rx="8" fill="#2B2119" />
-          <rect x="616" y="796" width="48" height="24" rx="8" fill="#2B2119" />
-          <path d="M 560 620 q 52 -34 108 0 l 6 110 q -60 26 -120 0 z" fill="#F4A63C" />
-          <rect x="588" y="618" width="12" height="118" fill="#FBF6EF" opacity="0.85" />
-          <rect x="628" y="618" width="12" height="118" fill="#FBF6EF" opacity="0.85" />
-          <rect x="566" y="690" width="106" height="12" fill="#FBF6EF" opacity="0.85" />
-          <rect x="560" y="726" width="112" height="16" rx="6" fill="#8A5A22" />
-          <rect x="654" y="726" width="18" height="34" rx="4" fill="#6E4718" />
-          <path d="M 566 648 q -34 20 -30 70" fill="none" stroke="#E4954F" strokeWidth="26" strokeLinecap="round" />
-          <rect x="602" y="596" width="24" height="24" fill="#E0A46A" />
-          <circle cx="614" cy="576" r="38" fill="#EBB57C" />
-          <path d="M 572 566 a 42 42 0 0 1 84 0 z" fill="#F2C230" />
-          <rect x="566" y="562" width="96" height="12" rx="6" fill="#E0A81C" />
-          <rect x="606" y="528" width="16" height="12" rx="4" fill="#E0A81C" />
-          <circle cx="602" cy="578" r="4" fill="#2B2119" />
-          <circle cx="628" cy="578" r="4" fill="#2B2119" />
-          <path d="M 602 592 q 12 9 24 0" fill="none" stroke="#2B2119" strokeWidth="4" strokeLinecap="round" />
-          {/* Hirer (right) — teal shirt, clipboard */}
-          <ellipse cx="980" cy="812" rx="118" ry="20" fill="#C87C22" opacity="0.35" />
-          <rect x="946" y="722" width="34" height="88" rx="14" fill="#5A4632" />
-          <rect x="994" y="722" width="34" height="88" rx="14" fill="#4E3D2B" />
-          <rect x="940" y="798" width="48" height="24" rx="8" fill="#2B2119" />
-          <rect x="990" y="798" width="48" height="24" rx="8" fill="#2B2119" />
-          <path d="M 930 626 q 52 -32 108 0 l 6 104 q -60 26 -120 0 z" fill="#2F7E74" />
-          <path d="M 978 620 l -14 20 l 14 16 l 14 -16 z" fill="#FBF6EF" />
-          <path d="M 1044 656 q 30 18 24 66" fill="none" stroke="#E0A46A" strokeWidth="24" strokeLinecap="round" />
-          <g transform="rotate(12 1066 726)">
-            <rect x="1044" y="702" width="48" height="60" rx="6" fill="#FBF6EF" stroke="#2B2119" strokeWidth="3" />
-            <rect x="1058" y="698" width="20" height="10" rx="3" fill="#E9731A" />
-            <rect x="1052" y="716" width="32" height="4" rx="2" fill="#C9BBA6" />
-            <rect x="1052" y="728" width="32" height="4" rx="2" fill="#C9BBA6" />
-            <rect x="1052" y="740" width="22" height="4" rx="2" fill="#C9BBA6" />
-          </g>
-          <rect x="972" y="600" width="24" height="24" fill="#C98A54" />
-          <circle cx="984" cy="580" r="38" fill="#D69B62" />
-          <path d="M 946 574 a 38 38 0 0 1 76 0 q -20 -14 -38 -14 q -18 0 -38 14 z" fill="#2B2119" />
-          <circle cx="972" cy="582" r="4" fill="#2B2119" />
-          <circle cx="998" cy="582" r="4" fill="#2B2119" />
-          <path d="M 972 596 q 12 9 24 0" fill="none" stroke="#2B2119" strokeWidth="4" strokeLinecap="round" />
-          {/* Handshake (centre) */}
-          <path d="M 660 660 q 60 22 118 40" fill="none" stroke="#E4954F" strokeWidth="28" strokeLinecap="round" />
-          <path d="M 936 668 q -58 20 -116 32" fill="none" stroke="#E0A46A" strokeWidth="28" strokeLinecap="round" />
-          <g transform="translate(792 706) rotate(6)">
-            <rect x="-34" y="-22" width="66" height="42" rx="18" fill="#F4A63C" />
-            <rect x="-30" y="-40" width="14" height="30" rx="7" fill="#E06A12" />
-            <rect x="-14" y="-44" width="14" height="34" rx="7" fill="#E06A12" />
-            <rect x="2" y="-42" width="14" height="32" rx="7" fill="#E06A12" />
-            <rect x="18" y="-38" width="14" height="28" rx="7" fill="#E06A12" />
-            <rect x="-46" y="-16" width="30" height="14" rx="7" fill="#F4A63C" transform="rotate(-26 -31 -9)" />
-          </g>
-          <g stroke="#E9731A" strokeWidth="5" strokeLinecap="round">
-            <path d="M 792 636 l 0 -22" />
-            <path d="M 750 650 l -14 -16" />
-            <path d="M 836 650 l 14 -16" />
-          </g>
         </svg>
 
         {/* ── Dark mode background ── */}
@@ -225,10 +161,14 @@ const Home = () => {
             style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '28px 28px' }} />
         </div>
 
-        {/* ── Bottom gradient: fade into page background (light mode) ── */}
+        {/* ── Bottom gradient: fade into page background ── */}
         <div
-          className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none dark:hidden z-[1]"
+          className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none z-[1]"
           style={{ background: 'linear-gradient(to bottom, transparent, #f6f7f9)' }}
+        />
+        <div
+          className="hidden dark:block absolute bottom-0 left-0 right-0 h-32 pointer-events-none z-[1]"
+          style={{ background: 'linear-gradient(to bottom, transparent, #0b0e14)' }}
         />
 
         <div className="relative z-10 max-w-6xl mx-auto px-4 pt-12 pb-10 md:pt-20 md:pb-16">
