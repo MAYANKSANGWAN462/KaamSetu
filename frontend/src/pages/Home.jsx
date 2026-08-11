@@ -94,14 +94,14 @@ const Home = () => {
     <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14]">
 
       {/* ── HERO ── */}
-      <section className="relative overflow-hidden min-h-[calc(100vh-4rem)]">
+      <section className="relative overflow-hidden min-h-[calc(100vh-4rem)] bg-[#FDD39A] dark:bg-[#080E1A]">
 
         {/* ── Background: illustrated scene (all sizes, light mode) ── */}
         <svg
           viewBox="0 0 1600 900"
           preserveAspectRatio="xMidYMax slice"
-          className="dark:hidden absolute inset-0 w-full h-full pointer-events-none"
-          aria-label="Two workers meeting on the KaamSetu platform"
+          className="block dark:hidden absolute inset-0 w-full h-full pointer-events-none"
+          aria-label="KaamSetu hero background: city skyline at golden hour"
           role="img"
         >
           <defs>
@@ -153,17 +153,140 @@ const Home = () => {
           <path d="M 0 690 Q 800 652 1600 690" fill="none" stroke="#C87C22" strokeWidth="4" opacity="0.5" />
         </svg>
 
-        {/* ── Dark mode background ── */}
-        <div className="hidden dark:block absolute inset-0 bg-[#0b0e14] pointer-events-none">
-          <div className="absolute -top-24 left-1/4 w-96 h-96 rounded-full bg-amber-400/15 blur-[120px]" />
-          <div className="absolute top-10 right-1/4 w-80 h-80 rounded-full bg-orange-400/10 blur-[100px]" />
-          <div className="absolute inset-0 opacity-[0.05] text-slate-400"
-            style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '28px 28px' }} />
-        </div>
+        {/* ── Dark mode: nighttime cityscape ── */}
+        <svg
+          viewBox="0 0 1600 900"
+          preserveAspectRatio="xMidYMax slice"
+          className="hidden dark:block absolute inset-0 w-full h-full pointer-events-none"
+          aria-hidden="true"
+        >
+          <defs>
+            <linearGradient id="ks-night-sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#04091C" />
+              <stop offset="0.4" stopColor="#0B1E40" />
+              <stop offset="0.75" stopColor="#0D1A2C" />
+              <stop offset="1" stopColor="#060C18" />
+            </linearGradient>
+            <linearGradient id="ks-night-ground" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#0C1C2C" />
+              <stop offset="1" stopColor="#040912" />
+            </linearGradient>
+            <radialGradient id="ks-moon-glow" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0" stopColor="#FFF8E0" stopOpacity="0.18" />
+              <stop offset="1" stopColor="#FFF8E0" stopOpacity="0" />
+            </radialGradient>
+            <radialGradient id="ks-city-glow" cx="0.5" cy="0" r="0.7">
+              <stop offset="0" stopColor="#E9731A" stopOpacity="0.28" />
+              <stop offset="1" stopColor="#E9731A" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+
+          {/* Night sky */}
+          <rect x="0" y="0" width="1600" height="900" fill="url(#ks-night-sky)" />
+
+          {/* Stars */}
+          <g fill="#FFFFFF">
+            <circle cx="95"  cy="72"  r="1.5" opacity="0.7" />
+            <circle cx="210" cy="40"  r="1"   opacity="0.6" />
+            <circle cx="340" cy="105" r="2"   opacity="0.5" />
+            <circle cx="455" cy="55"  r="1.5" opacity="0.8" />
+            <circle cx="570" cy="88"  r="1"   opacity="0.6" />
+            <circle cx="650" cy="30"  r="2"   opacity="0.7" />
+            <circle cx="760" cy="68"  r="1.5" opacity="0.5" />
+            <circle cx="890" cy="48"  r="1"   opacity="0.8" />
+            <circle cx="980" cy="95"  r="2"   opacity="0.6" />
+            <circle cx="1080" cy="62" r="1.5" opacity="0.7" />
+            <circle cx="1320" cy="85" r="1"   opacity="0.5" />
+            <circle cx="1420" cy="48" r="2"   opacity="0.6" />
+            <circle cx="1510" cy="120" r="1.5" opacity="0.8" />
+            <circle cx="155"  cy="145" r="1"  opacity="0.5" />
+            <circle cx="295"  cy="175" r="1.5" opacity="0.7" />
+            <circle cx="510"  cy="148" r="1"  opacity="0.6" />
+            <circle cx="820"  cy="135" r="2"  opacity="0.45" />
+            <circle cx="1060" cy="158" r="1"  opacity="0.7" />
+            <circle cx="1355" cy="140" r="1.5" opacity="0.55" />
+            <circle cx="730"  cy="115" r="1"  opacity="0.65" />
+            <circle cx="1180" cy="45"  r="1.5" opacity="0.7" />
+          </g>
+
+          {/* Moon glow */}
+          <circle cx="1260" cy="175" r="130" fill="url(#ks-moon-glow)" />
+          {/* Moon */}
+          <circle cx="1260" cy="175" r="60" fill="#FFF8E0" opacity="0.92" />
+          <circle cx="1242" cy="160" r="10" fill="#F0E8C0" opacity="0.4" />
+          <circle cx="1272" cy="192" r="7"  fill="#F0E8C0" opacity="0.3" />
+
+          {/* City glow at horizon */}
+          <rect x="0" y="540" width="1600" height="360" fill="url(#ks-city-glow)" />
+
+          {/* Far skyline silhouettes */}
+          <g fill="#050C1A">
+            <rect x="120" y="470" width="120" height="200" />
+            <rect x="255" y="520" width="90"  height="150" />
+            <rect x="1280" y="450" width="140" height="220" />
+            <rect x="1435" y="510" width="90"  height="160" />
+          </g>
+          {/* Far building lit windows */}
+          <g fill="#E9731A" opacity="0.3">
+            <rect x="138" y="490" width="14" height="12" rx="2" />
+            <rect x="164" y="490" width="14" height="12" rx="2" />
+            <rect x="138" y="516" width="14" height="12" rx="2" />
+            <rect x="164" y="538" width="14" height="12" rx="2" />
+            <rect x="1300" y="472" width="16" height="14" rx="2" />
+            <rect x="1328" y="472" width="16" height="14" rx="2" />
+            <rect x="1300" y="502" width="16" height="14" rx="2" />
+          </g>
+
+          {/* Mid buildings */}
+          <rect x="360" y="430" width="150" height="250" fill="#060C1C" />
+          <rect x="1090" y="410" width="160" height="270" fill="#060C1C" />
+
+          {/* Mid building lit windows — amber brand color */}
+          <g fill="#E9731A">
+            <rect x="382" y="460" width="22" height="18" rx="3" opacity="0.65" />
+            <rect x="416" y="460" width="22" height="18" rx="3" opacity="0.40" />
+            <rect x="452" y="460" width="22" height="18" rx="3" opacity="0.70" />
+            <rect x="382" y="494" width="22" height="18" rx="3" opacity="0.45" />
+            <rect x="416" y="494" width="22" height="18" rx="3" opacity="0.70" />
+            <rect x="452" y="494" width="22" height="18" rx="3" opacity="0.35" />
+            <rect x="382" y="528" width="22" height="18" rx="3" opacity="0.60" />
+            <rect x="452" y="528" width="22" height="18" rx="3" opacity="0.70" />
+            <rect x="416" y="562" width="22" height="18" rx="3" opacity="0.50" />
+            <rect x="452" y="562" width="22" height="18" rx="3" opacity="0.40" />
+
+            <rect x="1114" y="440" width="24" height="18" rx="3" opacity="0.70" />
+            <rect x="1150" y="440" width="24" height="18" rx="3" opacity="0.40" />
+            <rect x="1188" y="440" width="24" height="18" rx="3" opacity="0.60" />
+            <rect x="1114" y="474" width="24" height="18" rx="3" opacity="0.45" />
+            <rect x="1150" y="474" width="24" height="18" rx="3" opacity="0.70" />
+            <rect x="1188" y="474" width="24" height="18" rx="3" opacity="0.35" />
+            <rect x="1114" y="508" width="24" height="18" rx="3" opacity="0.65" />
+            <rect x="1188" y="508" width="24" height="18" rx="3" opacity="0.70" />
+            <rect x="1150" y="542" width="24" height="18" rx="3" opacity="0.50" />
+            <rect x="1188" y="542" width="24" height="18" rx="3" opacity="0.40" />
+          </g>
+
+          {/* Tower crane — amber glow */}
+          <g stroke="#C87C2A" strokeWidth="8" fill="none" opacity="0.55">
+            <path d="M 560 680 L 560 300" />
+            <path d="M 430 330 L 700 330" />
+            <path d="M 560 300 L 460 330 M 560 300 L 660 330" />
+          </g>
+          <path d="M 650 330 L 650 380" stroke="#C87C2A" strokeWidth="6" opacity="0.55" />
+          <rect x="632" y="380" width="36" height="26" fill="#E9731A" opacity="0.65" />
+
+          {/* Ground */}
+          <path d="M 0 680 Q 800 640 1600 680 L 1600 900 L 0 900 Z" fill="url(#ks-night-ground)" />
+          <path d="M 0 690 Q 800 652 1600 690" fill="none" stroke="#1A2D40" strokeWidth="3" opacity="0.5" />
+
+          {/* Ambient light pools under buildings */}
+          <ellipse cx="435"  cy="700" rx="90" ry="14" fill="#E9731A" opacity="0.07" />
+          <ellipse cx="1170" cy="695" rx="90" ry="14" fill="#E9731A" opacity="0.06" />
+        </svg>
 
         {/* ── Bottom gradient: fade into page background ── */}
         <div
-          className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none z-[1]"
+          className="block dark:hidden absolute bottom-0 left-0 right-0 h-32 pointer-events-none z-[1]"
           style={{ background: 'linear-gradient(to bottom, transparent, #f6f7f9)' }}
         />
         <div
@@ -308,7 +431,7 @@ const Home = () => {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="py-16 bg-white dark:bg-[#0b0e14] border-y border-[#e6e8ec] dark:border-white/8"
+          className="py-16 bg-white dark:bg-[#141824] border-y border-[#e6e8ec] dark:border-white/8"
         >
           <div className="max-w-3xl mx-auto px-4 text-center">
             <h2 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white mb-2">
@@ -382,7 +505,7 @@ const Home = () => {
       </section>
 
       {/* ── FEATURED WORKERS ── */}
-      <section className="py-16 bg-white dark:bg-[#0b0e14]">
+      <section className="py-16 bg-white dark:bg-[#141824]">
         <div className="max-w-6xl mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 16 }}

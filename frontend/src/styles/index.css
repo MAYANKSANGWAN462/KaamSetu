@@ -210,11 +210,17 @@
 }
 
 /* ===== THEME TRANSITION ===== */
-/* Smooth crossfade for all elements during theme switches */
+/* Smooth crossfade for all elements during theme switches.
+   SVG fill/stroke are excluded — they're needed for SVG gradient rendering. */
 *, *::before, *::after {
-  transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+  transition-property: background-color, border-color, color, box-shadow;
   transition-timing-function: ease;
   transition-duration: 200ms;
+}
+
+/* Opt SVG elements out of the global transition entirely to avoid gradient flicker */
+svg, svg * {
+  transition-property: none;
 }
 /* Don't transition transform/opacity (breaks intentional animations) */
 .no-theme-transition, .no-theme-transition * {
