@@ -297,12 +297,12 @@ const Home = () => {
         <div className="relative z-10 max-w-6xl mx-auto px-4 pt-12 pb-10 md:pt-20 md:pb-16">
           <motion.div {...stagger(0)} className="text-center mb-12">
             {/* Badge */}
-            <motion.div {...stagger(0)} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/60 dark:border-amber-500/30 bg-white/55 dark:bg-amber-500/10 backdrop-blur-sm mb-6">
+            <motion.div {...stagger(0)} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/60 dark:border-amber-500/40 bg-white/55 dark:bg-amber-500/20 backdrop-blur-sm mb-6">
               <span className="w-1.5 h-1.5 rounded-full bg-[#E9731A] dark:bg-amber-500 animate-pulse" />
               <span className="text-[11px] font-bold tracking-[0.15em] uppercase text-[#7a3d0e] dark:text-amber-400">Hyperlocal Job Marketplace</span>
             </motion.div>
 
-            <motion.h1 {...stagger(1)} className="text-5xl md:text-7xl font-black text-[#2B2119] dark:text-white mb-5 leading-[1.05] tracking-tight">
+            <motion.h1 {...stagger(1)} className="text-5xl md:text-7xl font-black text-[#2B2119] dark:text-white mb-5 leading-[1.05] tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
               Kaam<span style={{ color: '#E9731A' }}>Setu</span>
             </motion.h1>
             <motion.p {...stagger(2)} className="text-xl md:text-2xl text-[#5b4a38] dark:text-gray-300 font-medium mb-2">
@@ -320,7 +320,7 @@ const Home = () => {
             transition={{ delay: 0.35, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
             <form onSubmit={handleSearch}
-              className="mx-auto max-w-3xl rounded-3xl bg-white/95 dark:bg-white/[0.04] border border-white/80 dark:border-white/10 p-2 shadow-xl shadow-[#c8822a]/15 dark:shadow-black/30 backdrop-blur-sm"
+              className="mx-auto max-w-3xl rounded-3xl bg-white/95 dark:bg-[#0d1525]/90 border border-white/80 dark:border-white/15 p-2 shadow-xl shadow-[#c8822a]/15 dark:shadow-black/50 backdrop-blur-sm"
             >
               <div className="flex flex-col md:flex-row gap-2">
                 {/* Category */}
@@ -337,7 +337,7 @@ const Home = () => {
                     onChange={e => setSearchInput(p => ({ ...p, category: e.target.value }))}
                     onFocus={() => setCategoryFocused(true)}
                     onBlur={() => setCategoryFocused(false)}
-                    className="w-full rounded-2xl bg-gray-50 dark:bg-white/[0.06] border border-gray-200 dark:border-white/10 pl-11 pr-4 py-4 text-sm font-medium text-gray-900 dark:text-white appearance-none outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/30 transition-all duration-300"
+                    className="w-full rounded-2xl bg-gray-50 dark:bg-[#1a2535] border border-gray-200 dark:border-white/10 pl-11 pr-4 py-4 text-sm font-medium text-gray-900 dark:text-white appearance-none outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/30 transition-all duration-300"
                   >
                     <option value="" className="bg-white text-gray-900 dark:bg-[#141824] dark:text-white">All Categories</option>
                     {categories.map(cat => (
@@ -363,7 +363,7 @@ const Home = () => {
                     onChange={val => setSearchInput(p => ({ ...p, location: val }))}
                     placeholder="City or area…"
                     icon={false}
-                    inputClassName="w-full rounded-2xl bg-gray-50 dark:bg-white/[0.06] border border-gray-200 dark:border-white/10 pl-11 pr-4 py-4 text-sm font-medium text-gray-900 dark:text-white placeholder:text-gray-400 outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/30 transition-all duration-300"
+                    inputClassName="w-full rounded-2xl bg-gray-50 dark:bg-[#1a2535] border border-gray-200 dark:border-white/10 pl-11 pr-4 py-4 text-sm font-medium text-gray-900 dark:text-white placeholder:text-gray-400 outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/30 transition-all duration-300"
                   />
                 </div>
 
@@ -392,7 +392,7 @@ const Home = () => {
                 </Link>
                 <Link to="/login">
                   <motion.span whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                    className="inline-block border border-gray-300 dark:border-white/15 text-gray-700 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-400 dark:hover:border-amber-500/40 px-8 py-3.5 rounded-2xl font-semibold text-sm transition-all duration-300">
+                    className="inline-block border border-gray-300 dark:border-white/30 text-gray-700 dark:text-gray-200 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-400 dark:hover:border-amber-500/60 px-8 py-3.5 rounded-2xl font-semibold text-sm transition-all duration-300">
                     Sign In
                   </motion.span>
                 </Link>
@@ -415,7 +415,7 @@ const Home = () => {
               { icon: '📍', label: 'Hyperlocal' },
               { icon: '🔒', label: 'Verified Users' },
             ].map(({ icon, label }) => (
-              <div key={label} className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-white/[0.05] backdrop-blur-sm border border-white/60 dark:border-white/10 text-xs font-semibold text-[#5b4a38] dark:text-gray-400 shadow-sm">
+              <div key={label} className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-white/10 backdrop-blur-sm border border-white/60 dark:border-white/20 text-xs font-semibold text-[#5b4a38] dark:text-gray-200 shadow-sm">
                 <span>{icon}</span>
                 <span>{label}</span>
               </div>
@@ -606,7 +606,7 @@ const Home = () => {
             >
               {/* Step indicator */}
               <div className="relative inline-flex">
-                <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-[#f6f7f9] to-[#eef0f3] dark:from-white/[0.06] dark:to-white/[0.03] border border-[#e6e8ec] dark:border-white/10 flex items-center justify-center text-3xl mb-5 shadow-sm group-hover:shadow-md group-hover:border-[#c8933a]/30 transition-all duration-300">
+                <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-[#f6f7f9] to-[#eef0f3] dark:from-[#1a2535] dark:to-[#141824] border border-[#e6e8ec] dark:border-white/10 flex items-center justify-center text-3xl mb-5 shadow-sm group-hover:shadow-md group-hover:border-[#c8933a]/30 transition-all duration-300">
                   {icon}
                 </div>
                 <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#c8933a] text-white text-[10px] font-black flex items-center justify-center">
