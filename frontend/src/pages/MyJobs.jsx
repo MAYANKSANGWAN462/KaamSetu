@@ -204,9 +204,13 @@ const JobRow = ({ job, onStatusChange, onDelete }) => {
   const handleAccept = async (appId) => {
     try {
       const { applicationService } = await import('../services')
-      await applicationService.updateApplication(appId, 'accepted')
+      const res = await applicationService.updateApplication(appId, 'accepted')
       setApplicants(prev => prev.map(a => a._id === appId ? { ...a, status: 'accepted' } : a))
       toast.success('Worker booked!')
+      // If accepting this worker filled the job quota, update the job status badge
+      if (res?.job?.status) {
+        onStatusChange(job._id, res.job.status)
+      }
     } catch { toast.error('Failed to accept') }
   }
 
@@ -217,6 +221,18 @@ const JobRow = ({ job, onStatusChange, onDelete }) => {
       setApplicants(prev => prev.map(a => a._id === appId ? { ...a, status: 'rejected' } : a))
       toast.success('Application rejected')
     } catch { toast.error('Failed to reject') }
+  }
+
+  const handleMarkAbandoned = async (appId) => {
+    if (!window.confirm('Mark this worker as having abandoned the job? This records that they left mid-work.')) return
+    try {
+      const { applicationService } = await import('../services')
+      await applicationService.updateApplication(appId, 'abandoned')
+      setApplicants(prev => prev.map(a => a._id === appId ? { ...a, status: 'abandoned' } : a))
+      toast.success('Worker marked as abandoned.')
+    } catch (err) {
+      toast.error(typeof err === 'string' ? err : 'Failed to update status')
+    }
   }
 
   const handlePaymentLogged = (appId, payment) => {
@@ -482,8 +498,10 @@ const JobRow = ({ job, onStatusChange, onDelete }) => {
                             </p>
                             <div className="flex items-center gap-1.5 mt-0.5">
                               <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full ${
-                                app.status === 'accepted' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400' :
-                                app.status === 'rejected' ? 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400' :
+                                app.status === 'accepted'  ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400' :
+                                app.status === 'rejected'  ? 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400' :
+                                app.status === 'withdrawn' ? 'bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-400' :
+                                app.status === 'abandoned' ? 'bg-orange-100 text-orange-700 dark:bg-orange-500/15 dark:text-orange-400' :
                                 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400'
                               }`}>
                                 {app.status}
@@ -504,6 +522,14 @@ const JobRow = ({ job, onStatusChange, onDelete }) => {
                                 Reject
                               </button>
                             </>
+                          )}
+
+                          {/* Hirer marks a committed worker as having abandoned mid-job */}
+                          {app.status === 'accepted' && isInProgress && (
+                            <button onClick={() => handleMarkAbandoned(app._id)}
+                              className="px-3 py-1.5 rounded-xl border border-orange-300 dark:border-orange-500/30 text-orange-600 dark:text-orange-400 text-xs font-bold hover:bg-orange-50 dark:hover:bg-orange-500/10 transition-colors">
+                              Abandoned
+                            </button>
                           )}
 
                           {/* Log Payment button — only for completed jobs, accepted apps, no payment yet */}

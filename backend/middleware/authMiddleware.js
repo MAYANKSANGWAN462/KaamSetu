@@ -84,11 +84,13 @@ const optionalAuth = async (req, res, next) => {
 
 /**
  * Requires req.user.activeMode === mode (after protect).
+ * Admins bypass mode checks so they can operate on any resource.
  */
 const requireMode = (mode) => (req, res, next) => {
   if (!req.user) {
     return res.status(401).json({ success: false, message: 'Not authorized' });
   }
+  if (req.user.role === 'admin') return next();
   if (req.user.activeMode !== mode) {
     return res.status(403).json({
       success: false,

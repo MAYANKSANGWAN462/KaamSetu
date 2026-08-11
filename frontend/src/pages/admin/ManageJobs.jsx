@@ -10,7 +10,7 @@ const stagger = (i) => ({
   transition: { delay: i * 0.07, duration: 0.45, ease: [0.16, 1, 0.3, 1] }
 })
 
-const JOB_STATUSES = ['all', 'open', 'filled', 'cancelled']
+const JOB_STATUSES = ['all', 'open', 'filled', 'in_progress', 'completed', 'cancelled']
 
 const ManageJobs = () => {
   const [jobs, setJobs] = useState([])
@@ -56,9 +56,11 @@ const ManageJobs = () => {
   }
 
   const statusColor = (s) => ({
-    open: 'bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400',
-    filled: 'bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-400',
-    cancelled: 'bg-red-100 dark:bg-red-500/15 text-red-700 dark:text-red-400',
+    open:        'bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400',
+    filled:      'bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-400',
+    in_progress: 'bg-violet-100 dark:bg-violet-500/15 text-violet-700 dark:text-violet-400',
+    completed:   'bg-[#c8933a]/15 text-[#c8933a]',
+    cancelled:   'bg-red-100 dark:bg-red-500/15 text-red-700 dark:text-red-400',
   }[s] || 'bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400')
 
   return (
@@ -146,7 +148,7 @@ const ManageJobs = () => {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    {job.status !== 'cancelled' ? (
+                    {job.status !== 'completed' && job.status !== 'cancelled' && (
                       <button
                         onClick={() => handleModerate(job, 'cancelled')}
                         disabled={busyId === job._id}
@@ -154,13 +156,23 @@ const ManageJobs = () => {
                       >
                         Cancel
                       </button>
-                    ) : (
+                    )}
+                    {(job.status === 'cancelled' || job.status === 'completed') && (
                       <button
                         onClick={() => handleModerate(job, 'open')}
                         disabled={busyId === job._id}
                         className="px-3 py-2 rounded-xl border border-emerald-200/70 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-bold hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-all disabled:opacity-50"
                       >
                         Reopen
+                      </button>
+                    )}
+                    {job.status === 'in_progress' && (
+                      <button
+                        onClick={() => handleModerate(job, 'completed')}
+                        disabled={busyId === job._id}
+                        className="px-3 py-2 rounded-xl border border-[#c8933a]/40 text-[#c8933a] text-xs font-bold hover:bg-[#c8933a]/5 transition-all disabled:opacity-50"
+                      >
+                        Mark Complete
                       </button>
                     )}
                   </div>

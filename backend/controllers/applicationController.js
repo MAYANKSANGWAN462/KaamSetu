@@ -285,16 +285,17 @@ const checkInteraction = async (req, res) => {
 };
 
 /* ─── PUT /api/applications/:id ──────────────────────────── */
-// Hirer accepts or rejects an application
+// Hirer accepts, rejects, or marks a worker as abandoned.
+// Admin can also update any application for dispute resolution.
 
 const updateApplicationStatus = async (req, res) => {
   try {
     const { status } = req.body;
 
-    if (!["accepted", "rejected"].includes(status)) {
+    if (!["accepted", "rejected", "abandoned"].includes(status)) {
       return res.status(400).json({
         success: false,
-        message: 'Status must be "accepted" or "rejected"',
+        message: 'Status must be "accepted", "rejected", or "abandoned"',
       });
     }
 
@@ -305,12 +306,26 @@ const updateApplicationStatus = async (req, res) => {
         .json({ success: false, message: "Application not found" });
     }
 
-    if (application.hirerId.toString() !== req.user._id.toString()) {
+    const isAdmin = req.user.role === "admin";
+    if (
+      !isAdmin &&
+      application.hirerId.toString() !== req.user._id.toString()
+    ) {
       return res.status(403).json({
         success: false,
         message: "Not authorized to update this application",
       });
     }
+
+    // 'abandoned' is only valid for an already-accepted application (worker left mid-job)
+    if (status === "abandoned" && application.status !== "accepted") {
+      return res.status(400).json({
+        success: false,
+        message: "Can only mark accepted workers as abandoned",
+      });
+    }
+
+    let updatedJob = null;
 
     if (status === "accepted" && application.jobId) {
       const job = await Job.findById(application.jobId);
@@ -337,6 +352,7 @@ const updateApplicationStatus = async (req, res) => {
       if (newCount >= job.workersRequired) {
         job.status = "filled";
         await job.save();
+        updatedJob = { _id: job._id, status: job.status };
       }
     } else {
       application.status = status;
@@ -363,9 +379,72 @@ const updateApplicationStatus = async (req, res) => {
       success: true,
       message: `Application ${status}`,
       data: application,
+      job: updatedJob,
     });
   } catch (error) {
     console.error("[updateApplicationStatus]", error.message);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
+
+/* ─── PATCH /api/applications/:id/withdraw ───────────────── */
+// Worker withdraws a pending application or marks an accepted one as abandoned
+// (they are leaving the job mid-way).
+
+const withdrawApplication = async (req, res) => {
+  try {
+    const application = await Application.findById(req.params.id);
+    if (!application) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Application not found" });
+    }
+
+    if (application.workerId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to withdraw this application",
+      });
+    }
+
+    if (!["pending", "accepted"].includes(application.status)) {
+      return res.status(400).json({
+        success: false,
+        message: `Cannot withdraw an application with status '${application.status}'`,
+      });
+    }
+
+    const wasAccepted = application.status === "accepted";
+    application.status = "withdrawn";
+    await application.save();
+
+    // Notify hirer via socket
+    try {
+      const io = getIo();
+      io.to(application.hirerId.toString()).emit("applicationWithdrawn", {
+        applicationId: application._id.toString(),
+        workerId: application.workerId.toString(),
+        jobId: application.jobId?.toString(),
+        wasAccepted,
+      });
+    } catch (socketErr) {
+      console.warn(
+        "[withdrawApplication] Socket emit skipped:",
+        socketErr.message,
+      );
+    }
+
+    return res.json({
+      success: true,
+      message: wasAccepted
+        ? "You have been marked as withdrawn from this job. The hirer has been notified."
+        : "Application withdrawn successfully.",
+      data: application,
+    });
+  } catch (error) {
+    console.error("[withdrawApplication]", error.message);
     return res
       .status(500)
       .json({ success: false, message: "Internal server error" });
@@ -379,4 +458,5 @@ module.exports = {
   getJobApplicants,
   checkInteraction,
   updateApplicationStatus,
+  withdrawApplication,
 };

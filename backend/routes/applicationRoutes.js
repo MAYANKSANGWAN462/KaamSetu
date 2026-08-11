@@ -6,7 +6,8 @@ const {
   getMyApplications,
   getJobApplicants,
   checkInteraction,
-  updateApplicationStatus
+  updateApplicationStatus,
+  withdrawApplication
 } = require('../controllers/applicationController');
 const { protect, requireMode } = require('../middleware/authMiddleware');
 
@@ -25,9 +26,12 @@ router.get('/job/:jobId', requireMode('hirer'), getJobApplicants);
 // checkInteraction used by frontend to decide whether to show Message button
 router.get('/check', checkInteraction);
 
-// Update status — hirer only
+// Update status — hirer only (admin bypass handled in requireMode)
 router.put('/:id', requireMode('hirer'), updateApplicationStatus);
 // Alias — frontend jobService calls /:id/status for accept/reject
 router.put('/:id/status', requireMode('hirer'), updateApplicationStatus);
+
+// Worker withdraws their own pending or accepted application
+router.patch('/:id/withdraw', requireMode('worker'), withdrawApplication);
 
 module.exports = router;

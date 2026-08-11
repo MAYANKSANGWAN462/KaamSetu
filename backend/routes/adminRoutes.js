@@ -7,10 +7,12 @@ const {
   listUsers,
   listWorkers,
   listJobs,
+  listApplications,
   listConversations,
   setUserStatus,
   deleteUser,
-  moderateJob
+  moderateJob,
+  moderateApplication
 } = require('../controllers/adminController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
@@ -35,10 +37,12 @@ router.get('/stats',          getStats);
 router.get('/users',          listUsers);
 router.get('/workers',        listWorkers);
 router.get('/jobs',           listJobs);
+router.get('/applications',   listApplications);
 router.get('/conversations',  listConversations);
 
-router.patch('/users/:id/status', setUserStatus);
-router.delete('/users/:id',       deleteUser);
-router.patch('/jobs/:id/status',  moderateJob);
+router.patch('/users/:id/status',         setUserStatus);
+router.delete('/users/:id',               deleteUser);
+router.patch('/jobs/:id/status',          moderateJob);
+router.patch('/applications/:id/status',  moderateApplication);
 
 module.exports = router;

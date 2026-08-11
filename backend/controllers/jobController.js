@@ -443,7 +443,7 @@ const deleteJob = async (req, res) => {
 const ALLOWED_TRANSITIONS = {
   open:        ['cancelled'],
   filled:      ['in_progress', 'cancelled'],
-  in_progress: ['completed'],
+  in_progress: ['completed', 'cancelled'],  // cancelled: worker abandoned mid-job
   completed:   [],
   cancelled:   ['open'],
 };

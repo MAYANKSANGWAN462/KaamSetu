@@ -56,6 +56,15 @@ class ApplicationService {
       throw this.handleError(error);
     }
   }
+
+  async withdrawApplication(applicationId) {
+    try {
+      const response = await api.patch(`/applications/${applicationId}/withdraw`);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
   handleError(error) {
     if (error.response) {
       return error.response.data?.message || "An error occurred";

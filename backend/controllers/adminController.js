@@ -3,6 +3,7 @@ const User = require('../models/User');
 const WorkerProfile = require('../models/WorkerProfile');
 const Job = require('../models/Job');
 const Application = require('../models/Application');
+const Payment = require('../models/Payment');
 const Message = require('../models/Message');
 const { signToken } = require('../utils/generateToken');
 const { sanitizeUserDoc } = require('../utils/sanitizeUser');
@@ -279,9 +280,28 @@ const deleteUser = async (req, res) => {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
 
+    // Find all jobs posted by this user so we can cascade-delete their applications
+    const jobIds = await Job.find({ hirerId: user._id }).distinct('_id');
+
+    // Cascade: payments → applications → jobs/worker profile → user
+    await Payment.deleteMany({
+      $or: [
+        { hirerId: user._id },
+        { workerId: user._id }
+      ]
+    });
+    await Application.deleteMany({
+      $or: [
+        { workerId: user._id },
+        { hirerId: user._id },
+        { jobId: { $in: jobIds } }
+      ]
+    });
+    await Job.deleteMany({ hirerId: user._id });
     await WorkerProfile.findOneAndDelete({ userId: user._id });
     await user.deleteOne();
-    return res.json({ success: true, message: 'User deleted successfully' });
+
+    return res.json({ success: true, message: 'User and all associated data deleted successfully' });
   } catch (error) {
     console.error('[deleteUser]', error.message);
     return res.status(500).json({ success: false, message: 'Internal server error' });
@@ -289,22 +309,81 @@ const deleteUser = async (req, res) => {
 };
 
 /* ─── PATCH /api/admin/jobs/:id/status ──────────────────────
- * Moderate a job post — reopen or cancel any listing.
+ * Moderate a job — admin can force any status for dispute resolution.
  */
 const moderateJob = async (req, res) => {
   try {
     const { status } = req.body;
-    if (!['open', 'cancelled'].includes(status)) {
-      return res.status(400).json({ success: false, message: 'Status must be open or cancelled' });
+    const validStatuses = ['open', 'filled', 'in_progress', 'completed', 'cancelled'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ success: false, message: `Status must be one of: ${validStatuses.join(', ')}` });
     }
     const job = await Job.findById(req.params.id);
     if (!job) return res.status(404).json({ success: false, message: 'Job not found' });
 
     job.status = status;
     await job.save();
-    return res.json({ success: true, message: `Job ${status}`, data: { _id: job._id, status: job.status } });
+    return res.json({ success: true, message: `Job status set to ${status}`, data: { _id: job._id, status: job.status } });
   } catch (error) {
     console.error('[moderateJob]', error.message);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+/* ─── GET /api/admin/applications ─────────────────────────
+ * List all applications with optional filters for admin oversight.
+ */
+const listApplications = async (req, res) => {
+  try {
+    const { status, jobId } = req.query;
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 25));
+
+    const query = {};
+    if (status && status !== 'all') query.status = status;
+    if (jobId) query.jobId = jobId;
+
+    const [applications, total] = await Promise.all([
+      Application.find(query)
+        .populate('workerId', 'name email')
+        .populate('hirerId', 'name email')
+        .populate('jobId', 'title status')
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .lean(),
+      Application.countDocuments(query)
+    ]);
+
+    return res.json({
+      success: true,
+      data: applications,
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) }
+    });
+  } catch (error) {
+    console.error('[listApplications]', error.message);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+/* ─── PATCH /api/admin/applications/:id/status ────────────
+ * Admin can force any application status for dispute resolution.
+ */
+const moderateApplication = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const validStatuses = ['pending', 'accepted', 'rejected', 'withdrawn', 'abandoned'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ success: false, message: `Status must be one of: ${validStatuses.join(', ')}` });
+    }
+    const application = await Application.findById(req.params.id);
+    if (!application) return res.status(404).json({ success: false, message: 'Application not found' });
+
+    application.status = status;
+    await application.save();
+    return res.json({ success: true, message: `Application status set to ${status}`, data: application });
+  } catch (error) {
+    console.error('[moderateApplication]', error.message);
     return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
@@ -315,8 +394,10 @@ module.exports = {
   listUsers,
   listWorkers,
   listJobs,
+  listApplications,
   listConversations,
   setUserStatus,
   deleteUser,
-  moderateJob
+  moderateJob,
+  moderateApplication
 };

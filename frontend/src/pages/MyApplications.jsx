@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { jobService, paymentService } from '../services'
+import { jobService, paymentService, applicationService } from '../services'
 import { useAuth } from '../context/AuthContext'
 import toast from 'react-hot-toast'
 
@@ -16,7 +16,8 @@ const StatusBadge = ({ status }) => {
     accepted:  { label: 'Accepted',  cls: 'bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-200/70 dark:border-emerald-500/20' },
     rejected:  { label: 'Rejected',  cls: 'bg-red-100 dark:bg-red-500/15 text-red-700 dark:text-red-400 border-red-200/70 dark:border-red-500/20' },
     pending:   { label: 'Pending',   cls: 'bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-200/70 dark:border-amber-500/20' },
-    completed: { label: 'Completed', cls: 'bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-200/70 dark:border-blue-500/20' },
+    withdrawn: { label: 'Withdrawn', cls: 'bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-400 border-gray-200/70 dark:border-white/10' },
+    abandoned: { label: 'Abandoned', cls: 'bg-orange-100 dark:bg-orange-500/15 text-orange-700 dark:text-orange-400 border-orange-200/70 dark:border-orange-500/20' },
   }
   const { label, cls } = map[status] || map.pending
   return (
@@ -155,6 +156,7 @@ const MyApplications = () => {
   const [applications, setApplications] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [withdrawingId, setWithdrawingId] = useState(null)
 
   useEffect(() => {
     const fetch = async () => {
@@ -166,6 +168,25 @@ const MyApplications = () => {
     }
     fetch()
   }, [])
+
+  const handleWithdraw = async (appId) => {
+    const confirmed = window.confirm(
+      'Are you sure you want to withdraw this application? The hirer will be notified.'
+    )
+    if (!confirmed) return
+    setWithdrawingId(appId)
+    try {
+      await applicationService.withdrawApplication(appId)
+      setApplications(prev =>
+        prev.map(a => a._id === appId ? { ...a, status: 'withdrawn' } : a)
+      )
+      toast.success('Application withdrawn.')
+    } catch (err) {
+      toast.error(err?.response?.data?.message || err || 'Failed to withdraw application')
+    } finally {
+      setWithdrawingId(null)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#f6f7f9] dark:bg-[#0b0e14] pt-24 pb-12">
@@ -257,6 +278,26 @@ const MyApplications = () => {
                               d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                           </svg>
                           Message
+                        </motion.button>
+                      )}
+                      {(app.status === 'pending' || app.status === 'accepted') && (
+                        <motion.button
+                          whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                          onClick={() => handleWithdraw(app._id)}
+                          disabled={withdrawingId === app._id}
+                          className="flex items-center gap-1 px-3 py-2 rounded-xl border border-red-200/70 dark:border-red-500/20 text-red-600 dark:text-red-400 text-xs font-bold hover:bg-red-50 dark:hover:bg-red-500/10 transition-all duration-200 disabled:opacity-50">
+                          {withdrawingId === app._id ? (
+                            <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-30" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                              <path className="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                            </svg>
+                          ) : (
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          )}
+                          {app.status === 'accepted' ? 'Leave Job' : 'Withdraw'}
                         </motion.button>
                       )}
                       {job._id && (
