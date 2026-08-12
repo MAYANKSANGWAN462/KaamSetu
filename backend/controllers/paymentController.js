@@ -265,9 +265,15 @@ const handleWebhook = (req, res) => {
     const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
     const signature = req.headers['x-razorpay-signature'];
 
+    if (!secret || !signature) {
+      return res.status(400).json({ success: false, message: 'Webhook secret or signature missing' });
+    }
+
+    // Must verify against the raw request bytes, not re-serialized JSON
+    const rawBody = req.rawBody || Buffer.from(JSON.stringify(req.body));
     const expectedSig = crypto
       .createHmac('sha256', secret)
-      .update(JSON.stringify(req.body))
+      .update(rawBody)
       .digest('hex');
 
     if (expectedSig !== signature) {

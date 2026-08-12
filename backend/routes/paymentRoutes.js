@@ -12,18 +12,8 @@ const {
 } = require('../controllers/paymentController');
 const { protect, requireMode } = require('../middleware/authMiddleware');
 
-// ── Razorpay webhook — raw body required, no auth ──────────
-// Must be registered BEFORE body-parser JSON middleware in server.js
-// (handled via express.raw in server.js or here as raw endpoint)
-router.post('/webhook', express.raw({ type: 'application/json' }), (req, res, next) => {
-  // Parse the raw body back to JSON for the handler
-  try {
-    req.body = JSON.parse(req.body.toString());
-  } catch {
-    return res.status(400).json({ success: false, message: 'Invalid JSON payload' });
-  }
-  next();
-}, handleWebhook);
+// ── Razorpay webhook — no auth; rawBody is saved by express.json verify in server.js ──
+router.post('/webhook', handleWebhook);
 
 // ── All routes below require authentication ──────────────
 router.use(protect);
