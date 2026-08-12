@@ -29,12 +29,23 @@ const paymentSchema = new mongoose.Schema(
     },
     method: {
       type: String,
-      enum: ['cash'],
+      enum: ['cash', 'online'],
       default: 'cash'
+    },
+    // 'online' sub-method returned by Razorpay after payment (upi, card, netbanking, wallet)
+    onlineMethod: {
+      type: String,
+      default: null
     },
     status: {
       type: String,
-      enum: ['logged_by_hirer', 'confirmed_by_worker', 'disputed'],
+      enum: [
+        'pending_online',     // Razorpay order created, payment not yet done
+        'logged_by_hirer',    // Cash: hirer recorded payment
+        'confirmed_by_worker',// Cash: worker confirmed receipt
+        'paid_online',        // Online: Razorpay payment verified
+        'disputed'            // Either method: under dispute
+      ],
       default: 'logged_by_hirer'
     },
     note: {
@@ -43,7 +54,25 @@ const paymentSchema = new mongoose.Schema(
       maxlength: [300, 'Note cannot exceed 300 characters'],
       default: ''
     },
+    // Cash-specific
     workerConfirmedAt: {
+      type: Date,
+      default: null
+    },
+    // Razorpay-specific
+    razorpayOrderId: {
+      type: String,
+      default: null
+    },
+    razorpayPaymentId: {
+      type: String,
+      default: null
+    },
+    razorpaySignature: {
+      type: String,
+      default: null
+    },
+    paidAt: {
       type: Date,
       default: null
     }
@@ -55,5 +84,6 @@ paymentSchema.index({ jobId: 1 });
 paymentSchema.index({ hirerId: 1, createdAt: -1 });
 paymentSchema.index({ workerId: 1, createdAt: -1 });
 paymentSchema.index({ applicationId: 1 }, { unique: true });
+paymentSchema.index({ razorpayOrderId: 1 }, { sparse: true });
 
 module.exports = mongoose.model('Payment', paymentSchema);

@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { jobService, paymentService } from '../services'
+import { useSocket } from '../context/SocketContext'
+import useRazorpay from '../hooks/useRazorpay'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 
@@ -40,97 +42,157 @@ const SkeletonRow = () => (
   </div>
 )
 
-// Inline payment log form shown per accepted applicant
-const LogPaymentForm = ({ app, jobWage, onLogged, onCancel }) => {
+// Inline payment form — hirer chooses Cash or Online (UPI/Card)
+const LogPaymentForm = ({ app, jobWage, onLogged, onCancel, hirerUser }) => {
+  const [method, setMethod] = useState('cash') // 'cash' | 'online'
   const [amount, setAmount] = useState(jobWage || '')
   const [note, setNote] = useState('')
   const [loading, setLoading] = useState(false)
+  const openCheckout = useRazorpay()
 
-  const handleSubmit = async (e) => {
+  const handleCash = async (e) => {
     e.preventDefault()
     const val = Number(amount)
-    if (!Number.isFinite(val) || val < 0) {
-      toast.error('Enter a valid amount')
-      return
-    }
+    if (!Number.isFinite(val) || val < 0) { toast.error('Enter a valid amount'); return }
     setLoading(true)
     try {
       const res = await paymentService.logPayment(app._id, val, note)
-      toast.success(`Payment of ₹${val} logged!`)
+      toast.success(`Cash payment of ₹${val} logged!`)
       onLogged(app._id, res.data)
     } catch (err) {
       toast.error(err?.response?.data?.message || 'Failed to log payment')
-    } finally {
+    } finally { setLoading(false) }
+  }
+
+  const handleOnline = async (e) => {
+    e.preventDefault()
+    const val = Number(amount)
+    if (!Number.isFinite(val) || val <= 0) { toast.error('Enter a valid amount greater than 0'); return }
+    setLoading(true)
+    try {
+      const orderRes = await paymentService.createOrder(app._id, val, note)
+      if (!orderRes.success) throw new Error(orderRes.message)
+      const { orderId, amount: amountPaise, currency, key } = orderRes.data
       setLoading(false)
+
+      openCheckout({
+        orderId,
+        amount: amountPaise,
+        currency,
+        key,
+        description: `Payment for job application`,
+        prefillName: hirerUser?.name,
+        prefillEmail: hirerUser?.email,
+        onSuccess: async (rpResponse) => {
+          setLoading(true)
+          try {
+            const verifyRes = await paymentService.verifyPayment({
+              razorpay_order_id: rpResponse.razorpay_order_id,
+              razorpay_payment_id: rpResponse.razorpay_payment_id,
+              razorpay_signature: rpResponse.razorpay_signature,
+              applicationId: app._id
+            })
+            toast.success(`Online payment of ₹${val} confirmed!`)
+            onLogged(app._id, verifyRes.data)
+          } catch (err) {
+            toast.error(err?.response?.data?.message || 'Payment verification failed')
+          } finally { setLoading(false) }
+        },
+        onError: (msg) => toast.error(msg || 'Payment failed'),
+        onDismiss: () => toast('Payment cancelled')
+      })
+    } catch (err) {
+      setLoading(false)
+      toast.error(err?.response?.data?.message || err?.message || 'Failed to initiate payment')
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-2 p-3 bg-[#c8933a]/5 border border-[#c8933a]/20 rounded-xl space-y-2">
-      <p className="text-[10px] font-bold uppercase tracking-wider text-[#c8933a]">Log Cash Payment</p>
+    <div className="mt-2 p-3 bg-[#c8933a]/5 border border-[#c8933a]/20 rounded-xl space-y-3">
+      <p className="text-[10px] font-bold uppercase tracking-wider text-[#c8933a]">Log Payment</p>
+
+      {/* Method toggle */}
       <div className="flex gap-2">
-        <div className="flex-1">
-          <label className="text-[10px] text-[#6b7280] font-semibold block mb-1">Amount (₹)</label>
-          <input
-            type="number"
-            min="0"
-            step="1"
-            value={amount}
-            onChange={e => setAmount(e.target.value)}
-            className="w-full px-3 py-2 rounded-xl text-sm border border-[#e6e8ec] dark:border-white/10 bg-white dark:bg-white/5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#c8933a]/40"
-            placeholder="e.g. 800"
-            required
-          />
-        </div>
-        <div className="flex-1">
-          <label className="text-[10px] text-[#6b7280] font-semibold block mb-1">Note (optional)</label>
-          <input
-            type="text"
-            maxLength={100}
-            value={note}
-            onChange={e => setNote(e.target.value)}
-            className="w-full px-3 py-2 rounded-xl text-sm border border-[#e6e8ec] dark:border-white/10 bg-white dark:bg-white/5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#c8933a]/40"
-            placeholder="Paid for full day"
-          />
-        </div>
+        {['cash', 'online'].map(m => (
+          <button key={m} type="button" onClick={() => setMethod(m)}
+            className={`flex-1 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+              method === m
+                ? 'bg-gradient-to-br from-[#d4963e] to-[#b86e2a] text-white border-transparent'
+                : 'border-[#e6e8ec] dark:border-white/10 text-[#6b7280] hover:border-[#c8933a]/40'
+            }`}>
+            {m === 'cash' ? '💵 Cash' : '📱 UPI / Card'}
+          </button>
+        ))}
       </div>
-      <div className="flex gap-2 justify-end">
-        <button type="button" onClick={onCancel}
-          className="px-3 py-1.5 rounded-xl text-xs font-bold text-[#6b7280] border border-[#e6e8ec] dark:border-white/10 hover:bg-[#f6f7f9] dark:hover:bg-white/5 transition-colors">
-          Cancel
-        </button>
-        <button type="submit" disabled={loading}
-          className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] text-white text-xs font-bold disabled:opacity-50 transition-opacity">
-          {loading && (
-            <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-30" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
-              <path className="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-            </svg>
-          )}
-          Confirm Payment
-        </button>
-      </div>
-    </form>
+
+      <form onSubmit={method === 'cash' ? handleCash : handleOnline} className="space-y-2">
+        <div className="flex gap-2">
+          <div className="flex-1">
+            <label className="text-[10px] text-[#6b7280] font-semibold block mb-1">Amount (₹)</label>
+            <input type="number" min={method === 'online' ? '1' : '0'} step="1"
+              value={amount} onChange={e => setAmount(e.target.value)}
+              className="w-full px-3 py-2 rounded-xl text-sm border border-[#e6e8ec] dark:border-white/10 bg-white dark:bg-white/5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#c8933a]/40"
+              placeholder="e.g. 800" required />
+          </div>
+          <div className="flex-1">
+            <label className="text-[10px] text-[#6b7280] font-semibold block mb-1">Note (optional)</label>
+            <input type="text" maxLength={300} value={note} onChange={e => setNote(e.target.value)}
+              className="w-full px-3 py-2 rounded-xl text-sm border border-[#e6e8ec] dark:border-white/10 bg-white dark:bg-white/5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#c8933a]/40"
+              placeholder="Paid for full day" />
+          </div>
+        </div>
+
+        {method === 'online' && (
+          <p className="text-[10px] text-[#6b7280] bg-blue-50 dark:bg-blue-500/10 border border-blue-200/60 dark:border-blue-500/20 px-2.5 py-1.5 rounded-lg">
+            Worker will receive a payment confirmation once the online transaction is complete. Supports UPI, Card, Net Banking & Wallets.
+          </p>
+        )}
+
+        <div className="flex gap-2 justify-end">
+          <button type="button" onClick={onCancel}
+            className="px-3 py-1.5 rounded-xl text-xs font-bold text-[#6b7280] border border-[#e6e8ec] dark:border-white/10 hover:bg-[#f6f7f9] dark:hover:bg-white/5 transition-colors">
+            Cancel
+          </button>
+          <button type="submit" disabled={loading}
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-gradient-to-br from-[#d4963e] to-[#b86e2a] text-white text-xs font-bold disabled:opacity-50 transition-opacity">
+            {loading ? (
+              <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-30" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                <path className="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+            ) : null}
+            {method === 'cash' ? 'Log Cash Payment' : 'Pay Online'}
+          </button>
+        </div>
+      </form>
+    </div>
   )
 }
 
 // Payment status badge shown in applicant row
 const PaymentBadge = ({ payment }) => {
   if (!payment) return null
+  const isPaidOnline = payment.status === 'paid_online'
   const isConfirmed = payment.status === 'confirmed_by_worker'
+  const isDone = isPaidOnline || isConfirmed
+  const isPending = payment.status === 'pending_online'
   return (
     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
-      isConfirmed
-        ? 'bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400'
-        : 'bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400'
+      isDone    ? 'bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400' :
+      isPending ? 'bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-400' :
+                  'bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400'
     }`}>
-      {isConfirmed ? '✓ Payment confirmed' : `₹${payment.amount} logged`}
+      {isPaidOnline ? `✓ ₹${payment.amount} paid online` :
+       isConfirmed  ? `✓ ₹${payment.amount} cash confirmed` :
+       isPending    ? `₹${payment.amount} pending…` :
+                      `₹${payment.amount} cash logged`}
     </span>
   )
 }
 
 const JobRow = ({ job, onStatusChange, onDelete }) => {
   const navigate = useNavigate()
+  const socket = useSocket()
   const [toggling, setToggling] = useState(false)
   const [expanded, setExpanded] = useState(false)
   const [applicants, setApplicants] = useState([])
@@ -141,6 +203,24 @@ const JobRow = ({ job, onStatusChange, onDelete }) => {
   const [paymentMap, setPaymentMap] = useState({})
   // which applicant's log-payment form is open
   const [paymentFormAppId, setPaymentFormAppId] = useState(null)
+
+  // Live: when worker confirms a payment, update the badge without page reload
+  useEffect(() => {
+    if (!socket) return
+    const handleConfirmed = ({ applicationId, amount }) => {
+      if (!applicationId) return
+      setPaymentMap(prev => {
+        if (!prev[applicationId]) return prev
+        return {
+          ...prev,
+          [applicationId]: { ...prev[applicationId], status: 'confirmed_by_worker', amount }
+        }
+      })
+      toast.success('Worker confirmed payment receipt!')
+    }
+    socket.on('paymentConfirmed', handleConfirmed)
+    return () => socket.off('paymentConfirmed', handleConfirmed)
+  }, [socket])
 
   const isOpen        = job.status === 'open'
   const isFilled      = job.status === 'filled'
@@ -564,6 +644,7 @@ const JobRow = ({ job, onStatusChange, onDelete }) => {
                           jobWage={job.wage?.amount}
                           onLogged={handlePaymentLogged}
                           onCancel={() => setPaymentFormAppId(null)}
+                          hirerUser={JSON.parse(localStorage.getItem('user') || '{}')}
                         />
                       )}
 
@@ -575,13 +656,23 @@ const JobRow = ({ job, onStatusChange, onDelete }) => {
                               d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                           </svg>
                           <span>
-                            <span className="font-bold text-gray-900 dark:text-white">₹{payment.amount}</span> cash logged
+                            <span className="font-bold text-gray-900 dark:text-white">₹{payment.amount}</span>
+                            {payment.method === 'online'
+                              ? <span className="ml-1">paid online{payment.onlineMethod ? ` via ${payment.onlineMethod}` : ''}</span>
+                              : <span className="ml-1">cash</span>
+                            }
                             {payment.note && ` · ${payment.note}`}
+                            {payment.status === 'paid_online' && (
+                              <span className="ml-1.5 font-bold text-emerald-600 dark:text-emerald-400">· Payment confirmed</span>
+                            )}
                             {payment.status === 'confirmed_by_worker' && (
                               <span className="ml-1.5 font-bold text-emerald-600 dark:text-emerald-400">· Worker confirmed receipt</span>
                             )}
                             {payment.status === 'logged_by_hirer' && (
                               <span className="ml-1.5 text-amber-600 dark:text-amber-400">· Waiting for worker confirmation</span>
+                            )}
+                            {payment.status === 'pending_online' && (
+                              <span className="ml-1.5 text-blue-600 dark:text-blue-400">· Checkout in progress…</span>
                             )}
                           </span>
                         </div>

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { jobService, paymentService, applicationService } from '../services'
 import { useAuth } from '../context/AuthContext'
+import { useSocket } from '../context/SocketContext'
 import toast from 'react-hot-toast'
 
 const stagger = (i) => ({
@@ -52,7 +53,7 @@ const SkeletonRow = () => (
 )
 
 // Per-application payment section — fetches and displays payment, allows worker to confirm
-const PaymentSection = ({ app }) => {
+const PaymentSection = ({ app, refreshKey }) => {
   const [payment, setPayment] = useState(undefined) // undefined = not fetched yet
   const [loading, setLoading] = useState(false)
   const [confirming, setConfirming] = useState(false)
@@ -78,7 +79,8 @@ const PaymentSection = ({ app }) => {
     }
     fetch()
     return () => { cancelled = true }
-  }, [app._id, shouldFetch])
+  // refreshKey causes a re-fetch when hirer logs payment (via socket event)
+  }, [app._id, shouldFetch, refreshKey])
 
   const handleConfirm = async () => {
     if (!payment) return
@@ -109,17 +111,43 @@ const PaymentSection = ({ app }) => {
     </div>
   )
 
+  // Online payment — already settled, no worker confirmation needed
+  if (payment.status === 'paid_online') return (
+    <div className="mt-2 flex items-center gap-2 px-3 py-2 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200/70 dark:border-emerald-500/20 rounded-xl text-xs text-emerald-700 dark:text-emerald-400 font-semibold">
+      <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>
+        Online payment of <span className="font-black">₹{payment.amount}</span> received
+        {payment.onlineMethod && <span className="font-normal opacity-70 ml-1 capitalize">· via {payment.onlineMethod}</span>}
+        {payment.note && <span className="font-normal opacity-70 ml-1">· {payment.note}</span>}
+      </span>
+    </div>
+  )
+
+  // Online payment pending (order created, checkout not completed yet)
+  if (payment.status === 'pending_online') return (
+    <div className="mt-2 flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-500/10 border border-blue-200/70 dark:border-blue-500/20 rounded-xl text-xs text-blue-700 dark:text-blue-400">
+      <svg className="animate-spin w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24">
+        <circle className="opacity-30" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+        <path className="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+      </svg>
+      Online payment of ₹{payment.amount} in progress — waiting for hirer to complete checkout
+    </div>
+  )
+
+  // Cash payment confirmed by worker
   if (payment.status === 'confirmed_by_worker') return (
     <div className="mt-2 flex items-center gap-2 px-3 py-2 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200/70 dark:border-emerald-500/20 rounded-xl text-xs text-emerald-700 dark:text-emerald-400 font-semibold">
       <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
-      Payment confirmed — ₹{payment.amount} received
+      Cash payment confirmed — ₹{payment.amount} received
       {payment.note && <span className="text-emerald-600/70 dark:text-emerald-400/70 font-normal ml-1">· {payment.note}</span>}
     </div>
   )
 
-  // Payment logged by hirer, not yet confirmed by worker
+  // Cash: logged by hirer, worker hasn't confirmed yet
   return (
     <div className="mt-2 flex flex-wrap items-center justify-between gap-2 px-3 py-2.5 bg-[#c8933a]/5 border border-[#c8933a]/20 rounded-xl">
       <div className="flex items-center gap-2 text-xs text-gray-700 dark:text-gray-300">
@@ -153,10 +181,13 @@ const PaymentSection = ({ app }) => {
 const MyApplications = () => {
   const navigate = useNavigate()
   const { user } = useAuth()
+  const socket = useSocket()
   const [applications, setApplications] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [withdrawingId, setWithdrawingId] = useState(null)
+  // Track per-application payment refresh triggers (keyed by applicationId)
+  const [paymentRefreshKeys, setPaymentRefreshKeys] = useState({})
 
   useEffect(() => {
     const fetch = async () => {
@@ -168,6 +199,18 @@ const MyApplications = () => {
     }
     fetch()
   }, [])
+
+  // Live payment notification — bump the refresh key for the affected app
+  useEffect(() => {
+    if (!socket) return
+    const handlePaymentLogged = ({ applicationId }) => {
+      if (!applicationId) return
+      toast.success('Hirer logged a payment for one of your jobs!')
+      setPaymentRefreshKeys(prev => ({ ...prev, [applicationId]: Date.now() }))
+    }
+    socket.on('paymentLogged', handlePaymentLogged)
+    return () => socket.off('paymentLogged', handlePaymentLogged)
+  }, [socket])
 
   const handleWithdraw = async (appId) => {
     const confirmed = window.confirm(
@@ -311,7 +354,7 @@ const MyApplications = () => {
                   </div>
 
                   {/* Payment section — only renders when job is completed + app is accepted */}
-                  <PaymentSection app={app} />
+                  <PaymentSection app={app} refreshKey={paymentRefreshKeys[app._id]} />
                 </motion.div>
               )
             })}
